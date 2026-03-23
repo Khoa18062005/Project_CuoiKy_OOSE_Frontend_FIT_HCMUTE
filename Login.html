@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Đăng nhập - Khách sạn phong cách</title>
+    <link rel="stylesheet" href="Login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-grid">
+            <!-- Cột trái: Form đăng nhập -->
+            <div class="form-section">
+                <h1 class="login-title">LOGIN</h1>
+
+                <form id="loginForm" action="#" method="post">
+                    <div class="input-group">
+                        <label>Tên đăng nhập hoặc Email</label>
+                        <input type="text" placeholder="Nhập tên đăng nhập / email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mật khẩu</label>
+                        <input type="password" placeholder="••••••••" required>
+                    </div>
+
+                    <!-- Tùy chọn ghi nhớ và quên mật khẩu -->
+                    <div class="login-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="remember-checkbox">
+                            <span>Ghi nhớ đăng nhập</span>
+                        </label>
+                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    </div>
+
+                    <div class="login-btn-wrapper">
+                        <button type="submit" class="login-btn">
+                            <span>Đăng nhập</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
+                    <div class="register-redirect">
+                        Chưa có tài khoản? <a href="Register.html">Đăng ký ngay</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Cột phải: Hình khách sạn -->
+            <div class="image-section">
+                <div class="hotel-img-frame">
+                    <img src="asset/Hotel.png" alt="Khách sạn phong cách" loading="lazy">
+                </div>
+                <div class="slogan">Chọn chúng tôi, chọn phong cách!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const form = document.getElementById('loginForm');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('🔐 Đăng nhập thành công! Chào mừng bạn trở lại.');
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
