@@ -274,7 +274,6 @@ body::before {
     margin: 0 auto;
 }
 
-
 /* Điều chỉnh responsive cho Macbook và các màn hình lớn hơn */
 @media (min-width: 1400px) {
     .register-container {

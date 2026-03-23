@@ -1,0 +1,421 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8d810 0%, #fe7b18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('asset/Hotel_BG.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ========== CLOUDS ========== */
+.cloud {
+    position: fixed;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.6;
+    filter: blur(2px) drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+    transition: all 0.3s ease;
+    animation: floatCloud 8s ease-in-out infinite;
+}
+
+@keyframes floatCloud {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.cloud-1 { top: 20px; left: 20px; width: 120px; opacity: 0.55; animation-delay: 0s; }
+.cloud-2 { top: 25px; right: 25px; width: 130px; opacity: 0.6; animation-delay: 1s; }
+.cloud-3 { bottom: 20px; left: 20px; width: 110px; opacity: 0.5; animation-delay: 2s; }
+.cloud-4 { bottom: 25px; right: 25px; width: 125px; opacity: 0.55; animation-delay: 1.5s; }
+
+@media (max-width: 768px) {
+    .cloud-1 { width: 80px; top: 10px; left: 10px; }
+    .cloud-2 { width: 90px; top: 12px; right: 12px; }
+    .cloud-3 { width: 75px; bottom: 10px; left: 10px; }
+    .cloud-4 { width: 85px; bottom: 12px; right: 12px; }
+}
+
+/* ========== CARD CHÍNH ========== */
+.reset-container {
+    max-width: 1100px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 40px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255,255,240,0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
+}
+
+.reset-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* FORM BÊN TRÁI */
+.form-section {
+    flex: 1.2;
+    padding: 48px 40px 48px 48px;
+    background: white;
+}
+
+/* Tiêu đề */
+.reset-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f15a24, #c73b0c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 12px;
+    position: relative;
+    display: inline-block;
+}
+
+.reset-title:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 70px;
+    height: 3px;
+    background: #ef4136;
+    border-radius: 3px;
+}
+
+.reset-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 20px 0 30px 0;
+    line-height: 1.5;
+}
+
+/* Step hiển thị */
+.step {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Input group */
+.input-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: #2d2f36;
+    letter-spacing: 0.3px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 28px;
+    background-color: #fefefe;
+    transition: all 0.2s ease;
+    outline: none;
+    font-weight: 500;
+    color: #1a202c;
+}
+
+.input-group input:focus {
+    border-color: #ef4136;
+    box-shadow: 0 0 0 3px rgba(239, 65, 54, 0.15);
+    background-color: #fff;
+}
+
+.input-group input:hover {
+    border-color: #f8d810;
+}
+
+/* OTP Container */
+.otp-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.otp-input {
+    width: 50px;
+    height: 55px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.otp-input:focus {
+    border-color: #ef4136;
+    box-shadow: 0 0 0 3px rgba(239, 65, 54, 0.15);
+    outline: none;
+}
+
+.otp-timer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+#timer {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ef4136;
+    font-family: monospace;
+}
+
+.resend-btn {
+    background: none;
+    border: none;
+    color: #ef4136;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: 0.2s;
+}
+
+.resend-btn:hover:not(:disabled) {
+    color: #c53030;
+}
+
+.resend-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Password strength */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    height: 4px;
+    width: 0%;
+    background: #e2e8f0;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+.password-match {
+    font-size: 0.75rem;
+    margin-top: 6px;
+    padding-left: 5px;
+}
+
+/* Button */
+.reset-btn-wrapper {
+    background-color: #ef4136;
+    border-radius: 50px;
+    padding: 3px;
+    margin: 28px 0 20px 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 14px rgba(239, 65, 54, 0.25);
+}
+
+.reset-btn {
+    width: 100%;
+    background: #ef4136;
+    border: none;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.5px;
+    font-family: inherit;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.reset-btn:hover {
+    background: #d63a2e;
+    transform: scale(0.98);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Link quay lại */
+.login-redirect {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-redirect a {
+    color: #ef4136;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-redirect a:hover {
+    color: #c53030;
+    transform: translateX(-3px);
+}
+
+/* ========== PHẦN HÌNH ẢNH BÊN PHẢI ========== */
+.image-section {
+    flex: 1;
+    background: linear-gradient(145deg, #fff8ed, #fff0df);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    position: relative;
+    border-left: 1px solid rgba(239, 65, 54, 0.15);
+    gap: 20px;
+}
+
+.hotel-img-frame {
+    background: linear-gradient(135deg, #f8d810, #fe7b18);
+    padding: 6px;
+    border-radius: 32px;
+    box-shadow: 0 15px 28px -10px rgba(0,0,0,0.25);
+    max-width: 100%;
+}
+
+.hotel-img-frame img {
+    display: block;
+    height: auto;
+    border-radius: 28px;
+    max-height: 460px;
+    width: auto;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.image-section .slogan {
+    color: #fe7b18;
+    font-weight: 500;
+    margin: 16px 0 24px 0;
+    font-size: 1.2rem;
+    padding-left: 10px;
+    background: #fff5e8;
+    display: inline-block;
+    border-radius: 0 10px 10px 0;
+}
+/* Responsive */
+@media (max-width: 900px) {
+    .reset-grid {
+        flex-direction: column;
+    }
+    .image-section {
+        border-left: none;
+        border-top: 1px solid rgba(239,65,54,0.15);
+    }
+    .otp-input {
+        width: 45px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 550px) {
+    .form-section {
+        padding: 32px 24px;
+    }
+    .reset-title {
+        font-size: 1.8rem;
+    }
+    .otp-container {
+        gap: 8px;
+    }
+    .otp-input {
+        width: 40px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    .image-section .slogan {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+    }
+}
+
+.reset-container {
+    animation: fadeSlideUp 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+input::placeholder {
+    color: #cbd5e0;
+    font-weight: 400;
+    font-size: 0.85rem;
+}

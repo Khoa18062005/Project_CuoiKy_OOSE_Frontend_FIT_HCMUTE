@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Quên mật khẩu - Khách sạn phong cách</title>
+    <link rel="stylesheet" href="css/ResetPW.css">
+    <link rel="stylesheet" href="css/CheckStrongPW.css">
+</head>
+
+<body>
+    <div class="reset-container">
+        <div class="reset-grid">
+            <!-- Cột trái: Form quên mật khẩu -->
+            <div class="form-section">
+                <h1 class="reset-title">QUÊN MẬT KHẨU</h1>
+                <p class="reset-description">Vui lòng nhập email đã đăng ký để khôi phục mật khẩu</p>
+
+                <!-- Bước 1: Nhập email -->
+                <div id="step1" class="step active">
+                    <form id="emailForm">
+                        <div class="input-group">
+                            <label>Email đã đăng ký</label>
+                            <input type="email" id="resetEmail" placeholder="example@domain.com" required>
+                        </div>
+
+                        <div class="reset-btn-wrapper">
+                            <button type="submit" class="reset-btn">
+                                <span>Gửi mã xác thực</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bước 2: Nhập OTP -->
+                <div id="step2" class="step">
+                    <form id="otpForm">
+                        <div class="input-group">
+                            <label>Mã xác thực (OTP)</label>
+                            <div class="otp-container">
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric"
+                                    required>
+                            </div>
+                            <div class="otp-timer">
+                                <span id="otpTimer">03:00</span>
+                                <button type="button" id="resendOtp" class="resend-btn" disabled>Gửi lại mã</button>
+                            </div>
+                        </div>
+
+                        <div class="reset-btn-wrapper">
+                            <button type="submit" class="reset-btn">
+                                <span>Xác thực OTP</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bước 3: Nhập mật khẩu mới -->
+                <div id="step3" class="step">
+                    <form id="passwordForm">
+                        <div class="input-group">
+                            <label>Mật khẩu mới</label>
+                            <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới" required>
+                            <div class="password-strength">
+                                <div class="strength-bar" id="strengthBar"></div>
+                                <span class="strength-text" id="strengthText"></span>
+                            </div>
+                            
+                            <!-- Gợi ý độ mạnh mật khẩu -->
+                            <div class="password-hint" id="passwordHint">
+                                <span class="hint-item" data-rule="length">○ Ít nhất 6 ký tự</span>
+                                <span class="hint-item" data-rule="uppercase">○ Chữ hoa (A-Z)</span>
+                                <span class="hint-item" data-rule="lowercase">○ Chữ thường (a-z)</span>
+                                <span class="hint-item" data-rule="number">○ Số (0-9)</span>
+                                <span class="hint-item" data-rule="special">○ Ký tự đặc biệt (!@#$%)</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Nhập lại mật khẩu mới</label>
+                            <input type="password" id="confirmPassword" placeholder="Xác nhận mật khẩu mới" required>
+                            <div class="password-match" id="matchMessage"></div>
+                        </div>
+
+                        <div class="reset-btn-wrapper">
+                            <button type="submit" class="reset-btn">
+                                <span>Đặt lại mật khẩu</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Link quay lại đăng nhập -->
+                <div class="login-redirect">
+                    <a href="login.html">← Quay lại đăng nhập</a>
+                </div>
+            </div>
+
+            <!-- Cột phải: Hình khách sạn -->
+            <div class="image-section">
+                <div class="hotel-img-frame">
+                    <img src="asset/Hotel.png" alt="Khách sạn phong cách" loading="lazy">
+                </div>
+                <div class="slogan">Chọn chúng tôi, chọn phong cách!</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/OTPHandler.js"></script>
+    <script src="js/CheckPW.js"></script>
+    <script src="js/ResetPW.js"></script>
+</body>
+
+</html>

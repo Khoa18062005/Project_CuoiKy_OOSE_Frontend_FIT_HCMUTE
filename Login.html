@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/Login.css">
 </head>
 <body>
+
     <div class="login-container">
         <div class="login-grid">
             <!-- Cột trái: Form đăng nhập -->
@@ -16,11 +17,11 @@
                 <form id="loginForm" action="#" method="post">
                     <div class="input-group">
                         <label>Tên đăng nhập hoặc Email</label>
-                        <input type="text" placeholder="Nhập tên đăng nhập / email" required>
+                        <input type="text" id="loginUsername" placeholder="Nhập tên đăng nhập / email" required>
                     </div>
                     <div class="input-group">
                         <label>Mật khẩu</label>
-                        <input type="password" placeholder="••••••••" required>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
                     </div>
 
                     <!-- Tùy chọn ghi nhớ và quên mật khẩu -->
@@ -29,7 +30,7 @@
                             <input type="checkbox" class="remember-checkbox">
                             <span>Ghi nhớ đăng nhập</span>
                         </label>
-                        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                        <a href="ResetPW.html" class="forgot-password">Quên mật khẩu?</a>
                     </div>
 
                     <div class="login-btn-wrapper">
@@ -40,7 +41,7 @@
                     </div>
 
                     <div class="register-redirect">
-                        Chưa có tài khoản? <a href="Register.html">Đăng ký ngay</a>
+                        Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
                     </div>
                 </form>
             </div>
@@ -55,16 +56,6 @@
         </div>
     </div>
 
-    <script>
-        (function() {
-            const form = document.getElementById('loginForm');
-            if(form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    alert('🔐 Đăng nhập thành công! Chào mừng bạn trở lại.');
-                });
-            }
-        })();
-    </script>
+    <script src="js/Login.js"></script>
 </body>
 </html>

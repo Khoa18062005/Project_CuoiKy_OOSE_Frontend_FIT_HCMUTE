@@ -1,0 +1,156 @@
+
+/* ========== PASSWORD STRENGTH STYLES ========== */
+.password-strength {
+    margin-top: 8px;
+    padding: 0 4px;
+}
+
+.strength-bar {
+    height: 6px;
+    width: 0%;
+    background: #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.strength-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.strength-text {
+    font-size: 0.7rem;
+    margin-top: 6px;
+    display: inline-block;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+/* Các trạng thái độ mạnh */
+.strength-bar.weak {
+    background: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.strength-bar.medium {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+.strength-bar.strong {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* Password match message */
+.password-match {
+    font-size: 0.75rem;
+    margin-top: 6px;
+    padding-left: 5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* Hiệu ứng cho input khi focus vào mật khẩu */
+.input-group input:focus {
+    border-color: #ef4136;
+    box-shadow: 0 0 0 3px rgba(239, 65, 54, 0.15);
+    background-color: #fff;
+}
+
+/* Thêm gợi ý cho mật khẩu */
+.password-hint {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.password-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.password-hint .hint-icon {
+    font-size: 0.8rem;
+}
+
+.password-hint .valid {
+    color: #10b981;
+}
+
+.password-hint .invalid {
+    color: #94a3b8;
+}
+
+/* Tooltip cho gợi ý mật khẩu */
+.password-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.password-tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: #1e293b;
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    margin-bottom: 5px;
+}
+
+
+/* hiệu ứng nhẹ cho toàn card */
+.register-container {
+    animation: fadeSlideUp 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* tinh chỉnh font chữ và placeholder */
+input::placeholder {
+    color: #cbd5e0;
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+
+/* Thêm hiệu ứng hover nhẹ cho input */
+.input-group input:hover {
+    border-color: #f8d810;
+}

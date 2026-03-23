@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Đăng ký tài khoản - Khách sạn phong cách</title>
     <link rel="stylesheet" href="css/Register.css">
+    <link rel="stylesheet" href="css/CheckStrongPW.css">
 </head>
+
 <body>
 
     <div class="register-container">
@@ -17,27 +20,40 @@
                 <form id="registerForm" action="#" method="post">
                     <div class="input-group">
                         <label>Tên đăng nhập</label>
-                        <input type="text" placeholder="Nhập tên đăng nhập" required>
+                        <input type="text" id="username" placeholder="Nhập tên đăng nhập" required>
                     </div>
                     <div class="input-group">
                         <label>Email</label>
-                        <input type="email" placeholder="example@domain.com" required>
+                        <input type="email" id="email" placeholder="example@domain.com" required>
                     </div>
                     <div class="input-group">
                         <label>Số điện thoại</label>
-                        <input type="tel" placeholder="0912 345 678" required>
+                        <input type="tel" id="phone" placeholder="0912 345 678" required>
                     </div>
                     <div class="input-group">
                         <label>Ngày sinh</label>
-                        <input type="date" required>
+                        <input type="date" id="birthday" required>
                     </div>
                     <div class="input-group">
                         <label>Mật khẩu</label>
-                        <input type="password" placeholder="••••••••" required>
+                        <input type="password" id="regPassword" placeholder="••••••••" required>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="regStrengthBar"></div>
+                            <span class="strength-text" id="regStrengthText"></span>
+                        </div>
+                        <!-- Gợi ý độ mạnh mật khẩu -->
+                        <div class="password-hint" id="passwordHint">
+                            <span class="hint-item" data-rule="length">○ Ít nhất 6 ký tự</span>
+                            <span class="hint-item" data-rule="uppercase">○ Chữ hoa (A-Z)</span>
+                            <span class="hint-item" data-rule="lowercase">○ Chữ thường (a-z)</span>
+                            <span class="hint-item" data-rule="number">○ Số (0-9)</span>
+                            <span class="hint-item" data-rule="special">○ Ký tự đặc biệt (!@#$%)</span>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Nhập lại mật khẩu</label>
-                        <input type="password" placeholder="Xác nhận mật khẩu" required>
+                        <input type="password" id="regConfirmPassword" placeholder="Xác nhận mật khẩu" required>
+                        <div class="password-match" id="regMatchMessage"></div>
                     </div>
 
                     <div class="register-btn-wrapper">
@@ -48,7 +64,7 @@
                     </div>
 
                     <div class="login-redirect">
-                        Bạn đã có tài khoản? <a href="Login.html">Đăng nhập ngay</a>
+                        Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a>
                     </div>
                 </form>
             </div>
@@ -63,16 +79,8 @@
         </div>
     </div>
 
-    <script>
-        (function() {
-            const form = document.getElementById('registerForm');
-            if(form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    alert('🎉 Đăng ký thành công! Cảm ơn bạn đã chọn phong cách của chúng tôi.');
-                });
-            }
-        })();
-    </script>
+    <script src="js/CheckPW.js"></script>
+    <script src="js/Register.js"></script>
 </body>
+
 </html>
