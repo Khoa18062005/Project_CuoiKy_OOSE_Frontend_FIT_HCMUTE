@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Đăng ký tài khoản - Khách sạn phong cách</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 4 đám mây ở các góc (tên file: Cloud01.png -> Cloud04.png) -->
+    <img src="Clound01.png" alt="Cloud" class="cloud cloud-1" loading="lazy">
+    <img src="Clound02.png" alt="Cloud" class="cloud cloud-2" loading="lazy">
+    <img src="Clound03.png" alt="Cloud" class="cloud cloud-3" loading="lazy">
+    <img src="Clound04.png" alt="Cloud" class="cloud cloud-4" loading="lazy">
+
+    <div class="register-container">
+        <div class="register-grid">
+            <!-- Cột trái: Form đăng ký -->
+            <div class="form-section">
+                <h1 class="register-title">REGISTER</h1>
+                <div class="slogan">✨ Chọn chúng tôi, chọn phong cách!</div>
+
+                <form id="registerForm" action="#" method="post">
+                    <div class="input-group">
+                        <label>Tên đăng nhập</label>
+                        <input type="text" placeholder="Nhập tên đăng nhập" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="example@domain.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" placeholder="0912 345 678" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Ngày sinh</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mật khẩu</label>
+                        <input type="password" placeholder="••••••••" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Nhập lại mật khẩu</label>
+                        <input type="password" placeholder="Xác nhận mật khẩu" required>
+                    </div>
+
+                    <!-- Ô màu đỏ bao quanh nút đăng ký (như mô tả) -->
+                    <div class="register-btn-wrapper">
+                        <button type="submit" class="register-btn">
+                            <span>Đăng ký tài khoản</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
+                    <div class="login-redirect">
+                        Bạn đã có tài khoản? <a href="#">Đăng nhập ngay</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Cột phải: Hình khách sạn với khung viền gradient -->
+            <div class="image-section">
+                <div class="hotel-img-frame">
+                    <img src="Hotel.png" alt="Khách sạn phong cách" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const form = document.getElementById('registerForm');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Chỉ demo thông báo thành công, không gửi thực tế
+                    alert('🎉 Đăng ký thành công! Cảm ơn bạn đã chọn phong cách của chúng tôi.');
+                    // Có thể reset form hoặc tuỳ logic backend
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

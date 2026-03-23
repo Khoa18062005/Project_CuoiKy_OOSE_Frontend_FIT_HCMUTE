@@ -1,0 +1,328 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8d810 0%, #fe7b18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ========== CLOUDS - 4 góc màn hình ========== */
+.cloud {
+    position: fixed;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.85;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.1));
+}
+
+/* Cloud01 - góc trên trái */
+.cloud-1 {
+    top: 0;
+    left: 0;
+    width: 180px;
+    transform: translate(-15%, -15%) scale(0.9);
+}
+
+/* Cloud02 - góc trên phải */
+.cloud-2 {
+    top: 0;
+    right: 0;
+    width: 200px;
+    transform: translate(15%, -15%) scale(1);
+}
+
+/* Cloud03 - góc dưới trái */
+.cloud-3 {
+    bottom: 0;
+    left: 0;
+    width: 170px;
+    transform: translate(-12%, 12%) scale(0.85);
+}
+
+/* Cloud04 - góc dưới phải */
+.cloud-4 {
+    bottom: 0;
+    right: 0;
+    width: 190px;
+    transform: translate(12%, 12%) scale(0.9);
+}
+
+/* Responsive cho mây trên màn nhỏ vẫn giữ tỷ lệ đẹp */
+@media (max-width: 768px) {
+    .cloud-1 { width: 120px; transform: translate(-8%, -8%); }
+    .cloud-2 { width: 140px; transform: translate(8%, -8%); }
+    .cloud-3 { width: 110px; transform: translate(-6%, 6%); }
+    .cloud-4 { width: 130px; transform: translate(6%, 6%); }
+}
+
+/* ========== CARD CHÍNH ========== */
+.register-container {
+    max-width: 1300px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 48px;
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,240,0.3);
+    overflow: hidden;
+    backdrop-filter: blur(0px);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
+}
+
+/* Grid 2 cột: trái form, phải hình ảnh */
+.register-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* FORM BÊN TRÁI */
+.form-section {
+    flex: 1.2;
+    padding: 48px 40px 48px 48px;
+    background: white;
+}
+
+/* Tiêu đề REGISTER */
+.register-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f15a24, #c73b0c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+    position: relative;
+    display: inline-block;
+}
+
+.register-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 70px;
+    height: 4px;
+    background: #ef4136;
+    border-radius: 4px;
+}
+
+/* slogan nhỏ */
+.slogan {
+    color: #fe7b18;
+    font-weight: 500;
+    margin: 20px 0 28px 0;
+    font-size: 0.95rem;
+    border-left: 3px solid #ef4136;
+    padding-left: 12px;
+    background: #fff5e8;
+    display: inline-block;
+    border-radius: 0 12px 12px 0;
+}
+
+/* Form nhóm */
+.input-group {
+    margin-bottom: 22px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: #2d2f36;
+    letter-spacing: 0.3px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 28px;
+    background-color: #fefefe;
+    transition: all 0.2s ease;
+    outline: none;
+    font-weight: 500;
+    color: #1a202c;
+}
+
+.input-group input:focus {
+    border-color: #ef4136;
+    box-shadow: 0 0 0 3px rgba(239, 65, 54, 0.2);
+    background-color: #fff;
+}
+
+/* Ô hình chữ nhật bao quanh nút Đăng ký tài khoản - màu đỏ #ef4136 */
+.register-btn-wrapper {
+    background-color: #ef4136;
+    border-radius: 60px;
+    padding: 4px;
+    margin: 32px 0 24px 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 18px rgba(239, 65, 54, 0.3);
+}
+
+.register-btn {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 16px 20px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ef4136;
+    border-radius: 60px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+    font-family: inherit;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.register-btn:hover {
+    background: #fff2f0;
+    transform: scale(0.98);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Link chuyển đăng nhập */
+.login-redirect {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #4a5568;
+    border-top: 1px solid #edf2f7;
+    padding-top: 24px;
+    margin-top: 8px;
+}
+
+.login-redirect a {
+    color: #ef4136;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 8px;
+    transition: 0.2s;
+    border-bottom: 1px dashed #ef4136;
+}
+
+.login-redirect a:hover {
+    color: #c53030;
+    border-bottom-style: solid;
+}
+
+/* ========== PHẦN HÌNH ẢNH BÊN PHẢI (Register.png) ========== */
+.image-section {
+    flex: 1;
+    background: linear-gradient(145deg, #fff8ed, #fff0df);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    position: relative;
+    border-left: 1px solid rgba(239, 65, 54, 0.2);
+}
+
+/* Khung viền gradient bao quanh hình */
+.hotel-img-frame {
+    background: linear-gradient(135deg, #f8d810, #fe7b18);
+    padding: 8px;
+    border-radius: 42px;
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    max-width: 100%;
+}
+
+.hotel-img-frame img {
+    display: block;
+    height: auto;
+    border-radius: 36px;
+    object-fit: cover;
+    background: #faf3e0;
+    /* Scale hình nếu hơi to, vừa khung */
+    max-height: 700px;
+    width: auto;
+    margin: 0 auto;
+}
+
+/* Điều chỉnh responsive để bố cục đẹp trên Macbook 14" */
+@media (max-width: 1100px) {
+    .form-section {
+        padding: 40px 32px;
+    }
+    .register-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .register-grid {
+        flex-direction: column;
+    }
+    .image-section {
+        border-left: none;
+        border-top: 1px solid rgba(239,65,54,0.2);
+        padding: 40px 24px;
+    }
+    .hotel-img-frame img {
+        max-height: 380px;
+    }
+    body {
+        padding: 16px;
+    }
+    .register-container {
+        border-radius: 36px;
+    }
+}
+
+@media (max-width: 550px) {
+    .form-section {
+        padding: 32px 24px;
+    }
+    .register-title {
+        font-size: 1.8rem;
+    }
+    .input-group input {
+        padding: 12px 16px;
+    }
+    .register-btn {
+        padding: 14px;
+        font-size: 1rem;
+    }
+}
+
+/* hiệu ứng nhẹ cho toàn card */
+.register-container {
+    animation: fadeSlideUp 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* tinh chỉnh font chữ */
+input::placeholder {
+    color: #cbd5e0;
+    font-weight: 400;
+    font-size: 0.85rem;
+}
