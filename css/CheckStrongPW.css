@@ -77,13 +77,13 @@
 
 /* Thêm gợi ý cho mật khẩu */
 .password-hint {
-    margin-top: 8px;
+    margin-top: 4px;
     font-size: 0.7rem;
     color: #94a3b8;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    padding: 8px 0;
+    padding: 0px 0;
 }
 
 .password-hint span {

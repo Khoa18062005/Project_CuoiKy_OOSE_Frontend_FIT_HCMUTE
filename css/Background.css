@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+}
+/* 1. Kéo giãn khung chứa mây lấp đầy màn hình */
+.background-clouds-wrapper {
+    position: absolute; /* Hoặc fixed nếu bạn muốn mây đứng yên khi cuộn */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Nằm TRÊN lớp body::before (z-index: 0) nhưng DƯỚI form đăng ký */
+    pointer-events: none; /* Tránh việc mây che mất click chuột vào form */
+    overflow: hidden;
+}
+
+/* Cấp kích thước cho các đám mây */
+.cloud-decor {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 1; 
+    animation: cloudPulse 3s ease-in-out infinite;
+}
+.cloud-tl {
+    top: -10px; left: -10px;
+    background-image: url('../asset/left_top.png');
+    background-position: top left;
+}
+.cloud-bl {
+    bottom: -10px; left: -10px;
+    background-image: url('../asset/left_bottom.png');
+    background-position: bottom left;
+}
+.cloud-tr {
+    top: -10px; right: -10px;
+    background-image: url('../asset/right_top.png');
+    background-position: top right;
+}
+.cloud-br {
+    bottom: -10px; right: -10px;
+    background-image: url('../asset/right_bottom.png');
+    background-position: bottom right;
+}
+@keyframes cloudPulse {
+    0% {
+        transform: scale(1); /* Kích thước gốc (tương ứng 200px) */
+    }
+    50% {
+        transform: scale(1.25); /* Tăng 25% kích thước (tương ứng 250px) */
+    }
+    100% {
+        transform: scale(1); /* Trở về kích thước gốc */
+    }
+}
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8d810 0%, #fe7b18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    position: relative;
+    overflow-x: hidden;
+    animation: gradientMove 8s ease infinite;
+    background-size: 400% 400%;
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../asset/Hotel_BG.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes gradientMove{
+    0% {
+        background-position: 0% 50%; /* Bắt đầu ở bên trái */
+    }
+    50% {
+        background-position: 100% 50%; /* Chạy sang hết bên phải */
+    }
+    100% {
+        background-position: 0% 50%; /* Quay lại vị trí đầu */
+    }
+}
