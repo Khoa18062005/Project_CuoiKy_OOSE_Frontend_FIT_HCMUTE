@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Đặt phòng - Khách sạn phong cách</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/Background.css">
+    <link rel="stylesheet" href="css/room.css">
+</head>
+
+<body>
+
+    <!-- Header placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Room Search Section -->
+    <section class="room-search-section">
+        <div class="room-search-container">
+            <div class="room-search-header">
+                <h1>ĐẶT PHÒNG TRỰC TUYẾN</h1>
+                <p>Trải nghiệm không gian sang trọng và tiện nghi hiện đại</p>
+            </div>
+
+            <div class="room-search-box">
+                <form id="roomSearchForm" class="room-search-form" action="#" method="get">
+                    <div class="room-search-grid">
+                        <!-- Ngày đi -->
+                        <div class="room-search-field">
+                            <label>
+                                <i class="fas fa-calendar-alt"></i>
+                                Ngày đi
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-calendar-day input-icon-left"></i>
+                                <input type="date" name="checkin" class="room-search-input" required>
+                            </div>
+                        </div>
+
+                        <!-- Ngày về -->
+                        <div class="room-search-field">
+                            <label>
+                                <i class="fas fa-calendar-alt"></i>
+                                Ngày về
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-calendar-day input-icon-left"></i>
+                                <input type="date" name="checkout" class="room-search-input" required>
+                            </div>
+                        </div>
+
+                        <!-- Số lượng phòng -->
+                        <div class="room-search-field">
+                            <label>
+                                <i class="fas fa-door-open"></i>
+                                Số lượng phòng
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-hotel input-icon-left"></i>
+                                <select name="rooms" class="room-search-select">
+                                    <option value="1">1 phòng</option>
+                                    <option value="2">2 phòng</option>
+                                    <option value="3">3 phòng</option>
+                                    <option value="4">4 phòng</option>
+                                    <option value="5">5 phòng</option>
+                                </select>
+                                <i class="fas fa-chevron-down input-icon-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Số lượng người -->
+                        <div class="room-search-field">
+                            <label>
+                                <i class="fas fa-users"></i>
+                                Số lượng người
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user input-icon-left"></i>
+                                <select name="guests" class="room-search-select">
+                                    <option value="1">1 người</option>
+                                    <option value="2">2 người</option>
+                                    <option value="3">3 người</option>
+                                    <option value="4">4 người</option>
+                                    <option value="5">5 người</option>
+                                    <option value="6">6 người</option>
+                                    <option value="7">7 người</option>
+                                    <option value="8">8 người</option>
+                                </select>
+                                <i class="fas fa-chevron-down input-icon-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Loại phòng -->
+                        <div class="room-search-field">
+                            <label>
+                                <i class="fas fa-star"></i>
+                                Loại phòng
+                            </label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-crown input-icon-left"></i>
+                                <select name="roomType" class="room-search-select">
+                                    <option value="all">Tất cả</option>
+                                    <option value="basic">Basic</option>
+                                    <option value="royal">Royal</option>
+                                </select>
+                                <i class="fas fa-chevron-down input-icon-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Button Search -->
+                        <div class="room-search-button-wrapper">
+                            <button type="submit" class="room-search-btn">
+                                <i class="fas fa-search"></i>
+                                <span>Tìm kiếm phòng</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/Header.js"></script>
+    <script>
+        // Chỉ dùng JS để load header
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                // Active menu item
+                setTimeout(() => {
+                    const navLinks = document.querySelectorAll('.nav-links a');
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === 'rooms.html') {
+                            link.classList.add('active');
+                        }
+                    });
+                }, 100);
+            })
+            .catch(error => console.error('Error loading header:', error));
+    </script>
+</body>
+
+</html>

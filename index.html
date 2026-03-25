@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/Index.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-box">
+                <form id="searchForm" class="search-form">
+                    <div class="search-grid">
+                        <!-- Ngày đi -->
+                        <div class="search-field">
+                            <label>Ngày đi</label>
+                            <input type="date" id="checkin" class="search-input" required>
+                        </div>
+
+                        <!-- Ngày về -->
+                        <div class="search-field">
+                            <label>Ngày về</label>
+                            <input type="date" id="checkout" class="search-input" required>
+                        </div>
+
+                        <!-- Số lượng phòng, số lượng khách -->
+                        <div class="search-field">
+                            <label>Số lượng phòng & Khách</label>
+                            <div class="room-guest-group">
+                                <select id="rooms" class="search-select">
+                                    <option value="1">1 phòng</option>
+                                    <option value="2">2 phòng</option>
+                                    <option value="3">3 phòng</option>
+                                    <option value="4">4 phòng</option>
+                                    <option value="5">5 phòng</option>
+                                </select>
+                                <select id="guests" class="search-select">
+                                    <option value="1">1 khách</option>
+                                    <option value="2">2 khách</option>
+                                    <option value="3">3 khách</option>
+                                    <option value="4">4 khách</option>
+                                    <option value="5">5 khách</option>
+                                    <option value="6">6 khách</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Loại phòng -->
+                        <div class="search-field">
+                            <label>Loại phòng</label>
+                            <select id="roomType" class="search-input">
+                                <option value="basic">Basic</option>
+                                <option value="royal">Royal</option>
+                            </select>
+                        </div>
+
+                        <!-- Nút tìm kiếm -->
+                        <div class="search-button-wrapper">
+                            <button type="submit" class="search-btn">
+                                <span>Tìm kiếm phòng</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/Search.js"></script>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+    </script>
+</body>
+</html>
