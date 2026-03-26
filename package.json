@@ -1,0 +1,12 @@
+{
+  "name": "Project_CuoiKy_OOSE_Frontend_FIT_HCMUTE",
+  "version": "1.0.0",
+  "description": "Website đặt phòng khách sạn Hotel Style",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
