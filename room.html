@@ -127,12 +127,11 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-placeholder').innerHTML = data;
-
-                // GỌI HÀM NÀY ĐỂ KÍCH HOẠT HIỆU ỨNG NGAY SAU KHI TẢI XONG HEADER
                 if (typeof initHeader === 'function') {
                     initHeader();
                 }
-            });
+            })
+            .catch(err => console.error("Lỗi tải header:", err));
     </script>
 </body>
 

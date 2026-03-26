@@ -1,26 +1,34 @@
 function initHeader() {
-    const header = document.querySelector('.main-header');
     const allLinks = document.querySelectorAll('.nav-links a');
+    if (!allLinks.length) return;
 
-    if (!allLinks.length) return; // Nếu chưa thấy link nào thì thoát để tránh lỗi
-
-    // Lấy tên trang hiện tại
-    const path = window.location.pathname;
-    const currentPage = path.split('/').pop() || 'index.html';
+    // 1. Lấy đường dẫn hiện tại và chuẩn hóa nó
+    let currentPath = window.location.pathname.toLowerCase();
+    
+    // Nếu đường dẫn là "/" hoặc trống, mặc định là index.html
+    if (currentPath === '/' || currentPath === '') {
+        currentPath = '/index.html';
+    }
 
     allLinks.forEach(link => {
-        const linkPage = link.getAttribute('href');
-        // Kiểm tra khớp trang hoặc nếu ở trang chủ (/) thì highlight 'index.html'
-        if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+        // 2. Lấy href và chuẩn hóa để so sánh
+        let linkHref = link.getAttribute('href').toLowerCase();
+        
+        // Đảm bảo linkHref có dấu / ở đầu để khớp với pathname
+        if (!linkHref.startsWith('/')) {
+            linkHref = '/' + linkHref;
+        }
+
+        // 3. So sánh: Nếu pathname kết thúc bằng linkHref thì highlight
+        if (currentPath.endsWith(linkHref)) {
             link.classList.add('active');
         } else {
             link.classList.remove('active');
         }
     });
 
-    // --- Giữ nguyên các phần Mobile Menu và Scroll Effect ở đây ---
-    console.log("Header đã được khởi tạo cho trang:", currentPage);
+    console.log("Highlight thành công cho:", currentPath);
+    
+    // Khởi tạo lại Mobile Menu (nếu bạn có đoạn code đó ở dưới)
+    // setupMobileMenu(); 
 }
-
-// Tự động chạy hàm khi trang web tải xong
-document.addEventListener('DOMContentLoaded', initHeader);
