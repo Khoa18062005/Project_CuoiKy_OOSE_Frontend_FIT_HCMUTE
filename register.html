@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/Register.css">
     <link rel="stylesheet" href="css/CheckStrongPW.css">
     <link rel="stylesheet" href="css/Background.css">
+    <link rel="stylesheet" href="css/Global.css">
 </head>
 
 <body>
@@ -28,14 +29,17 @@
                     <div class="input-group">
                         <label>Tên đăng nhập</label>
                         <input type="text" id="username" placeholder="Nhập tên đăng nhập" required>
+                        <small class="error-msg" id="error-username"></small>
                     </div>
                     <div class="input-group">
                         <label>Email</label>
                         <input type="email" id="email" placeholder="example@domain.com" required>
+                        <small class="error-msg" id="error-email"></small>
                     </div>
                     <div class="input-group">
                         <label>Số điện thoại</label>
                         <input type="tel" id="phone" placeholder="0912 345 678" required>
+                        <small class="error-msg" id="error-phone"></small>
                     </div>
                     <div class="input-group">
                         <label>Ngày sinh</label>
@@ -87,6 +91,7 @@
     </div>
 
     <script src="js/CheckPW.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/Register.js"></script>
 </body>
 

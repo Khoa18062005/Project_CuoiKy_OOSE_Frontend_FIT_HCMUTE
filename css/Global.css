@@ -14,3 +14,48 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased; /* Giúp chữ siêu nét trên MacBook Pro */
 }
+/* Toast Container */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Base Toast Style */
+.toast-custom {
+    min-width: 300px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px); /* Hiệu ứng kính mờ cho MacBook */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+    transform: translateX(120%); /* Bắt đầu từ ngoài màn hình */
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-custom.show {
+    transform: translateX(0);
+}
+
+/* Success State */
+.toast-success {
+    background: rgba(34, 197, 94, 0.9);
+}
+
+/* Error State */
+.toast-error {
+    background: rgba(239, 68, 68, 0.9);
+}
+
+/* Icon Animation */
+.toast-icon {
+    font-size: 1.2rem;
+}
