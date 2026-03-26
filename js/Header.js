@@ -1,55 +1,26 @@
-// Mobile Menu Toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const navLinks = document.querySelector('.nav-links');
-const navButtons = document.querySelector('.nav-buttons');
+function initHeader() {
+    const header = document.querySelector('.main-header');
+    const allLinks = document.querySelectorAll('.nav-links a');
 
-if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        
-        // Thêm nút đăng nhập/đăng ký vào menu mobile nếu chưa có
-        if (navLinks.classList.contains('active')) {
-            if (!document.querySelector('.mobile-nav-buttons')) {
-                const mobileNavBtns = navButtons.cloneNode(true);
-                mobileNavBtns.classList.add('mobile-nav-buttons');
-                mobileNavBtns.style.marginTop = '20px';
-                mobileNavBtns.style.justifyContent = 'center';
-                navLinks.appendChild(mobileNavBtns);
-            }
+    if (!allLinks.length) return; // Nếu chưa thấy link nào thì thoát để tránh lỗi
+
+    // Lấy tên trang hiện tại
+    const path = window.location.pathname;
+    const currentPage = path.split('/').pop() || 'index.html';
+
+    allLinks.forEach(link => {
+        const linkPage = link.getAttribute('href');
+        // Kiểm tra khớp trang hoặc nếu ở trang chủ (/) thì highlight 'index.html'
+        if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+            link.classList.add('active');
         } else {
-            const mobileBtns = document.querySelector('.mobile-nav-buttons');
-            if (mobileBtns) mobileBtns.remove();
+            link.classList.remove('active');
         }
     });
+
+    // --- Giữ nguyên các phần Mobile Menu và Scroll Effect ở đây ---
+    console.log("Header đã được khởi tạo cho trang:", currentPage);
 }
 
-// Header scroll effect
-let lastScroll = 0;
-const header = document.querySelector('.main-header');
-
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        header.style.background = 'rgba(255, 255, 255, 0.98)';
-        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        header.style.background = 'rgba(255, 255, 255, 0.96)';
-        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-    }
-    
-    lastScroll = currentScroll;
-});
-
-// Active link highlight based on current page
-const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-const navLinksList = document.querySelectorAll('.nav-links a');
-
-navLinksList.forEach(link => {
-    const linkPage = link.getAttribute('href');
-    if (linkPage === currentPage) {
-        link.classList.add('active');
-    } else {
-        link.classList.remove('active');
-    }
-});
+// Tự động chạy hàm khi trang web tải xong
+document.addEventListener('DOMContentLoaded', initHeader);

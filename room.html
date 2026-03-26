@@ -123,22 +123,16 @@
 
     <script src="js/Header.js"></script>
     <script>
-        // Chỉ dùng JS để load header
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-placeholder').innerHTML = data;
-                // Active menu item
-                setTimeout(() => {
-                    const navLinks = document.querySelectorAll('.nav-links a');
-                    navLinks.forEach(link => {
-                        if (link.getAttribute('href') === 'rooms.html') {
-                            link.classList.add('active');
-                        }
-                    });
-                }, 100);
-            })
-            .catch(error => console.error('Error loading header:', error));
+
+                // GỌI HÀM NÀY ĐỂ KÍCH HOẠT HIỆU ỨNG NGAY SAU KHI TẢI XONG HEADER
+                if (typeof initHeader === 'function') {
+                    initHeader();
+                }
+            });
     </script>
 </body>
 

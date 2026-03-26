@@ -1,0 +1,16 @@
+/* Global.css - Áp dụng cho TẤT CẢ các trang */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước phần tử */
+}
+
+html {
+    /* Luôn giữ thanh cuộn để tránh Header bị nhảy sang trái/phải khi chuyển trang */
+    overflow-y: scroll; 
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; /* Giúp chữ siêu nét trên MacBook Pro */
+}

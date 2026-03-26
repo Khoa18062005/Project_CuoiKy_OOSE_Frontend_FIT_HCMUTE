@@ -68,6 +68,7 @@ body {
     overflow-x: hidden;
     animation: gradientMove 8s ease infinite;
     background-size: 400% 400%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 body::before {
     content: '';

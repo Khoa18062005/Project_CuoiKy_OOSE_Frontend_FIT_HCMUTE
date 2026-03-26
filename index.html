@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/Index.css">
 </head>
+
 <body>
     <div id="header-placeholder"></div>
 
@@ -72,12 +74,18 @@
 
 
     <script src="js/Search.js"></script>
+    <script src="js/Header.js"></script>
     <script>
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-placeholder').innerHTML = data;
+                // GỌI HÀM NÀY ĐỂ KÍCH HOẠT HIỆU ỨNG NGAY SAU KHI TẢI XONG HEADER
+                if (typeof initHeader === 'function') {
+                    initHeader();
+                }
             });
     </script>
 </body>
+
 </html>
