@@ -21,6 +21,9 @@
                 if (typeof initHeader === 'function') {
                     initHeader();
                 }
+                if (typeof initAuth === 'function') {
+                    initAuth();
+                }
             })
             .catch(err => console.error("Lỗi tải header:", err));
     </script>
