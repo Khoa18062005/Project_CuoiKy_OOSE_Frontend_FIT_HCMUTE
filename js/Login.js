@@ -25,7 +25,10 @@ class LoginService {
 
             // 2. Xử lý kết quả
             if (response.ok) {
-                notify.show("🔐 Đăng nhập thành công! Chào mừng trở lại.", "success");
+                notify.show(" Đăng nhập thành công! Chào mừng trở lại.", "success");
+                
+                // ---> BẠN ĐANG THIẾU DÒNG NÀY ĐÂY: Lưu tên người dùng <---
+                localStorage.setItem('current_user', loginData.username); 
                 
                 // Xử lý "Ghi nhớ đăng nhập"
                 if (rememberMe) {
@@ -34,15 +37,13 @@ class LoginService {
                     localStorage.removeItem('rememberedUser');
                 }
 
-                // LƯU Ý: Thường Backend sẽ trả về Token (JWT) ở đây. 
-                // Bạn có thể lưu nó vào localStorage:
                 if (result.token) {
                     localStorage.setItem('jwt_token', result.token);
                 }
 
-                // Chuyển hướng sang trang chủ (hoặc dashboard) sau 2 giây
+                // Chuyển hướng sang trang chủ sau 2 giây
                 setTimeout(() => {
-                    window.location.href = 'index.html'; // Thay đổi link này theo ý bạn
+                    window.location.href = 'index.html'; 
                 }, 2000);
             } 
             else if (response.status === 400) {

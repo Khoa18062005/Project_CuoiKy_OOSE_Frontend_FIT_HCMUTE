@@ -190,24 +190,29 @@ body {
 
 .welcome-text {
     font-size: 1rem;
-    color: #333; /* Bạn có thể đổi màu cho hợp với nền Header (ví dụ #fff nếu nền tối) */
+    color: #333;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .welcome-text b {
-    color: #2563eb; /* Nổi bật tên user bằng màu xanh */
+    color: #ef4444;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .btn-logout {
-    padding: 8px 16px;
-    background-color: #ef4444; /* Nút đỏ cảnh báo đăng xuất */
-    color: white;
-    border: none;
-    border-radius: 8px; /* Bo góc nhẹ */
+    padding: 8px 24px;
+    border-radius: 50px;
     font-weight: 600;
+    background: #ef4444; 
+    color: white;
+    border: 2px solid #ef4444; 
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-size: 1rem;
 }
 
 .btn-logout:hover {
-    background-color: #dc2626; /* Đậm hơn khi hover */
+    background: #dc2626; 
+    border-color: #dc2626;
+    transform: translateY(-2px); /* Hiệu ứng nảy lên giống nút Đăng ký */
 }
