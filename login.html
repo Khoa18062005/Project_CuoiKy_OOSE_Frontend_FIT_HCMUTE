@@ -26,10 +26,12 @@
                     <div class="input-group">
                         <label>Tên đăng nhập hoặc Email</label>
                         <input type="text" id="loginUsername" placeholder="Nhập tên đăng nhập / email" required>
+                        <small class="error-msg" id="error-username"></small>
                     </div>
                     <div class="input-group">
                         <label>Mật khẩu</label>
                         <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <small class="error-msg" id="error-password"></small>
                     </div>
 
                     <!-- Tùy chọn ghi nhớ và quên mật khẩu -->
@@ -64,6 +66,7 @@
         </div>
     </div>
 
+    <script src="js/notifications.js"></script>
     <script src="js/Login.js"></script>
 </body>
 </html>
