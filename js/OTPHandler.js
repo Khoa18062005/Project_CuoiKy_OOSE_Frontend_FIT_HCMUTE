@@ -6,15 +6,15 @@ class OTPHandler {
         this.timerElement = document.getElementById(timerElementId);
         this.resendBtn = document.getElementById(resendBtnId);
         this.emailInput = emailInputId ? document.getElementById(emailInputId) : null;
-        
+
         this.generatedOTP = '';
         this.userEmail = '';
         this.timerInterval = null;
         this.timeLeft = 180; // 3 phút
-        
+
         this.init();
     }
-    
+
     init() {
         // Thiết lập auto focus cho OTP inputs
         if (this.otpInputs.length > 0) {
@@ -23,65 +23,66 @@ class OTPHandler {
                 input.addEventListener('keydown', (e) => this.handleOTPKeydown(e, index));
             });
         }
-        
+
         // Thiết lập sự kiện cho nút gửi lại
         if (this.resendBtn) {
             this.resendBtn.addEventListener('click', () => this.resendOTP());
         }
     }
-    
+
     handleOTPInput(e, index) {
         const input = e.target;
-        
+
         // Chỉ cho phép nhập số
         input.value = input.value.replace(/[^0-9]/g, '');
-        
+
         // Tự động focus sang ô tiếp theo
         if (input.value.length === 1 && index < this.otpInputs.length - 1) {
             this.otpInputs[index + 1].focus();
         }
     }
-    
+
     handleOTPKeydown(e, index) {
         const input = e.target;
-        
+
         // Xử lý phím backspace
         if (e.key === 'Backspace' && index > 0 && !input.value) {
             this.otpInputs[index - 1].focus();
         }
     }
-    
-    generateOTP() {
-        // Tạo OTP ngẫu nhiên 6 số
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-    
-    sendOTP(email) {
+
+    async sendOTP(email) {
         this.userEmail = email;
-        this.generatedOTP = this.generateOTP();
-        
-        // Giả lập gửi email
-        console.log(`📧 Mã OTP: ${this.generatedOTP}`);
-        alert(`📧 Mã OTP của bạn là: ${this.generatedOTP}\n\n(Vui lòng kiểm tra email để xác thực)\nTrong môi trường demo, mã OTP được hiển thị ở đây.`);
-        
-        this.startTimer();
-        if (this.resendBtn) this.resendBtn.disabled = true;
-        
-        // Reset OTP inputs
-        this.resetOTPInputs();
-        
-        // Focus vào ô đầu tiên
-        if (this.otpInputs.length > 0) {
-            this.otpInputs[0].focus();
+
+        try {
+            // Gọi đến API chúng ta đã viết ở AuthController
+            const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+
+            if (response.ok) {
+                // Chỉ bắt đầu đếm ngược khi Backend báo đã gửi mail thành công
+                this.startTimer();
+                if (this.resendBtn) this.resendBtn.disabled = true;
+                this.resetOTPInputs();
+                if (this.otpInputs.length > 0) this.otpInputs[0].focus();
+
+                console.log("✅ OTP đã được Java gửi đi!");
+            } else {
+                const errorData = await response.text();
+                alert("Lỗi: " + errorData);
+            }
+        } catch (error) {
+            alert("Không thể kết nối đến server. Hãy kiểm tra Backend đã chạy chưa nhé!");
         }
-        
-        return this.generatedOTP;
     }
-    
+
     startTimer() {
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.timeLeft = 180;
-        
+
         this.timerInterval = setInterval(() => {
             if (this.timeLeft <= 0) {
                 clearInterval(this.timerInterval);
@@ -97,14 +98,14 @@ class OTPHandler {
             }
         }, 1000);
     }
-    
+
     resetOTPInputs() {
         this.otpInputs.forEach(input => {
             input.value = '';
             input.disabled = false;
         });
     }
-    
+
     getOTP() {
         let otp = '';
         this.otpInputs.forEach(input => {
@@ -112,11 +113,26 @@ class OTPHandler {
         });
         return otp;
     }
-    
-    verifyOTP(enteredOTP) {
-        return enteredOTP === this.generatedOTP;
+
+    async verifyOTP(enteredOTP) {
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: this.userEmail,
+                    otpCode: enteredOTP
+                })
+            });
+
+            // Trả về true nếu Backend trả về status 200 (OK)
+            return response.ok;
+        } catch (error) {
+            console.error("Lỗi xác thực:", error);
+            return false;
+        }
     }
-    
+
     resendOTP() {
         if (this.userEmail) {
             this.sendOTP(this.userEmail);
@@ -129,12 +145,12 @@ class OTPHandler {
             }
         }
     }
-    
+
     validateEmail(email) {
         const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
         return emailRegex.test(email);
     }
-    
+
     destroy() {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);

@@ -11,8 +11,28 @@
 
 <body>
     <div id="header-placeholder"></div>
+
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Trải nghiệm kỳ nghỉ <br>
+                <span class="typewriter-text"></span><span class="cursor">|</span>
+            </h1>
+            <p class="hero-slogan">
+                Đánh thức mọi giác quan - Nơi phong cách hòa quyện cùng sự tinh tế. <br> 
+                Khám phá không gian lưu trú hoàn hảo dành riêng cho bạn.
+            </p>
+            <div class="hero-buttons">
+                <a href="room.html" class="btn-primary">Đặt phòng ngay</a>
+                <a href="#services" class="btn-secondary">Khám phá dịch vụ</a>
+            </div>
+        </div>
+    </section>
+
     <script src="js/Search.js"></script>
     <script src="js/Header.js"></script>
+    <script src="js/Index.js"></script>
     <script>
         fetch('header.html')
             .then(response => response.text())

@@ -1,4 +1,6 @@
-// Mobile Menu Toggle
+// ==========================================
+// 1. MOBILE MENU TOGGLE
+// ==========================================
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.querySelector('.nav-links');
 const navButtons = document.querySelector('.nav-buttons');
@@ -7,7 +9,7 @@ if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         
-        // Optional: Hiển thị cả nút đăng nhập/đăng ký trong menu mobile
+        // Hiển thị cả nút đăng nhập/đăng ký trong menu mobile
         if (navLinks.classList.contains('active')) {
             if (!document.querySelector('.mobile-nav-buttons')) {
                 const mobileNavBtns = navButtons.cloneNode(true);
@@ -23,7 +25,9 @@ if (mobileMenuBtn) {
     });
 }
 
-// Smooth scroll cho các link trong navigation
+// ==========================================
+// 2. SMOOTH SCROLL CHO NAVIGATION
+// ==========================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
@@ -40,25 +44,31 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Header scroll effect
+// ==========================================
+// 3. HEADER SCROLL EFFECT
+// ==========================================
 let lastScroll = 0;
 const header = document.querySelector('.main-header');
 
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        header.style.background = 'rgba(255, 255, 255, 0.98)';
-        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        header.style.background = 'rgba(255, 255, 255, 0.96)';
-        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-    }
-    
-    lastScroll = currentScroll;
-});
+if (header) {
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        if (currentScroll > 100) {
+            header.style.background = 'rgba(255, 255, 255, 0.98)';
+            header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            header.style.background = 'rgba(255, 255, 255, 0.96)';
+            header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+        }
+        
+        lastScroll = currentScroll;
+    });
+}
 
-// Animation on scroll - fade in các phần tử
+// ==========================================
+// 4. ANIMATION ON SCROLL (FADE IN)
+// ==========================================
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
@@ -81,7 +91,9 @@ document.querySelectorAll('.room-card, .service-card').forEach(el => {
     observer.observe(el);
 });
 
-// Preload images - thêm fallback cho ảnh không tải được
+// ==========================================
+// 5. PRELOAD IMAGES FALLBACK
+// ==========================================
 const images = document.querySelectorAll('img');
 images.forEach(img => {
     img.addEventListener('error', function() {
@@ -98,4 +110,56 @@ buttons.forEach(btn => {
     });
 });
 
-console.log('Trang chủ đã sẵn sàng!');
+// ==========================================
+// 6. TYPEWRITER EFFECT (CHỮ CHẠY)
+// ==========================================
+const words = ["Sang Trọng", "Đẳng Cấp", "Thư Giãn", "Khác Biệt"];
+let wordIndex = 0;
+let isDeleting = false;
+let text = "";
+let typeSpeed = 150;
+
+function typeWriter() {
+    const typeWriterElement = document.querySelector('.typewriter-text');
+    if (!typeWriterElement) return;
+
+    const currentWord = words[wordIndex];
+
+    if (isDeleting) {
+        // Đang xóa chữ
+        text = currentWord.substring(0, text.length - 1);
+        typeSpeed = 100;
+    } else {
+        // Đang gõ chữ
+        text = currentWord.substring(0, text.length + 1);
+        typeSpeed = 150;
+    }
+
+    typeWriterElement.textContent = text;
+
+    // Kịch bản gõ và xóa
+    if (!isDeleting && text === currentWord) {
+        // Gõ xong 1 từ -> Dừng lại 2 giây cho khách đọc
+        typeSpeed = 2000; 
+        isDeleting = true;
+    } else if (isDeleting && text === "") {
+        // Xóa xong -> Chuyển sang từ tiếp theo
+        isDeleting = false;
+        wordIndex++;
+        if (wordIndex >= words.length) {
+            wordIndex = 0; // Quay vòng lại từ đầu
+        }
+        typeSpeed = 500; // Nghỉ 0.5s trước khi gõ từ mới
+    }
+
+    setTimeout(typeWriter, typeSpeed);
+}
+
+// Khởi chạy Typewriter khi trang đã sẵn sàng
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.typewriter-text')) {
+        setTimeout(typeWriter, 1000); // Chờ 1 giây tạo cảm giác tự nhiên
+    }
+});
+
+console.log('Trang chủ đã sẵn sàng với hiệu ứng chữ chạy!');
