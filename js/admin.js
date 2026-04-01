@@ -1,3 +1,6 @@
+/**
+ * Lớp xử lý gọi API (Tách biệt logic mạng)
+ */
 class ApiService {
     constructor() {
         this.baseUrl = "http://localhost:8080/api";
@@ -39,6 +42,20 @@ class ApiService {
             return await this.handleResponse(response);
         } catch (error) {
             console.error("Lỗi khi tải doanh thu:", error);
+            return null;
+        }
+    }
+
+    // API: Lấy danh sách khách hàng tiềm năng
+    async getPotentialCustomers() {
+        try {
+            const response = await fetch(`${this.baseUrl}/manager/potential-customers`, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách khách hàng tiềm năng:", error);
             return null;
         }
     }
@@ -133,6 +150,14 @@ class AdminDashboard {
             });
         });
 
+        // Sự kiện làm mới danh sách khách hàng tiềm năng
+        const refreshPotentialBtn = document.getElementById('refreshPotentialBtn');
+        if (refreshPotentialBtn) {
+            refreshPotentialBtn.addEventListener('click', () => {
+                this.loadPotentialCustomers();
+            });
+        }
+
         // Các sự kiện cho Modal (Tắt modal khi bấm X)
         const closeBtns = document.querySelectorAll('.close');
         closeBtns.forEach(btn => {
@@ -155,8 +180,12 @@ class AdminDashboard {
             targetTab.classList.add('active');
         }
 
-        // Gọi API tương ứng khi chuyển tab (Mở rộng sau này)
-        if (tabId === 'revenue') this.loadRevenueData('week');
+        // Gọi API tương ứng khi chuyển tab
+        if (tabId === 'revenue') {
+            this.loadRevenueData('week');
+        } else if (tabId === 'potential-customers') {
+            this.loadPotentialCustomers();
+        }
         // else if (tabId === 'room-management') this.loadRooms();
         // else if (tabId === 'booking-list') this.loadBookings();
     }
@@ -164,7 +193,7 @@ class AdminDashboard {
     // 5. Xử lý logic nghiệp vụ: Doanh Thu
     async loadRevenueData(period) {
         const data = await this.api.getRevenue(period);
-        if (!data) return; // Nếu lỗi API thì dừng
+        if (!data) return; 
 
         // Cập nhật các thẻ Stats
         document.getElementById('totalRevenue').innerText = this.formatCurrency(data.totalRevenue || 0);
@@ -172,45 +201,90 @@ class AdminDashboard {
         document.getElementById('bookedRoomsCount').innerText = data.bookedRoomsCount || 0;
         document.getElementById('avgDailyRevenue').innerText = this.formatCurrency(data.avgDailyRevenue || 0);
 
-        // --- XỬ LÝ DỮ LIỆU ĐỔ VÀO BIỂU ĐỒ ---
+        // Xử lý dữ liệu đổ vào biểu đồ
         let labels = [];
         let values = [];
 
-        // Kiểm tra xem mảng chartData từ Backend có dữ liệu không
         if (data.chartData && data.chartData.length > 0) {
-            
-            // Dùng map() để tách Array Object thành 2 Array riêng biệt
-            // Lưu ý: Mình đang giả sử thuộc tính trong file Java của bạn là 'date' và 'revenue'. 
-            // Nếu Java của bạn đặt tên khác (ví dụ: 'key', 'value'), hãy đổi lại cho khớp nhé!
             labels = data.chartData.map(item => item.date || item.key || '');
             values = data.chartData.map(item => item.revenue || item.value || 0);
-            
         } else {
-            // Hiển thị mặc định nếu không có booking nào trong khoảng thời gian này
             labels = ['Chưa có dữ liệu'];
             values = [0];
         }
         
-        // Gọi hàm render biểu đồ
         this.renderChart(labels, values, period);
     }
 
-    // 6. Cấu hình Chart.js với Tone Cam Vàng (Orange & Gold)
+    // 6. Xử lý logic nghiệp vụ: Khách hàng tiềm năng
+    async loadPotentialCustomers() {
+        const tableBody = document.getElementById('potentialTableBody');
+        if (!tableBody) return;
+
+        // Đã đổi colspan="7" vì bỏ bớt 1 cột đánh giá
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+
+        const customers = await this.api.getPotentialCustomers();
+
+        if (!customers || customers.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Không có dữ liệu khách hàng tiềm năng.</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = ''; // Xóa loading
+
+        customers.forEach(customer => {
+            // Giả sử 100,000 VNĐ = 1 điểm tích lũy
+            let points = Math.floor((customer.totalSpent || 0) / 100000); 
+            
+            // Cập nhật logic phân hạng thành viên
+            let tier = 'Bronze';
+            let tierBg = '#cd7f32'; // Màu Đồng
+            let tierColor = '#fff';
+
+            if (points >= 6000) {
+                tier = 'Platinum';
+                tierBg = '#e5e4e2'; // Màu Bạch Kim
+                tierColor = '#333';
+            } else if (points >= 2500) {
+                tier = 'Gold';
+                tierBg = '#ffd700'; // Màu Vàng
+                tierColor = '#333';
+            } else if (points >= 800) {
+                tier = 'Silver';
+                tierBg = '#c0c0c0'; // Màu Bạc
+                tierColor = '#333';
+            }
+
+            // Tạo thẻ tr cho mỗi khách hàng (đã bỏ cột Đánh giá)
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${customer.username || 'Khách vãng lai'}</strong></td>
+                <td>${customer.email || 'Chưa cập nhật'}</td>
+                <td>${customer.phone || 'Chưa cập nhật'}</td>
+                <td style="text-align: center;"><strong>${customer.totalBookings || 0}</strong></td>
+                <td style="color: #c53030; font-weight: bold;">${this.formatCurrency(customer.totalSpent || 0)}</td>
+                <td><span style="padding: 4px 8px; border-radius: 4px; background: ${tierBg}; font-weight: bold; font-size: 12px; color: ${tierColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${tier}</span></td>
+                <td style="text-align: center;">${points}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    // 7. Cấu hình Chart.js với Tone Cam Vàng
     renderChart(labels, data, period) {
         const canvas = document.getElementById('revenueChart');
         if (!canvas) return;
 
-        // Xóa biểu đồ cũ nếu có để vẽ lại biểu đồ mới
         if (this.revenueChartInstance) {
             this.revenueChartInstance.destroy();
         }
 
         const ctx = canvas.getContext('2d');
         
-        // Tạo Gradient màu Cam Vàng cực đẹp cho cột
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(255, 140, 0, 0.8)'); // #FF8C00
-        gradient.addColorStop(1, 'rgba(212, 160, 23, 0.2)'); // #D4A017
+        gradient.addColorStop(0, 'rgba(255, 140, 0, 0.8)'); 
+        gradient.addColorStop(1, 'rgba(212, 160, 23, 0.2)');
 
         let titleText = 'Biểu đồ doanh thu';
         if(period === 'week') titleText += ' (Tuần này)';
@@ -218,7 +292,7 @@ class AdminDashboard {
         if(period === 'year') titleText += ' (Năm nay)';
 
         this.revenueChartInstance = new Chart(ctx, {
-            type: 'bar', // Có thể đổi thành 'line' nếu thích
+            type: 'bar', 
             data: {
                 labels: labels,
                 datasets: [{
@@ -227,7 +301,7 @@ class AdminDashboard {
                     backgroundColor: gradient,
                     borderColor: '#FF8C00',
                     borderWidth: 2,
-                    borderRadius: 6, // Bo góc cột
+                    borderRadius: 6,
                     hoverBackgroundColor: '#D4A017'
                 }]
             },

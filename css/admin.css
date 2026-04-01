@@ -217,6 +217,7 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     border: 1px solid #ffe1c6;
     transition: transform 0.2s;
+    width: 270px;
 }
 .stat-card:hover {
     transform: translateY(-3px);
