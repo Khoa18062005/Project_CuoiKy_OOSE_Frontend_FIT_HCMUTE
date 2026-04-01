@@ -28,6 +28,7 @@ class LoginService {
     notify.show("Đăng nhập thành công! Chào mừng trở lại.", "success");
 
     localStorage.setItem('current_user', result.username || loginData.username);
+    localStorage.setItem('role', result.role);
 
     if (rememberMe) {
         localStorage.setItem('rememberedUser', loginData.username);
@@ -40,7 +41,11 @@ class LoginService {
     }
 
     setTimeout(() => {
-        window.location.href = 'index.html';
+        if (result.role === 'MANAGER') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'index.html';
+        }
     }, 1200);
 }
             else if (response.status === 400) {
