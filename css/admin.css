@@ -381,12 +381,17 @@ body {
 }
 .btn-small {
     background: #f5e7dc;
+    color: #4a3f35; /* Màu nâu trầm cho sang */
     border: none;
-    padding: 8px 18px;
+    padding: 10px 22px; /* Tăng nhẹ padding để nút cân đối với chữ to */
     border-radius: 40px;
     font-weight: 600;
+    font-size: 1rem; /* Kích thước chữ chuẩn (khoảng 16px) */
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
+    display: inline-flex; /* Giúp icon và chữ thẳng hàng hoàn hảo */
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và chữ */
 }
 .btn-primary {
     background: #ef4136;
