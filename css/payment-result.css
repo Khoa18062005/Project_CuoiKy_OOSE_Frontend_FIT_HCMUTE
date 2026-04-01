@@ -1,0 +1,277 @@
+.payment-result-page {
+    min-height: 100vh;
+    background:
+        linear-gradient(135deg, rgba(248, 216, 16, 0.9), rgba(254, 123, 24, 0.9)),
+        url('../asset/Hotel_BG.jpg') center/cover no-repeat;
+    padding: 120px 20px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-result-section {
+    width: 100%;
+    max-width: 820px;
+}
+
+.payment-result-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 32px;
+    box-shadow: 0 24px 54px rgba(15, 23, 42, 0.16);
+    padding: 42px 36px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    animation: paymentFadeUp 0.6s ease;
+}
+
+@keyframes paymentFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.payment-status-icon {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(135deg, #fff7ed, #ffffff);
+    border: 3px solid #fed7aa;
+    box-shadow: 0 12px 26px rgba(239, 65, 54, 0.12);
+}
+
+.payment-result-header h1 {
+    font-size: 2rem;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.payment-result-header p {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-bottom: 20px;
+}
+
+.payment-badges {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.status-badge.neutral {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.status-badge.success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+.status-badge.failed {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+}
+
+.status-badge.confirmed {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+.point-reward-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    margin-bottom: 22px;
+    padding: 18px 20px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #fff7ed, #ffffff);
+    border: 1px solid #fdba74;
+}
+
+.point-reward-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 65, 54, 0.08);
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+.point-reward-box strong {
+    display: block;
+    color: #ef4136;
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+}
+
+.point-reward-box p {
+    color: #64748b;
+    margin: 0;
+}
+
+.payment-result-info {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+.info-row span {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.info-row strong {
+    color: #1f2937;
+    text-align: right;
+    word-break: break-word;
+}
+
+.payment-note {
+    padding: 18px 20px;
+    border-radius: 20px;
+    margin-bottom: 26px;
+    font-size: 0.96rem;
+    line-height: 1.7;
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+}
+
+.payment-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.btn-payment {
+    min-width: 190px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-payment.primary {
+    background: linear-gradient(135deg, #ef4136, #c73b0c);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(239, 65, 54, 0.22);
+}
+
+.btn-payment.primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-payment.secondary {
+    background: #fff;
+    color: #ef4136;
+    border: 2px solid #ef4136;
+}
+
+.btn-payment.secondary:hover {
+    background: #ef4136;
+    color: #fff;
+}
+
+.btn-payment.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+}
+
+.btn-payment.warning:hover {
+    transform: translateY(-2px);
+}
+
+.payment-success .payment-status-icon {
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), #ffffff);
+    border-color: rgba(16,185,129,0.45);
+}
+
+.payment-success .payment-note {
+    background: rgba(16,185,129,0.08);
+    color: #047857;
+    border-color: rgba(16,185,129,0.28);
+}
+
+.payment-failed .payment-status-icon {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), #ffffff);
+    border-color: rgba(239,68,68,0.35);
+}
+
+.payment-failed .payment-note {
+    background: rgba(239,68,68,0.08);
+    color: #b91c1c;
+    border-color: rgba(239,68,68,0.25);
+}
+
+@media (max-width: 768px) {
+    .payment-result-card {
+        padding: 28px 20px;
+    }
+
+    .payment-result-header h1 {
+        font-size: 1.65rem;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .info-row strong {
+        text-align: left;
+    }
+
+    .point-reward-box {
+        flex-direction: column;
+        text-align: center;
+    }
+}

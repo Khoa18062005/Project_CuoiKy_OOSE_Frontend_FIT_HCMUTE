@@ -1,216 +1,229 @@
-// const ROOM_SEARCH_API = "http://localhost:8080/api/rooms/search";
+class RoomSearchService {
+    constructor() {
+        this.baseUrl = "http://localhost:8080";
+        this.selectedRooms = [];
+        this.lastSearchPayload = null;
+        this.bindEvents();
+        this.setMinDate();
+    }
 
-// // ── Helpers ────────────────────────────────────────────────────────────────
+    bindEvents() {
+        const form = document.getElementById("roomSearchForm");
+        const createBookingBtn = document.getElementById("btn-create-booking");
 
-// function getJwtToken() {
-//     return localStorage.getItem("jwt_token");
-// }
+        if (form) {
+            form.addEventListener("submit", (e) => this.handleSearch(e));
+        }
 
-// function formatCurrency(amount) {
-//     return new Intl.NumberFormat("vi-VN", {
-//         style: "currency",
-//         currency: "VND"
-//     }).format(amount);
-// }
+        if (createBookingBtn) {
+            createBookingBtn.addEventListener("click", () => this.handleCreateBooking());
+        }
+    }
 
-// // ── Render kết quả ─────────────────────────────────────────────────────────
+    setMinDate() {
+        const today = new Date().toISOString().split("T")[0];
+        const checkin = document.querySelector('input[name="checkin"]');
+        const checkout = document.querySelector('input[name="checkout"]');
+        if (checkin) checkin.min = today;
+        if (checkout) checkout.min = today;
+    }
 
-// function renderRooms(data, container) {
-//     const { rooms, totalFound, requested, enough, warning } = data;
+    async handleSearch(e) {
+        e.preventDefault();
 
-//     // Header tổng kết
-//     let headerHtml = `
-//         <div style="
-//             display:flex; justify-content:space-between; align-items:center;
-//             margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #e2e8f0;
-//         ">
-//             <h2 style="margin:0; font-size:1.1rem; color:#1e293b;">
-//                 Tìm thấy <strong>${totalFound}</strong> phòng trống
-//                 &nbsp;·&nbsp; Bạn yêu cầu <strong>${requested}</strong> phòng
-//             </h2>
-//         </div>`;
+        const form = e.target;
+        const checkin = form.checkin.value;
+        const checkout = form.checkout.value;
+        const numberOfRooms = form.rooms.value;
+        const guests = form.guests.value;
+        const roomType = form.roomType.value;
 
-//     // Cảnh báo nếu không đủ phòng
-//     let warningHtml = "";
-//     if (warning) {
-//         warningHtml = `
-//             <div style="
-//                 background:#fffbeb; border:1px solid #fcd34d; border-radius:8px;
-//                 padding:12px 16px; margin-bottom:16px; color:#92400e; font-size:.9rem;
-//             ">
-//                 ⚠️ ${warning}
-//             </div>`;
-//     }
+        this.lastSearchPayload = { 
+            checkin, 
+            checkout, 
+            numberOfRooms, 
+            guests, 
+            roomType 
+        };
 
-//     if (!rooms || rooms.length === 0) {
-//         container.innerHTML = headerHtml + `
-//             <div style="text-align:center; padding:40px; color:#888;">
-//                 <i class="fas fa-door-closed" style="font-size:3rem; margin-bottom:12px; display:block;"></i>
-//                 Không tìm thấy phòng phù hợp cho lịch này.
-//             </div>`;
-//         return;
-//     }
+        const query = new URLSearchParams({
+            checkin,
+            checkout,
+            numberOfRooms,
+            guests,
+            roomType
+        });
 
-//     const roomCardsHtml = rooms.map(room => `
-//         <div class="room-card" style="
-//             border:1px solid #e2e8f0; border-radius:12px; padding:20px;
-//             margin-bottom:16px; display:flex; justify-content:space-between;
-//             align-items:center; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.06);
-//         ">
-//             <div>
-//                 <h3 style="margin:0 0 6px; font-size:1.1rem;">
-//                     Phòng ${room.roomNumber}
-//                     <span style="
-//                         background:#f0fdf4; color:#16a34a; font-size:.75rem;
-//                         padding:2px 8px; border-radius:99px; font-weight:500; margin-left:8px;
-//                     ">Còn trống</span>
-//                 </h3>
-//                 <p style="margin:0 0 4px; color:#64748b; font-size:.9rem;">
-//                     Loại: <strong>${room.roomType.typeName}</strong>
-//                     &nbsp;·&nbsp; Sức chứa: <strong>${room.roomType.occupancy} người</strong>
-//                 </p>
-//                 ${room.description
-//                     ? `<p style="margin:4px 0 0; color:#94a3b8; font-size:.85rem;">${room.description}</p>`
-//                     : ""}
-//             </div>
-//             <div style="text-align:right; min-width:150px;">
-//                 <div style="font-size:1.25rem; font-weight:700; color:#1e40af;">
-//                     ${formatCurrency(room.roomType.priceRoom)}
-//                 </div>
-//                 <div style="color:#94a3b8; font-size:.8rem; margin-bottom:10px;">/ đêm</div>
-//                 <button
-//                     onclick="handleBookRoom(${room.roomID}, '${room.roomNumber}')"
-//                     style="
-//                         background:#1e40af; color:#fff; border:none;
-//                         padding:8px 18px; border-radius:8px; cursor:pointer;
-//                         font-size:.9rem; font-weight:600;
-//                     "
-//                 >Đặt ngay</button>
-//             </div>
-//         </div>
-//     `).join("");
+        try {
+            const response = await fetch(`${this.baseUrl}/api/rooms/search?${query.toString()}`);
+            const result = await response.json();
 
-//     container.innerHTML = headerHtml + warningHtml + roomCardsHtml;
-// }
+            if (!response.ok) {
+                notify.show(result.message || "Không thể tìm phòng", "error");
+                return;
+            }
 
-// // ── Xử lý nút Đặt ngay ────────────────────────────────────────────────────
+            this.renderRooms(result);
+        } catch (error) {
+            console.error(error);
+            notify.show("Không thể kết nối đến backend", "error");
+        }
+    }
 
-// function handleBookRoom(roomID, roomNumber) {
-//     const token = getJwtToken();
-//     if (!token) {
-//         alert("Bạn cần đăng nhập để đặt phòng!");
-//         window.location.href = "login.html";
-//         return;
-//     }
-//     // TODO: chuyển sang trang booking với roomID
-//     alert(`Đặt phòng ${roomNumber} (ID: ${roomID}) — chức năng đang phát triển`);
-// }
+    renderRooms(result) {
+        const container = document.getElementById("room-result-list");
+        const summary = document.getElementById("result-summary");
+        const bookingAction = document.getElementById("booking-action");
 
-// // ── Fetch API ──────────────────────────────────────────────────────────────
+        container.innerHTML = "";
+        this.selectedRooms = [];
 
-// async function searchRooms(params) {
-//     // Tạo result container nếu chưa có
-//     let resultSection = document.getElementById("room-results");
-//     if (!resultSection) {
-//         resultSection = document.createElement("section");
-//         resultSection.id = "room-results";
-//         resultSection.style.cssText = "max-width:900px; margin:32px auto; padding:0 16px;";
-//         document.querySelector(".room-search-section")
-//                 .insertAdjacentElement("afterend", resultSection);
-//     }
+        summary.innerText = result.enough
+            ? `Tìm thấy ${result.totalFound} phòng phù hợp. Bạn đang yêu cầu ${result.requested} phòng.`
+            : (result.warning || "Không đủ phòng phù hợp.");
 
-//     // Loading state
-//     resultSection.innerHTML = `
-//         <div style="text-align:center; padding:40px; color:#64748b;">
-//             <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:12px; display:block;"></i>
-//             Đang tìm kiếm phòng...
-//         </div>`;
+        if (!result.rooms || result.rooms.length === 0) {
+            container.innerHTML = `<div class="empty-room-state">Không có phòng trống phù hợp trong thời gian bạn chọn.</div>`;
+            bookingAction.style.display = "none";
+            return;
+        }
 
-//     // Build query string — chỉ đính roomType nếu không phải "all"
-//     const queryParams = {
-//         checkin:        params.checkin,
-//         checkout:       params.checkout,
-//         guests:         params.guests,
-//         numberOfRooms:  params.numberOfRooms,
-//     };
-//     if (params.roomType && params.roomType !== "all") {
-//         queryParams.roomType = params.roomType;
-//     }
-//     const query = new URLSearchParams(queryParams);
+        result.rooms.forEach(room => {
+            const card = document.createElement("div");
+            card.className = "room-card-beauty";
+            card.innerHTML = `
+                <div class="room-card-top">
+                    <div>
+                        <span class="room-badge">${room.roomType.typeName}</span>
+                        <h3>${room.roomNumber}</h3>
+                        <p>${room.description || "Không gian sang trọng, đầy đủ tiện nghi."}</p>
+                    </div>
+                    <div class="room-price">
+                        <strong>${this.formatMoney(room.roomType.priceRoom)}</strong>
+                        <span>/ đêm</span>
+                    </div>
+                </div>
 
-//     // Header: gắn JWT nếu có (route này public nên không bắt buộc)
-//     const headers = { "Content-Type": "application/json" };
-//     const token = getJwtToken();
-//     if (token) headers["Authorization"] = `Bearer ${token}`;
+                <div class="room-meta">
+                    <div><i class="fas fa-users"></i> ${room.roomType.occupancy} khách</div>
+                    <div><i class="fas fa-circle-check"></i> ${room.status}</div>
+                </div>
 
-//     try {
-//         const response = await fetch(`${ROOM_SEARCH_API}?${query}`, {
-//             method: "GET",
-//             headers,
-//             credentials: "include"
-//         });
+                <label class="room-select-box">
+                    <input type="checkbox" 
+                           value="${room.roomID}" 
+                           data-price="${room.roomType.priceRoom}" 
+                           data-room="${room.roomNumber}">
+                    <span>Chọn phòng này</span>
+                </label>
+            `;
 
-//         const data = await response.json();
+            container.appendChild(card);
+        });
 
-//         if (response.ok) {
-//             // data là RoomSearchResponse
-//             renderRooms(data, resultSection);
-//         } else {
-//             // data là {status, message} hoặc {status, errors}
-//             const msg = data.message
-//                 || (data.errors && data.errors.map(e => e.defaultMessage).join(", "))
-//                 || "Lỗi không xác định";
-//             resultSection.innerHTML = `
-//                 <div style="text-align:center; padding:32px; color:#dc2626;">
-//                     <i class="fas fa-exclamation-circle"
-//                        style="font-size:2rem; margin-bottom:8px; display:block;"></i>
-//                     ${msg}
-//                 </div>`;
-//         }
-//     } catch (err) {
-//         console.error("Lỗi kết nối:", err);
-//         resultSection.innerHTML = `
-//             <div style="text-align:center; padding:32px; color:#dc2626;">
-//                 ⚠️ Không thể kết nối tới máy chủ. Vui lòng thử lại.
-//             </div>`;
-//     }
-// }
+        // Gắn sự kiện cho checkbox
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener("change", () => this.handleSelectRoom());
+        });
 
-// // ── Submit form ────────────────────────────────────────────────────────────
+        bookingAction.style.display = "block";
+    }
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     const form = document.getElementById("roomSearchForm");
-//     if (!form) return;
+    handleSelectRoom() {
+        const checked = document.querySelectorAll('#room-result-list input[type="checkbox"]:checked');
+        this.selectedRooms = Array.from(checked).map(item => Number(item.value));
+    }
 
-//     // Set min date = hôm nay
-//     const today = new Date().toISOString().split("T")[0];
-//     const checkinInput  = form.querySelector("[name='checkin']");
-//     const checkoutInput = form.querySelector("[name='checkout']");
-//     if (checkinInput)  checkinInput.min  = today;
-//     if (checkoutInput) checkoutInput.min = today;
+    async handleCreateBooking() {
+        const token = localStorage.getItem("jwt_token");
+        if (!token) {
+            notify.show("Bạn cần đăng nhập để đặt phòng", "error");
+            setTimeout(() => window.location.href = "login.html", 1000);
+            return;
+        }
 
-//     // Khi đổi checkin → checkout phải sau checkin
-//     checkinInput?.addEventListener("change", () => {
-//         if (checkoutInput) checkoutInput.min = checkinInput.value;
-//         if (checkoutInput.value && checkoutInput.value <= checkinInput.value) {
-//             checkoutInput.value = "";
-//         }
-//     });
+        if (!this.lastSearchPayload) {
+            notify.show("Bạn cần tìm phòng trước", "error");
+            return;
+        }
 
-//     form.addEventListener("submit", async (e) => {
-//         e.preventDefault();
+        if (this.selectedRooms.length === 0) {
+            notify.show("Vui lòng chọn ít nhất 1 phòng", "error");
+            return;
+        }
 
-//         const checkin       = form.querySelector("[name='checkin']").value;
-//         const checkout      = form.querySelector("[name='checkout']").value;
-//         const guests        = form.querySelector("[name='guests']").value;
-//         const numberOfRooms = form.querySelector("[name='rooms']").value;  // name="rooms" trong HTML của bạn
-//         const roomType      = form.querySelector("[name='roomType']").value;
+        const payload = {
+            checkin: this.lastSearchPayload.checkin,
+            checkout: this.lastSearchPayload.checkout,
+            roomIds: this.selectedRooms,
+            guests: Number(this.lastSearchPayload.guests),
+            numberOfRooms: Number(this.lastSearchPayload.numberOfRooms)
+        };
 
-//         if (!checkin || !checkout) {
-//             alert("Vui lòng chọn ngày nhận và trả phòng!");
-//             return;
-//         }
+        try {
+            const response = await fetch(`${this.baseUrl}/api/bookings`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
 
-//         await searchRooms({ checkin, checkout, guests, numberOfRooms, roomType });
-//     });
-// });
+            const result = await response.json();
+
+            if (!response.ok) {
+                notify.show(result.message || "Tạo booking thất bại", "error");
+                return;
+            }
+
+            // Hiển thị thông báo từ backend (đã có thông tin giảm giá)
+            notify.show(result.message || "Tạo booking thành công", "success");
+
+            // Nếu backend trả về discountRate (tùy chọn nâng cao)
+            if (result.discountRate && result.discountRate > 0) {
+                notify.show(`Đã áp dụng giảm giá ${Math.round(result.discountRate * 100)}% theo hạng thành viên!`, "success");
+            }
+
+            // Chuyển sang thanh toán VNPay
+            await this.redirectToVnpay(result.bookingID, token);
+
+        } catch (error) {
+            console.error(error);
+            notify.show("Lỗi tạo booking", "error");
+        }
+    }
+
+    async redirectToVnpay(bookingId, token) {
+        try {
+            const response = await fetch(`${this.baseUrl}/api/payments/vnpay/${bookingId}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                notify.show(result.message || "Không tạo được link thanh toán", "error");
+                return;
+            }
+
+            // Chuyển hướng đến trang thanh toán VNPay
+            window.location.href = result.paymentUrl;
+        } catch (error) {
+            console.error(error);
+            notify.show("Không thể kết nối thanh toán", "error");
+        }
+    }
+
+    formatMoney(value) {
+        return Number(value).toLocaleString("vi-VN") + " VNĐ";
+    }
+}
+
+// Khởi tạo khi trang load xong
+document.addEventListener("DOMContentLoaded", () => {
+    new RoomSearchService();
+});

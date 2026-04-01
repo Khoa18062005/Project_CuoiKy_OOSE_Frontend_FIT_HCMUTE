@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả thanh toán - Hotel Style</title>
+    <link rel="stylesheet" href="css/Global.css">
+    <link rel="stylesheet" href="css/Header.css">
+    <link rel="stylesheet" href="css/payment-result.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="payment-result-page">
+        <section class="payment-result-section">
+            <div class="payment-result-card" id="paymentResultCard">
+                <div class="payment-status-icon" id="paymentStatusIcon">
+                    <span id="paymentStatusEmoji">⏳</span>
+                </div>
+
+                <div class="payment-result-header">
+                    <h1 id="paymentTitle">Đang xử lý kết quả thanh toán</h1>
+                    <p id="paymentMessage">Vui lòng chờ trong giây lát...</p>
+                </div>
+
+                <div class="payment-badges" id="paymentBadges">
+                    <span class="status-badge neutral" id="paymentStatusBadge">Đang xử lý</span>
+                    <span class="status-badge booking-badge" id="bookingStatusBadge">Booking: --</span>
+                </div>
+
+                <div class="point-reward-box" id="pointRewardBox" style="display:none;">
+                    <div class="point-reward-icon">🎁</div>
+                    <div>
+                        <strong id="earnedPointText">+0 điểm</strong>
+                        <p>Bạn vừa được cộng điểm thành viên cho giao dịch này.</p>
+                    </div>
+                </div>
+
+                <div class="payment-result-info">
+                    <div class="info-row">
+                        <span>Mã booking</span>
+                        <strong id="bookingId">--</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Số tiền</span>
+                        <strong id="paymentAmount">--</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Mã giao dịch VNPay</span>
+                        <strong id="transactionCode">--</strong>
+                    </div>
+
+                    <div class="info-row">
+                        <span>Trạng thái thanh toán</span>
+                        <strong id="paymentStatusText">--</strong>
+                    </div>
+                </div>
+
+                <div class="payment-note" id="paymentNote">
+                    Hệ thống đang xác thực giao dịch của bạn.
+                </div>
+
+                <div class="payment-actions" id="paymentActions">
+                    <a href="room.html" class="btn-payment secondary">Tiếp tục đặt phòng</a>
+                    <a href="profile.html" class="btn-payment primary">Xem hồ sơ cá nhân</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/notifications.js"></script>
+    <script src="js/Header.js"></script>
+    <script src="js/payment-result.js"></script>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                if (typeof initHeader === 'function') initHeader();
+                if (typeof initAuth === 'function') initAuth();
+            })
+            .catch(err => console.error("Lỗi tải header:", err));
+    </script>
+</body>
+</html>

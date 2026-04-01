@@ -25,27 +25,24 @@ class LoginService {
 
             // 2. Xử lý kết quả
             if (response.ok) {
-                notify.show(" Đăng nhập thành công! Chào mừng trở lại.", "success");
-                
-                // ---> BẠN ĐANG THIẾU DÒNG NÀY ĐÂY: Lưu tên người dùng <---
-                localStorage.setItem('current_user', loginData.username); 
-                
-                // Xử lý "Ghi nhớ đăng nhập"
-                if (rememberMe) {
-                    localStorage.setItem('rememberedUser', loginData.username);
-                } else {
-                    localStorage.removeItem('rememberedUser');
-                }
+    notify.show("Đăng nhập thành công! Chào mừng trở lại.", "success");
 
-                if (result.token) {
-                    localStorage.setItem('jwt_token', result.token);
-                }
+    localStorage.setItem('current_user', result.username || loginData.username);
 
-                // Chuyển hướng sang trang chủ sau 2 giây
-                setTimeout(() => {
-                    window.location.href = 'index.html'; 
-                }, 2000);
-            } 
+    if (rememberMe) {
+        localStorage.setItem('rememberedUser', loginData.username);
+    } else {
+        localStorage.removeItem('rememberedUser');
+    }
+
+    if (result.token) {
+        localStorage.setItem('jwt_token', result.token);
+    }
+
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1200);
+}
             else if (response.status === 400) {
                 // Lỗi Validation từ LoginRequest.java (ví dụ: để trống)
                 if (result.errors && Array.isArray(result.errors)) {

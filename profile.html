@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hồ sơ cá nhân - Hotel Style</title>
+    <link rel="stylesheet" href="css/Global.css">
+    <link rel="stylesheet" href="css/Header.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="profile-page">
+        <section class="profile-hero">
+            <div class="profile-hero-overlay"></div>
+            <div class="profile-hero-content">
+                <h1>QUẢN LÝ TÀI KHOẢN CÁ NHÂN</h1>
+                <p>Xem thông tin, cập nhật hồ sơ, theo dõi hạng thành viên và lịch sử đặt phòng.</p>
+            </div>
+        </section>
+
+        <section class="profile-wrapper">
+            <div class="profile-grid">
+                <!-- Sidebar -->
+                <aside class="profile-sidebar">
+                    <div class="profile-card">
+                        <div class="avatar-wrap">
+                            <img id="profileAvatarPreview" src="asset/default-avatar.png" alt="Avatar">
+                        </div>
+                        <h2 id="sidebarUsername">Đang tải...</h2>
+                        <p id="sidebarEmail">--</p>
+
+                        <div class="tier-badge" id="tierBadge">Bronze</div>
+
+                        <div class="point-box">
+                            <span>Điểm tích lũy</span>
+                            <strong id="profilePoint">0</strong>
+                        </div>
+
+                        <div class="benefit-box">
+                            <h4>Quyền lợi hạng</h4>
+                            <p id="profileBenefits">Đang tải quyền lợi...</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main content -->
+                <div class="profile-content">
+                    <!-- Personal Info -->
+                    <section class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Thông tin cá nhân</h3>
+                                <p>Cập nhật tên, email, số điện thoại, ngày sinh và avatar.</p>
+                            </div>
+                        </div>
+
+                        <form id="profileForm" class="profile-form">
+                            <div class="avatar-upload-box">
+                                <label class="avatar-upload-label">Ảnh đại diện</label>
+
+                                <div class="avatar-upload-inner">
+                                    <input type="file" id="avatarFile" accept="image/*">
+                                    <button type="button" id="uploadAvatarBtn" class="btn-upload-avatar">
+                                        Tải ảnh lên
+                                    </button>
+                                </div>
+
+                                <div class="avatar-upload-status" id="avatarUploadStatus">
+                                    Chưa chọn ảnh nào
+                                </div>
+
+                                <input type="hidden" id="avatar">
+
+                                <small>
+                                    Chọn ảnh từ máy tính, hệ thống sẽ tự upload lên CDN và lưu vào hồ sơ của bạn.
+                                </small>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>Tên đăng nhập</label>
+                                    <input type="text" id="username" placeholder="Nhập tên đăng nhập">
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Email</label>
+                                    <input type="email" id="email" placeholder="Nhập email">
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Số điện thoại</label>
+                                    <input type="tel" id="phone" placeholder="Nhập số điện thoại">
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Ngày sinh</label>
+                                    <input type="date" id="dateOfBirth">
+                                </div>
+                            </div>
+
+                            <div class="profile-form-actions">
+                                <button type="submit" class="btn-save-profile">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Membership -->
+                    <section class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Hạng thành viên</h3>
+                                <p>Theo dõi hạng hiện tại, mức ưu đãi và điểm tích lũy.</p>
+                            </div>
+                        </div>
+
+                        <div class="membership-grid">
+                            <div class="membership-item highlight">
+                                <span>Hạng hiện tại</span>
+                                <strong id="membershipTier">Bronze</strong>
+                            </div>
+                            <div class="membership-item">
+                                <span>Điểm hiện tại</span>
+                                <strong id="membershipPoint">0</strong>
+                            </div>
+                            <div class="membership-item">
+                                <span>Ưu đãi giảm giá</span>
+                                <strong id="membershipDiscount">0%</strong>
+                            </div>
+                        </div>
+
+                        <div class="membership-benefits-panel">
+                            <h4>Quyền lợi đang áp dụng</h4>
+                            <p id="membershipBenefitsText">Đang tải quyền lợi thành viên...</p>
+                        </div>
+                    </section>
+
+                    <!-- Booking History -->
+                    <section class="content-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Lịch sử đặt phòng</h3>
+                                <p>Xem toàn bộ booking của bạn, trạng thái và chi tiết phòng đã đặt.</p>
+                            </div>
+                        </div>
+
+                        <div id="bookingHistoryList" class="booking-history-list">
+                            <div class="empty-booking">Đang tải lịch sử đặt phòng...</div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/notifications.js"></script>
+    <script src="js/Header.js"></script>
+    <script src="js/Profile.js"></script>
+
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+
+                if (typeof initHeader === 'function') initHeader();
+                if (typeof initAuth === 'function') initAuth();
+
+                // Chỉ khởi tạo ProfileService sau khi header đã inject xong
+                if (typeof ProfileService === 'function') {
+                    new ProfileService();
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi tải header:", err);
+                if (typeof ProfileService === 'function') {
+                    new ProfileService();
+                }
+            });
+    </script>
+</body>
+
+</html>

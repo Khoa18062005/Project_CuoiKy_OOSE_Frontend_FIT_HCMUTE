@@ -1,19 +1,19 @@
-/* Global.css */
 body {
     margin: 0;
     padding: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
 }
-/* ========== HEADER & NAVIGATION ========== */
+
+/* ========== HEADER ========== */
 .main-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 200;
     background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
@@ -21,10 +21,15 @@ body {
 .navbar {
     max-width: 1300px;
     margin: 0 auto;
-    padding: 18px 32px;
+    padding: 16px 28px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo-link {
+    text-decoration: none;
 }
 
 .logo h2 {
@@ -47,9 +52,10 @@ body {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 32px;
+    gap: 28px;
     margin: 0;
     padding: 0;
+    align-items: center;
 }
 
 .nav-links li {
@@ -60,8 +66,9 @@ body {
     text-decoration: none;
     color: #2d2f36;
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: color 0.25s ease;
     position: relative;
+    font-size: 0.98rem;
 }
 
 .nav-links a:hover,
@@ -72,7 +79,7 @@ body {
 .nav-links a.active::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: -7px;
     left: 0;
     width: 100%;
     height: 2px;
@@ -80,18 +87,27 @@ body {
     border-radius: 2px;
 }
 
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ========== BUTTONS BEFORE LOGIN ========== */
 .nav-buttons {
     display: flex;
+    align-items: center;
     gap: 12px;
 }
 
 .btn-login,
 .btn-register-nav {
-    padding: 8px 24px;
-    border-radius: 50px;
+    padding: 9px 22px;
+    border-radius: 999px;
     text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    font-size: 0.95rem;
 }
 
 .btn-login {
@@ -118,99 +134,234 @@ body {
     transform: translateY(-2px);
 }
 
+/* ========== USER DROPDOWN ========== */
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: none;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 14px 8px 8px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.25s ease;
+}
+
+.user-dropdown-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.user-avatar-mini {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ef4136, #fe7b18);
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.user-avatar-mini img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    object-fit: cover;
+}
+
+.user-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.user-greeting {
+    font-size: 0.76rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+#display-username {
+    font-size: 0.94rem;
+    color: #1f2937;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown-arrow {
+    font-size: 0.95rem;
+    color: #64748b;
+    transition: transform 0.25s ease;
+}
+
+.user-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 12px);
+    width: 260px;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 22px;
+    box-shadow: 0 24px 44px rgba(15, 23, 42, 0.16);
+    border: 1px solid #eef2f7;
+    padding: 12px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    animation: dropdownFade 0.22s ease;
+}
+
+.user-dropdown.open .user-dropdown-menu {
+    display: flex;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #1f2937;
+    background: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 14px;
+    font-size: 0.96rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background: #fff7ed;
+    color: #ef4136;
+}
+
+.dropdown-icon {
+    width: 22px;
+    text-align: center;
+}
+
+.logout-item {
+    color: #ef4444;
+}
+
+.logout-item:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+}
+
+/* ========== MOBILE BUTTON ========== */
 .mobile-menu-btn {
     display: none;
     flex-direction: column;
     cursor: pointer;
     gap: 5px;
+    background: transparent;
+    border: none;
+    padding: 4px;
 }
 
 .mobile-menu-btn span {
-    width: 25px;
+    width: 24px;
     height: 3px;
     background: #ef4136;
     border-radius: 3px;
     transition: 0.3s;
 }
 
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
+/* ========== MOBILE MENU ========== */
+@media (max-width: 992px) {
     .navbar {
-        padding: 15px 24px;
+        padding: 14px 20px;
     }
-    
+
     .nav-links {
         display: none;
     }
-    
-    .nav-buttons {
-        display: none;
+
+    .nav-links.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 78px;
+        left: 16px;
+        right: 16px;
+        background: rgba(255,255,255,0.98);
+        border-radius: 24px;
+        padding: 22px 18px;
+        gap: 18px;
+        text-align: center;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
+        z-index: 199;
     }
-    
+
+    .nav-links.active a {
+        display: block;
+        padding: 10px 0;
+    }
+
     .mobile-menu-btn {
         display: flex;
     }
-    
+}
+
+@media (max-width: 768px) {
     .logo h2 {
         font-size: 1.5rem;
     }
+
+    .nav-buttons {
+        display: none;
+    }
+
+    .user-meta {
+        display: none;
+    }
+
+    .user-dropdown-menu {
+        width: 220px;
+    }
 }
 
-/* Mobile menu active state */
-.nav-links.active {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background: white;
-    padding: 20px;
-    gap: 20px;
-    text-align: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    border-radius: 0 0 20px 20px;
-    z-index: 99;
-}
+@media (max-width: 576px) {
+    .user-dropdown-toggle {
+        padding: 7px;
+    }
 
-.nav-links.active li {
-    width: 100%;
-}
+    .user-avatar-mini {
+        width: 38px;
+        height: 38px;
+    }
 
-.nav-links.active a {
-    display: block;
-    padding: 10px 0;
-}
-/* --- Style cho người dùng đã đăng nhập --- */
-.user-menu {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.welcome-text {
-    font-size: 1rem;
-    color: #333;
-}
-
-.welcome-text b {
-    color: #ef4444;
-}
-
-.btn-logout {
-    padding: 12px 32px;
-    font-size: 1rem;
-    border-radius: 50px;
-    font-weight: 600;
-    background: #ef4444; 
-    color: white;
-    border: 2px solid #ef4444; 
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-logout:hover {
-    background: #dc2626; 
-    border-color: #dc2626;
-    transform: translateY(-2px); /* Hiệu ứng nảy lên giống nút Đăng ký */
+    .user-dropdown-menu {
+        right: -8px;
+        width: 210px;
+    }
 }

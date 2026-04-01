@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -10,13 +9,9 @@
     <link rel="stylesheet" href="css/room.css">
     <link rel="stylesheet" href="css/Global.css">
 </head>
-
 <body>
-
-    <!-- Header placeholder -->
     <div id="header-placeholder"></div>
 
-    <!-- Room Search Section -->
     <section class="room-search-section">
         <div class="room-search-container">
             <div class="room-search-header">
@@ -25,38 +20,26 @@
             </div>
 
             <div class="room-search-box">
-                <form id="roomSearchForm" class="room-search-form" action="#" method="get">
+                <form id="roomSearchForm" class="room-search-form">
                     <div class="room-search-grid">
-                        <!-- Ngày đi -->
                         <div class="room-search-field">
-                            <label>
-                                <i class="fas fa-calendar-alt"></i>
-                                Ngày đi
-                            </label>
+                            <label><i class="fas fa-calendar-alt"></i> Ngày nhận phòng</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-calendar-day input-icon-left"></i>
                                 <input type="date" name="checkin" class="room-search-input" required>
                             </div>
                         </div>
 
-                        <!-- Ngày về -->
                         <div class="room-search-field">
-                            <label>
-                                <i class="fas fa-calendar-alt"></i>
-                                Ngày về
-                            </label>
+                            <label><i class="fas fa-calendar-alt"></i> Ngày trả phòng</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-calendar-day input-icon-left"></i>
                                 <input type="date" name="checkout" class="room-search-input" required>
                             </div>
                         </div>
 
-                        <!-- Số lượng phòng -->
                         <div class="room-search-field">
-                            <label>
-                                <i class="fas fa-door-open"></i>
-                                Số lượng phòng
-                            </label>
+                            <label><i class="fas fa-door-open"></i> Số lượng phòng</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-hotel input-icon-left"></i>
                                 <select name="rooms" class="room-search-select">
@@ -70,12 +53,8 @@
                             </div>
                         </div>
 
-                        <!-- Số lượng người -->
                         <div class="room-search-field">
-                            <label>
-                                <i class="fas fa-users"></i>
-                                Số lượng người
-                            </label>
+                            <label><i class="fas fa-users"></i> Số lượng người</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user input-icon-left"></i>
                                 <select name="guests" class="room-search-select">
@@ -92,12 +71,8 @@
                             </div>
                         </div>
 
-                        <!-- Loại phòng -->
                         <div class="room-search-field">
-                            <label>
-                                <i class="fas fa-star"></i>
-                                Loại phòng
-                            </label>
+                            <label><i class="fas fa-star"></i> Loại phòng</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-crown input-icon-left"></i>
                                 <select name="roomType" class="room-search-select">
@@ -113,7 +88,6 @@
                             </div>
                         </div>
 
-                        <!-- Button Search -->
                         <div class="room-search-button-wrapper">
                             <button type="submit" class="room-search-btn">
                                 <i class="fas fa-search"></i>
@@ -123,21 +97,34 @@
                     </div>
                 </form>
             </div>
+
+            <section id="available-rooms" class="available-room-result">
+                <div class="result-header">
+                    <h2>Danh sách phòng trống</h2>
+                    <p id="result-summary">Hãy chọn ngày để tìm phòng phù hợp với bạn.</p>
+                </div>
+
+                <div id="room-result-list" class="room-result-list"></div>
+
+                <div id="booking-action" class="booking-action" style="display:none;">
+                    <button id="btn-create-booking" class="confirm-booking-btn">Tạo booking</button>
+                </div>
+            </section>
         </div>
     </section>
 
+    <script src="js/notifications.js"></script>
     <script src="js/Header.js"></script>
+    <script src="js/RoomSearch.js"></script>
     <script>
         fetch('header.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-placeholder').innerHTML = data;
-                if (typeof initHeader === 'function') {
-                    initHeader();
-                }
+                if (typeof initHeader === 'function') initHeader();
+                if (typeof initAuth === 'function') initAuth();
             })
             .catch(err => console.error("Lỗi tải header:", err));
     </script>
-    <!-- <script src="js/RoomSearch.js"></script> -->
 </body>
 </html>

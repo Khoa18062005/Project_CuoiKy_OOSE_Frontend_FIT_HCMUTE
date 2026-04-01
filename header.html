@@ -1,38 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="css/Header.css">
     <link rel="stylesheet" href="css/Global.css">
 </head>
-
 <body>
     <header class="main-header">
         <nav class="navbar">
             <div class="logo">
-                <h2>HOTEL<span>STYLE</span></h2>
+                <a href="index.html" class="logo-link">
+                    <h2>HOTEL<span>STYLE</span></h2>
+                </a>
             </div>
-            <ul class="nav-links">
+
+            <ul class="nav-links" id="nav-links">
                 <li><a href="index.html">Trang chủ</a></li>
                 <li><a href="room.html">Đặt phòng</a></li>
-                <li><a href="#">Dịch vụ</a></li>
+                <li><a href="room.html#available-rooms">Phòng trống</a></li>
+                <li><a href="profile.html">Tài khoản</a></li>
                 <li><a href="#">Liên hệ</a></li>
             </ul>
-            <div class="nav-buttons" id="auth-buttons">
-                <a href="login.html" class="btn-login">Đăng nhập</a>
-                <a href="register.html" class="btn-register-nav">Đăng ký</a>
-            </div>
-            
-            <div class="user-menu" id="user-menu" style="display: none;">
-                <span class="welcome-text">Xin chào, <b id="display-username"></b>!</span>
-                <button id="logout-btn" class="btn-logout">Đăng xuất</button>
+
+            <div class="nav-right">
+                <div class="nav-buttons" id="auth-buttons">
+                    <a href="login.html" class="btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn-register-nav">Đăng ký</a>
+                </div>
+
+                <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                    <button class="user-dropdown-toggle" id="user-dropdown-toggle" type="button">
+                        <div class="user-avatar-mini" id="header-avatar-mini">
+                            <img id="header-avatar-img" src="asset/default-avatar.png" alt="avatar">
+                        </div>
+                        <div class="user-meta">
+                            <span class="user-greeting">Xin chào</span>
+                            <strong id="display-username">User</strong>
+                        </div>
+                        <span class="dropdown-arrow">▾</span>
+                    </button>
+
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <a href="profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            <span>Hồ sơ cá nhân</span>
+                        </a>
+
+                        <a href="profile.html#booking-history-list" class="dropdown-item">
+                            <span class="dropdown-icon">📘</span>
+                            <span>Lịch sử đặt phòng</span>
+                        </a>
+
+                        <a href="room.html" class="dropdown-item">
+                            <span class="dropdown-icon">🏨</span>
+                            <span>Đặt phòng ngay</span>
+                        </a>
+
+                        <button id="logout-btn" class="dropdown-item logout-item" type="button">
+                            <span class="dropdown-icon">↩</span>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </nav>
     </header>
 
     <script src="js/Header.js"></script>
 </body>
-
 </html>
