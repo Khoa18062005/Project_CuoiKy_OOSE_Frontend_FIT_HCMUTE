@@ -167,15 +167,29 @@
             <div id="room-management-tab" class="tab-content">
                 <div class="card">
                     <div class="card-header">
-            <h2><i class="fas fa-door-open"></i> Quản lý phòng</h2>
-            <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
-                <div class="date-picker-wrapper" style="display: flex; align-items: center; gap: 8px;">
-                    <label for="roomViewDate" style="font-weight: 600; color: #4a3f35;"><i class="fas fa-calendar-alt"></i> Xem ngày:</label>
-                    <input type="date" id="roomViewDate" class="search-input" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; outline: none; cursor: pointer;">
-                </div>
-                <button id="addRoomBtn" class="btn-small btn-primary"><i class="fas fa-plus"></i> Thêm phòng mới</button>
-            </div>
-        </div>
+                        <h2><i class="fas fa-door-open"></i> Quản lý phòng</h2>
+                        <div class="header-actions">
+                            <div class="custom-control-group">
+                                <label for="roomViewDate"><i class="fas fa-calendar-alt"></i> Xem ngày:</label>
+                                <div class="input-wrapper">
+                                    <input type="date" id="roomViewDate" class="modern-input">
+                                </div>
+                            </div>
+
+                            <div class="custom-control-group">
+                                <label for="roomStatusFilter"><i class="fas fa-filter"></i> Lọc trạng thái:</label>
+                                <div class="select-wrapper">
+                                    <select id="roomStatusFilter" class="modern-select">
+                                        <option value="all">Tất cả phòng</option>
+                                        <option value="available">Còn trống</option>
+                                        <option value="booked">Đã đặt</option>
+                                        <option value="maintenance">Bảo trì</option>
+                                        <option value="inactive">Ngừng kinh doanh</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="rooms-stats-summary">
                         <div class="mini-stat">
                             <span>Tổng số phòng:</span>

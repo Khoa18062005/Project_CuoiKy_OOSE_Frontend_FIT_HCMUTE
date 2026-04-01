@@ -247,6 +247,14 @@ class AdminDashboard {
             });
         }
 
+        // Bắt sự kiện khi người dùng chọn lọc trạng thái phòng
+        const roomStatusFilter = document.getElementById('roomStatusFilter');
+        if (roomStatusFilter) {
+            roomStatusFilter.addEventListener('change', () => {
+                this.renderRoomsList(); 
+            });
+        }
+
         // Sự kiện Submit Form cập nhật phòng
         const roomForm = document.getElementById('roomForm');
         if (roomForm) {
@@ -518,61 +526,67 @@ class AdminDashboard {
             return;
         }
 
-        this.renderRoomsList(rooms);
+        this.renderRoomsList();
     }
 
-    renderRoomsList(rooms) {
+    renderRoomsList() {
         const roomsGrid = document.getElementById('roomsGrid');
-        let total = rooms.length;
-        let available = 0;
-        let booked = 0;
-        let maintenance = 0;
+        if (!roomsGrid) return;
 
-        roomsGrid.innerHTML = '';
+        // Lấy giá trị bộ lọc hiện tại
+        const filterValue = document.getElementById('roomStatusFilter')?.value || 'all';
 
-        rooms.forEach(room => {
+        let total = this.roomsData.length;
+        let available = 0, booked = 0, maintenance = 0;
+
+        // BƯỚC 1: Tính toán thống kê dựa trên TẤT CẢ dữ liệu (để 4 ô trên cùng luôn đúng)
+        this.roomsData.forEach(room => {
             const status = room.status?.toLowerCase() || 'available';
-
-            // Đếm thống kê
             if (status === 'available') available++;
             else if (status === 'booked') booked++;
             else if (status === 'maintenance') maintenance++;
+        });
 
-            // Set màu sắc và icon 
-            let statusText = '';
-            let statusIcon = '';
-            let statusBgColor = '';
-            let statusTextColor = '';
+        document.getElementById('totalRooms').innerText = total;
+        document.getElementById('availableRooms').innerText = available;
+        document.getElementById('bookedRoomsStat').innerText = booked;
+        document.getElementById('maintenanceRooms').innerText = maintenance;
 
-            switch (status) {
+        roomsGrid.innerHTML = '';
+
+        // BƯỚC 2: Lọc dữ liệu theo giá trị dropdown
+        const filteredRooms = this.roomsData.filter(room => {
+            if (filterValue === 'all') return true;
+            const status = room.status?.toLowerCase() || 'available';
+            return status === filterValue;
+        });
+
+        // BƯỚC 3: Vẽ giao diện
+        if (filteredRooms.length === 0) {
+            roomsGrid.style.display = 'block';
+            roomsGrid.innerHTML = '<div style="text-align:center; width: 100%; padding: 30px; color: #666;"><i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; color: #ccc;"></i><br>Không có phòng nào khớp với trạng thái này.</div>';
+            return;
+        }
+
+        filteredRooms.forEach(room => {
+            const status = room.status?.toLowerCase() || 'available';
+            let statusText = '', statusIcon = '', statusBgColor = '', statusTextColor = '';
+            
+            switch(status) {
                 case 'available':
-                    statusText = 'Còn trống';
-                    statusIcon = 'fa-check-circle';
-                    statusBgColor = '#d4edda';
-                    statusTextColor = '#155724';
-                    break;
+                    statusText = 'Còn trống'; statusIcon = 'fa-check-circle';
+                    statusBgColor = '#d4edda'; statusTextColor = '#155724'; break;
                 case 'booked':
-                    statusText = 'Đã đặt';
-                    statusIcon = 'fa-lock';
-                    statusBgColor = '#f8d7da';
-                    statusTextColor = '#721c24';
-                    break;
+                    statusText = 'Đã đặt'; statusIcon = 'fa-lock';
+                    statusBgColor = '#f8d7da'; statusTextColor = '#721c24'; break;
                 case 'maintenance':
-                    statusText = 'Bảo trì';
-                    statusIcon = 'fa-tools';
-                    statusBgColor = '#fff3cd';
-                    statusTextColor = '#856404';
-                    break;
+                    statusText = 'Bảo trì'; statusIcon = 'fa-tools';
+                    statusBgColor = '#fff3cd'; statusTextColor = '#856404'; break;
                 case 'inactive':
-                    statusText = 'Ngừng kinh doanh';
-                    statusIcon = 'fa-ban';
-                    statusBgColor = '#e2e3e5';
-                    statusTextColor = '#383d41';
-                    break;
+                    statusText = 'Ngừng kinh doanh'; statusIcon = 'fa-ban';
+                    statusBgColor = '#e2e3e5'; statusTextColor = '#383d41'; break;
                 default:
-                    statusText = status;
-                    statusBgColor = '#e2e3e5';
-                    statusTextColor = '#383d41';
+                    statusText = status; statusBgColor = '#e2e3e5'; statusTextColor = '#383d41';
             }
 
             const roomCard = document.createElement('div');
@@ -583,7 +597,7 @@ class AdminDashboard {
             roomCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
             roomCard.style.cursor = 'pointer';
             roomCard.style.transition = '0.3s';
-
+            
             const badgeStyle = `background-color: ${statusBgColor}; color: ${statusTextColor}; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;`;
 
             roomCard.innerHTML = `
@@ -605,12 +619,7 @@ class AdminDashboard {
             roomsGrid.appendChild(roomCard);
         });
 
-        // Cập nhật thống kê header của tab
-        document.getElementById('totalRooms').innerText = total;
-        document.getElementById('availableRooms').innerText = available;
-        document.getElementById('bookedRoomsStat').innerText = booked;
-        document.getElementById('maintenanceRooms').innerText = maintenance;
-
+        // Thiết lập lại Grid CSS
         roomsGrid.style.display = 'grid';
         roomsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(240px, 1fr))';
         roomsGrid.style.gap = '20px';

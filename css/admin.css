@@ -285,7 +285,9 @@ body {
     color: #ef4136;
     font-size: 1.3rem;
 }
-
+.mini-stat span {
+    margin-top: 1px;
+}
 /* Rooms Grid */
 .rooms-grid {
     display: grid;
@@ -517,5 +519,132 @@ body {
     }
     .revenue-stats {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   TÙY CHỈNH HEADER ACTIONS (LỌC & CHỌN NGÀY) - TAB QUẢN LÝ PHÒNG
+   ========================================================================== */
+
+/* Căn chỉnh cụm điều khiển nằm ngang và có khoảng cách đều */
+.header-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center; /* Đổi thành center để mọi thứ căn giữa theo chiều dọc */
+    flex-wrap: wrap; 
+}
+
+/* ĐƯA LABEL VÀ INPUT NẰM NGANG (Thay đổi chính ở đây) */
+.custom-control-group {
+    display: flex;
+    flex-direction: row; /* Ép nằm ngang trên 1 dòng */
+    align-items: center; /* Căn giữa label và ô nhập */
+    gap: 10px;           /* Khoảng cách giữa label và ô nhập */
+}
+
+/* Tùy chỉnh nhãn (label) */
+.custom-control-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a3f35;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.3px;
+    white-space: nowrap; /* Đảm bảo chữ không bị rớt xuống dòng */
+    margin: 0;           /* Xóa margin mặc định nếu có */
+}
+
+.custom-control-group label i {
+    color: #c53030;
+}
+
+/* Tùy chỉnh Input Date */
+.modern-input {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    font-family: inherit;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Tùy chỉnh Select Dropdown */
+.modern-select {
+    padding: 8px 36px 8px 12px; 
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    font-family: inherit;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    min-width: 170px;
+}
+
+/* Tạo mũi tên thả xuống (Dropdown arrow) */
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.select-wrapper::after {
+    content: '\f107'; 
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    color: #6c757d;
+    pointer-events: none; 
+    font-size: 14px;
+}
+
+/* Hiệu ứng khi Focus hoặc Hover */
+.modern-input:hover,
+.modern-select:hover {
+    border-color: #a0a5aa;
+}
+
+.modern-input:focus,
+.modern-select:focus {
+    border-color: #c53030;
+    box-shadow: 0 0 0 3px rgba(197, 48, 48, 0.15); 
+}
+
+/* Responsive cho màn hình điện thoại (Mobile) */
+@media (max-width: 768px) {
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .custom-control-group {
+        width: 100%;
+        justify-content: space-between; /* Đẩy label sang trái, input sang phải trên mobile */
+    }
+
+    .input-wrapper, 
+    .select-wrapper {
+        width: 60%; /* Chỉnh lại độ rộng của ô nhập trên mobile */
+    }
+
+    .modern-input,
+    .modern-select {
+        width: 100%;
     }
 }
