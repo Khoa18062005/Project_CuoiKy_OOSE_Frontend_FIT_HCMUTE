@@ -1,0 +1,510 @@
+/* ========== PAGE HEADER ========== */
+.page-header {
+    position: relative;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    padding: 100px 0 80px;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+}
+
+/* Thêm hiệu ứng ánh sáng nền */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(239,65,54,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, #f8fafc, transparent);
+    pointer-events: none;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.page-header h1 {
+    font-size: 3.8rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+    position: relative;
+    display: inline-block;
+    animation: fadeInUp 0.8s ease;
+}
+
+/* Hiệu ứng underline đẹp cho tiêu đề */
+.page-header h1::before {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4136, #f8d810);
+    border-radius: 2px;
+}
+
+.page-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ef4136, #f8d810, transparent);
+    filter: blur(4px);
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 30px auto 0;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* ========== TEAM SECTION ========== */
+.team-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    position: relative;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 50px;
+    margin-top: 20px;
+}
+
+.team-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.team-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4136, #f8d810, #ef4136);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px rgba(239, 65, 54, 0.15);
+}
+
+.team-card:hover::before {
+    transform: scaleX(1);
+}
+
+.card-avatar {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.team-card:hover .card-avatar::after {
+    opacity: 1;
+}
+
+.card-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.team-card:hover .card-avatar img {
+    transform: scale(1.08);
+}
+
+.card-info {
+    padding: 28px 28px 32px;
+    position: relative;
+    background: white;
+    /* Thiết lập khung chứa là cột */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Mặc định cho tất cả căn lề trái */
+    gap: 10px;               /* Khoảng cách giữa các dòng */
+}
+
+/* Đã chỉnh sửa: gạch ngang nằm bên trái tên */
+.member-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 24px;
+    position: relative;
+    display: inline-block;
+    padding-left: 20px;
+    align-self: center; 
+    text-align: center;
+}
+/* 
+.member-name::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 32px;
+    background: linear-gradient(180deg, #ef4136, #f8d810);
+    border-radius: 2px;
+    transition: height 0.3s ease;
+} */
+
+.team-card:hover .member-name::before {
+    height: 40px;
+}
+
+.card-info p {
+    margin: 12px 0;
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-info p strong {
+    color: #0f172a;
+    font-weight: 700;
+    min-width: 70px;
+}
+
+.btn-portfolio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #ef4136, #c53030);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    align-self: center; 
+    text-align: center;
+}
+
+.btn-portfolio::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-portfolio:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-portfolio:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(239, 65, 54, 0.4);
+}
+
+/* ========== RESOURCES SECTION ========== */
+.resources-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    position: relative;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+.section-title:after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4136, #f8d810);
+    margin: 20px auto 0;
+    border-radius: 2px;
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.resource-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 24px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.resource-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ef4136, #f8d810);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-color: transparent;
+}
+
+.resource-card:hover::before {
+    transform: scaleX(1);
+}
+
+.resource-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: inline-block;
+    filter: brightness(0) saturate(100%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.resource-card:hover .resource-icon {
+    filter: brightness(0) saturate(100%) invert(35%) sepia(84%) saturate(1841%) hue-rotate(341deg) brightness(96%) contrast(92%);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.resource-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+}
+
+.resource-card:hover h3 {
+    color: #ef4136;
+}
+
+.resource-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.team-card {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+.team-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.team-card:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.team-card:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+    .page-header h1 {
+        font-size: 3rem;
+    }
+    
+    .team-grid {
+        gap: 40px;
+    }
+    
+    .resources-grid {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 80px 0 60px;
+    }
+    
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .page-header h1::before,
+    .page-header h1::after {
+        width: 60px;
+    }
+    
+    .page-header h1::after {
+        width: 100px;
+    }
+    
+    .page-header p {
+        font-size: 1rem;
+        margin-top: 25px;
+    }
+    
+    .team-section,
+    .resources-section {
+        padding: 60px 0;
+    }
+    
+    .team-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .card-avatar {
+        height: 280px;
+    }
+    
+    .member-name {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+    
+    .resources-grid {
+        gap: 25px;
+    }
+    
+    .resource-card {
+        padding: 30px 25px;
+    }
+    
+    .resource-card h3 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .card-info {
+        padding: 24px 20px;
+    }
+    
+    .card-info p {
+        font-size: 0.9rem;
+        gap: 8px;
+    }
+    
+    .card-info p strong {
+        min-width: 65px;
+    }
+    
+    .btn-portfolio {
+        width: 100%;
+        padding: 12px 24px;
+    }
+    
+    .resource-icon {
+        font-size: 2.5rem;
+    }
+}

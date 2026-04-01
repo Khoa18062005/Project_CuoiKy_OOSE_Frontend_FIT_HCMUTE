@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ - Nhóm phát triển</title>
+    <link rel="stylesheet" href="css/Global.css">
+    <link rel="stylesheet" href="css/Contact.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="contact-main">
+        <section class="page-header">
+            <div class="container">
+                <h1>Gặp gỡ Đội ngũ Phát triển</h1>
+                <p>Những người đứng sau dự án khách sạn trực tuyến của chúng tôi</p>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <div class="container">
+                <div class="team-grid" id="team-grid">
+                    <!-- Dữ liệu thành viên sẽ được JavaScript tạo động -->
+                </div>
+            </div>
+        </section>
+
+        <section class="resources-section">
+            <div class="container">
+                <h2 class="section-title">Tài nguyên dự án</h2>
+                <div class="resources-grid">
+                    <a href="#" class="resource-card" id="report-link" target="_blank">
+                        <div class="resource-icon">📄</div>
+                        <h3>Báo cáo dự án</h3>
+                        <p>Xem báo cáo chi tiết (PDF)</p>
+                    </a>
+                    <a href="#" class="resource-card" id="github-frontend-link" target="_blank">
+                        <div class="resource-icon">💻</div>
+                        <h3>GitHub Frontend</h3>
+                        <p>Mã nguồn giao diện người dùng</p>
+                    </a>
+                    <a href="#" class="resource-card" id="github-backend-link" target="_blank">
+                        <div class="resource-icon">⚙️</div>
+                        <h3>GitHub Backend</h3>
+                        <p>Mã nguồn xử lý logic và API</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/Contact.js"></script>
+    <script>
+        // Tải header từ header.html (tương tự như index)
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+                if (typeof initHeader === 'function') {
+                    initHeader();
+                }
+                if (typeof initAuth === 'function') {
+                    initAuth();
+                }
+            })
+            .catch(err => console.error("Lỗi tải header:", err));
+    </script>
+</body>
+
+</html>
