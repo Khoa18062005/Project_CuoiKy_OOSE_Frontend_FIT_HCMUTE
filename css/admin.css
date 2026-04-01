@@ -249,6 +249,8 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
+    font-size: 18px;
+    padding: 10px 24px;
 }
 .filter-btn.active {
     background: #ef4136;
