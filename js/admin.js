@@ -79,6 +79,39 @@ class ApiService {
             return [];
         }
     }
+
+    // API: Lấy danh sách tất cả phòng (CÓ HỖ TRỢ LỌC THEO NGÀY)
+    async getAllRooms(dateString = '') {
+        try {
+            let url = `${this.baseUrl}/rooms`;
+            if (dateString) {
+                url += `?date=${dateString}`;
+            }
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách phòng:", error);
+            return [];
+        }
+    }
+
+    // API: Cập nhật thông tin phòng
+    async updateRoom(roomId, roomData) {
+        try {
+            const response = await fetch(`${this.baseUrl}/rooms/${roomId}`, {
+                method: 'PUT',
+                headers: this.getHeaders(),
+                body: JSON.stringify(roomData)
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi cập nhật phòng:", error);
+            throw error;
+        }
+    }
 }
 
 /**
@@ -88,6 +121,7 @@ class AdminDashboard {
     constructor() {
         this.api = new ApiService();
         this.revenueChartInstance = null; // Lưu trữ instance của Chart.js
+        this.roomsData = []; // Lưu trữ dữ liệu phòng tại local
         this.init();
     }
 
@@ -98,6 +132,15 @@ class AdminDashboard {
 
         // Tải dữ liệu mặc định khi vừa vào trang (Tab Doanh thu - period: week)
         this.loadRevenueData('week');
+
+        // Set ngày mặc định cho bộ lọc phòng là hôm nay
+        const roomViewDate = document.getElementById('roomViewDate');
+        if (roomViewDate) {
+            const today = new Date();
+            const offset = today.getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(today - offset)).toISOString().slice(0, -1);
+            roomViewDate.value = localISOTime.split('T')[0];
+        }
     }
 
     // 1. Kiểm tra đăng nhập
@@ -176,7 +219,7 @@ class AdminDashboard {
             });
         }
 
-        // --- SỰ KIỆN CHO TAB BOOKING ---
+        // Sự kiện lọc Booking
         const statusFilter = document.getElementById('statusFilter');
         if (statusFilter) {
             statusFilter.addEventListener('change', () => {
@@ -186,13 +229,30 @@ class AdminDashboard {
 
         const searchBooking = document.getElementById('searchBooking');
         if (searchBooking) {
-            // Dùng setTimeout (Debounce) để người dùng gõ xong mới gọi API, tránh gọi liên tục gây quá tải server
+            // Dùng setTimeout (Debounce) để người dùng gõ xong mới gọi API
             let timeout = null;
             searchBooking.addEventListener('input', () => {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     this.loadBookings();
                 }, 500);
+            });
+        }
+
+        // SỰ KIỆN MỚI: Bắt sự kiện đổi ngày xem phòng
+        const roomViewDate = document.getElementById('roomViewDate');
+        if (roomViewDate) {
+            roomViewDate.addEventListener('change', (e) => {
+                this.loadRooms(e.target.value);
+            });
+        }
+
+        // Sự kiện Submit Form cập nhật phòng
+        const roomForm = document.getElementById('roomForm');
+        if (roomForm) {
+            roomForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.submitRoomUpdate();
             });
         }
 
@@ -230,8 +290,11 @@ class AdminDashboard {
             this.loadPotentialCustomers();
         } else if (tabId === 'booking-list') {
             this.loadBookings();
+        } else if (tabId === 'room-management') {
+            // Lấy ngày hiện tại trên input để tải
+            const dateStr = document.getElementById('roomViewDate')?.value || '';
+            this.loadRooms(dateStr);
         }
-        // else if (tabId === 'room-management') this.loadRooms();
     }
 
     // 5. Xử lý logic nghiệp vụ: Doanh Thu
@@ -315,7 +378,7 @@ class AdminDashboard {
         if (!tableBody) return;
 
         // Bật loading
-        tableBody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
 
         const status = document.getElementById('statusFilter').value;
         const keyword = document.getElementById('searchBooking').value;
@@ -336,7 +399,6 @@ class AdminDashboard {
             let roomDisplay = "N/A";
             let checkinDisplay = "N/A";
             let checkoutDisplay = "N/A";
-            let nightsDisplay = "0";
 
             if (booking.details && booking.details.length > 0) {
                 // Lấy tất cả các tên phòng và nối chúng lại bằng dấu phẩy
@@ -346,7 +408,6 @@ class AdminDashboard {
                 const firstDetail = booking.details[0];
                 checkinDisplay = this.formatDate(firstDetail.checkinDate);
                 checkoutDisplay = this.formatDate(firstDetail.checkoutDate);
-                nightsDisplay = firstDetail.numberOfNights || 0;
             }
 
             // Xử lý huy hiệu trạng thái (Badge)
@@ -366,19 +427,19 @@ class AdminDashboard {
             }
 
             tr.innerHTML = `
-    <td><strong>#${booking.bookingID}</strong></td>
-    <td>${booking.username || 'N/A'}</td>
-    <td>${booking.phone || 'N/A'}</td>
-    <td>${booking.email || 'N/A'}</td>
-    <td style="max-width: 150px; line-height: 1.4;"><strong>${roomDisplay}</strong></td>
-    <td>${checkinDisplay}</td>
-    <td>${checkoutDisplay}</td>
-    <td style="color: #c53030; font-weight: bold;">${this.formatCurrency(booking.totalPrice || 0)}</td>
-    <td>${statusBadge}</td>
-    <td style="text-align: center;">
-        <button class="btn-small btn-view-detail" style="background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 10px; border-radius: 4px; cursor: pointer; transition: 0.2s;"><i class="fas fa-eye"></i></button>
-    </td>
-`;
+                <td><strong>#${booking.bookingID}</strong></td>
+                <td>${booking.username || 'N/A'}</td>
+                <td>${booking.phone || 'N/A'}</td>
+                <td>${booking.email || 'N/A'}</td>
+                <td style="max-width: 150px; line-height: 1.4;"><strong>${roomDisplay}</strong></td>
+                <td>${checkinDisplay}</td>
+                <td>${checkoutDisplay}</td>
+                <td style="color: #c53030; font-weight: bold;">${this.formatCurrency(booking.totalPrice || 0)}</td>
+                <td>${statusBadge}</td>
+                <td style="text-align: center;">
+                    <button class="btn-small btn-view-detail" style="background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 10px; border-radius: 4px; cursor: pointer; transition: 0.2s;"><i class="fas fa-eye"></i></button>
+                </td>
+            `;
 
             // Bắt sự kiện click vào nút xem chi tiết
             const viewBtn = tr.querySelector('.btn-view-detail');
@@ -439,11 +500,196 @@ class AdminDashboard {
             </div>
         `;
 
-        // Hiển thị modal
         modal.style.display = 'flex';
     }
 
-    // 9. Cấu hình Chart.js với Tone Cam Vàng
+    // 9. Xử lý logic nghiệp vụ: Quản lý Phòng
+    async loadRooms(dateString = '') {
+        const roomsGrid = document.getElementById('roomsGrid');
+        if (!roomsGrid) return;
+
+        roomsGrid.innerHTML = '<div style="text-align:center; width: 100%; padding: 20px;">Đang tải dữ liệu phòng... <i class="fas fa-spinner fa-spin"></i></div>';
+
+        const rooms = await this.api.getAllRooms(dateString);
+        this.roomsData = rooms;
+
+        if (!rooms || rooms.length === 0) {
+            roomsGrid.innerHTML = '<div style="text-align:center; width: 100%; padding: 20px;">Không có dữ liệu phòng.</div>';
+            return;
+        }
+
+        this.renderRoomsList(rooms);
+    }
+
+    renderRoomsList(rooms) {
+        const roomsGrid = document.getElementById('roomsGrid');
+        let total = rooms.length;
+        let available = 0;
+        let booked = 0;
+        let maintenance = 0;
+
+        roomsGrid.innerHTML = '';
+
+        rooms.forEach(room => {
+            const status = room.status?.toLowerCase() || 'available';
+
+            // Đếm thống kê
+            if (status === 'available') available++;
+            else if (status === 'booked') booked++;
+            else if (status === 'maintenance') maintenance++;
+
+            // Set màu sắc và icon 
+            let statusText = '';
+            let statusIcon = '';
+            let statusBgColor = '';
+            let statusTextColor = '';
+
+            switch (status) {
+                case 'available':
+                    statusText = 'Còn trống';
+                    statusIcon = 'fa-check-circle';
+                    statusBgColor = '#d4edda';
+                    statusTextColor = '#155724';
+                    break;
+                case 'booked':
+                    statusText = 'Đã đặt';
+                    statusIcon = 'fa-lock';
+                    statusBgColor = '#f8d7da';
+                    statusTextColor = '#721c24';
+                    break;
+                case 'maintenance':
+                    statusText = 'Bảo trì';
+                    statusIcon = 'fa-tools';
+                    statusBgColor = '#fff3cd';
+                    statusTextColor = '#856404';
+                    break;
+                case 'inactive':
+                    statusText = 'Ngừng kinh doanh';
+                    statusIcon = 'fa-ban';
+                    statusBgColor = '#e2e3e5';
+                    statusTextColor = '#383d41';
+                    break;
+                default:
+                    statusText = status;
+                    statusBgColor = '#e2e3e5';
+                    statusTextColor = '#383d41';
+            }
+
+            const roomCard = document.createElement('div');
+            roomCard.style.border = '1px solid #e0e0e0';
+            roomCard.style.borderRadius = '8px';
+            roomCard.style.padding = '15px';
+            roomCard.style.backgroundColor = '#fff';
+            roomCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+            roomCard.style.cursor = 'pointer';
+            roomCard.style.transition = '0.3s';
+
+            const badgeStyle = `background-color: ${statusBgColor}; color: ${statusTextColor}; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;`;
+
+            roomCard.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                    <h3 style="margin: 0; color: #2c3e50;">P. ${room.roomNumber}</h3>
+                    <span style="${badgeStyle}"><i class="fas ${statusIcon}"></i> ${statusText}</span>
+                </div>
+                <div style="font-size: 14px; color: #555;">
+                    <p style="margin: 5px 0;"><strong>Loại:</strong> <span style="font-weight: 600;">${room.typeName}</span></p>
+                    <p style="margin: 5px 0;"><strong>Giá:</strong> <span style="color: #c53030; font-weight:bold;">${this.formatCurrency(room.priceRoom)}</span></p>
+                    <p style="margin: 5px 0;"><strong>Sức chứa:</strong> <i class="fas fa-user"></i> ${room.occupancy}</p>
+                </div>
+            `;
+
+            roomCard.addEventListener('mouseover', () => roomCard.style.boxShadow = '0 5px 15px rgba(0,0,0,0.15)');
+            roomCard.addEventListener('mouseout', () => roomCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)');
+            roomCard.addEventListener('click', () => this.showRoomModal(room));
+
+            roomsGrid.appendChild(roomCard);
+        });
+
+        // Cập nhật thống kê header của tab
+        document.getElementById('totalRooms').innerText = total;
+        document.getElementById('availableRooms').innerText = available;
+        document.getElementById('bookedRoomsStat').innerText = booked;
+        document.getElementById('maintenanceRooms').innerText = maintenance;
+
+        roomsGrid.style.display = 'grid';
+        roomsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(240px, 1fr))';
+        roomsGrid.style.gap = '20px';
+    }
+
+    showRoomModal(room) {
+        const modal = document.getElementById('roomModal');
+        if (!modal) return;
+
+        document.getElementById('roomId').value = room.roomID;
+        document.getElementById('roomName').value = room.roomNumber;
+        document.getElementById('roomName').disabled = true;
+
+        // Select Loại phòng
+        const typeSelect = document.getElementById('roomType');
+        for (let i = 0; i < typeSelect.options.length; i++) {
+            if (typeSelect.options[i].text.trim() === room.typeName?.trim()) {
+                typeSelect.selectedIndex = i;
+                break;
+            }
+        }
+
+        document.getElementById('roomPrice').value = room.priceRoom;
+        document.getElementById('roomPrice').disabled = true;
+        document.getElementById('roomCapacity').value = room.occupancy;
+        document.getElementById('roomCapacity').disabled = true;
+
+        // Nếu phòng hiện tại đang được Booked trên UI, trong Modal chỉ hiển thị nó ở trạng thái vật lý là Available
+        let physicalStatus = room.status?.toLowerCase() || 'available';
+        if (physicalStatus === 'booked') {
+            physicalStatus = 'available';
+        }
+        document.getElementById('roomStatus').value = physicalStatus;
+
+        modal.style.display = 'flex';
+    }
+
+    async submitRoomUpdate() {
+        const roomId = document.getElementById('roomId').value;
+        const status = document.getElementById('roomStatus').value;
+
+        const typeSelect = document.getElementById('roomType');
+        let typeId = 0;
+
+        // Map Type ID dựa theo CSDL
+        const typeName = typeSelect.options[typeSelect.selectedIndex].text.trim();
+        if (typeName === 'Basic') typeId = 1;
+        if (typeName === 'Superior') typeId = 2;
+        if (typeName === 'Deluxe') typeId = 3;
+        if (typeName === 'Royal') typeId = 4;
+        if (typeName === 'Junior Suite') typeId = 5;
+        if (typeName === 'Family Suite') typeId = 6;
+
+        const updateData = {
+            typeID: typeId,
+            status: status
+        };
+
+        const btnSave = document.querySelector('.btn-save');
+        const originalText = btnSave.innerHTML;
+        btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+        btnSave.disabled = true;
+
+        try {
+            await this.api.updateRoom(roomId, updateData);
+            alert("Cập nhật thông tin phòng thành công!");
+            document.getElementById('roomModal').style.display = 'none';
+            // Lấy lại ngày đang chọn để refresh đúng dữ liệu
+            const dateStr = document.getElementById('roomViewDate')?.value || '';
+            this.loadRooms(dateStr);
+        } catch (error) {
+            alert("Cập nhật thất bại. Vui lòng thử lại!");
+        } finally {
+            btnSave.innerHTML = originalText;
+            btnSave.disabled = false;
+        }
+    }
+
+    // 10. Cấu hình Chart.js
     renderChart(labels, data, period) {
         const canvas = document.getElementById('revenueChart');
         if (!canvas) return;
@@ -508,17 +754,13 @@ class AdminDashboard {
     }
 
     // --- CÁC HÀM TIỆN ÍCH (UTILITIES) ---
-
-    // Định dạng tiền tệ VNĐ
     formatCurrency(amount) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
     }
 
-    // Định dạng ngày tháng
     formatDate(dateString) {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
-        // Trả về định dạng dd/mm/yyyy
         return date.toLocaleDateString('vi-VN');
     }
 }
