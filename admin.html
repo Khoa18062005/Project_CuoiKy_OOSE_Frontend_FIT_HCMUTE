@@ -1,0 +1,286 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+        <title>Quản trị khách sạn | Admin Dashboard</title>
+        <link rel="stylesheet" href="css/admin.css">
+        <!-- Font Awesome 6 (Free) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <!-- Chart.js cho biểu đồ -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    </head>
+    <body>
+
+        <!-- Mây trang trí 4 góc -->
+        <div class="cloud cloud-1">
+            <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 80C20 80 5 65 5 45C5 28 18 14 35 12C42 5 52 0 64 0C82 0 97 12 103 28C110 23 119 20 130 20C150 20 166 36 166 56C166 76 150 92 130 92H40V80Z" fill="#FEF9E6" stroke="#F7C35C" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="cloud cloud-2">
+            <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 80C20 80 5 65 5 45C5 28 18 14 35 12C42 5 52 0 64 0C82 0 97 12 103 28C110 23 119 20 130 20C150 20 166 36 166 56C166 76 150 92 130 92H40V80Z" fill="#FFF8E7" stroke="#F7C35C" stroke-width="1.5"/>
+            </svg>
+        </div>
+        <div class="cloud cloud-3">
+            <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 80C20 80 5 65 5 45C5 28 18 14 35 12C42 5 52 0 64 0C82 0 97 12 103 28C110 23 119 20 130 20C150 20 166 36 166 56C166 76 150 92 130 92H40V80Z" fill="#FFF3E0" stroke="#F5B642" stroke-width="1.2"/>
+            </svg>
+        </div>
+        <div class="cloud cloud-4">
+            <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 80C20 80 5 65 5 45C5 28 18 14 35 12C42 5 52 0 64 0C82 0 97 12 103 28C110 23 119 20 130 20C150 20 166 36 166 56C166 76 150 92 130 92H40V80Z" fill="#FFF7EA" stroke="#F7B347" stroke-width="1.5"/>
+            </svg>
+        </div>
+
+        <div class="admin-wrapper">
+            <!-- Sidebar điều hướng -->
+            <aside class="admin-sidebar">
+                <div class="sidebar-header">
+                    <i class="fas fa-hotel"></i>
+                    <h3>Hotel<span>Manager</span></h3>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" data-tab="revenue">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Xem tổng doanh thu</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="potential-customers">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Khách hàng tiềm năng</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="room-management">
+                        <i class="fas fa-bed"></i>
+                        <span>Quản lý phòng</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="booking-list">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>DS booking khách hàng</span>
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="admin-info">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin: <strong>Quản lý</strong></span>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                </div>
+            </aside>
+
+            <!-- Main content -->
+            <main class="admin-main">
+                <div class="main-header">
+                    <h1>Bảng điều khiển <span>Khách sạn Mây Vàng</span></h1>
+                    <div class="date-time" id="currentDateTime"></div>
+                </div>
+
+                <!-- Tab Doanh thu (UC14) -->
+                <div id="revenue-tab" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-chart-pie"></i> Thống kê doanh thu</h2>
+                            <div class="revenue-filter">
+                                <button class="filter-btn active" data-period="week">Tuần này</button>
+                                <button class="filter-btn" data-period="month">Tháng này</button>
+                                <button class="filter-btn" data-period="year">Năm nay</button>
+                                <button class="filter-btn" data-period="all">Tất cả</button>
+                            </div>
+                        </div>
+                        <div class="revenue-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                                <div class="stat-info">
+                                    <h3>Tổng doanh thu</h3>
+                                    <p id="totalRevenue">0 VND</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-chart-simple"></i></div>
+                                <div class="stat-info">
+                                    <h3>Số đơn đặt phòng</h3>
+                                    <p id="totalBookings">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-door-closed"></i></div>
+                                <div class="stat-info">
+                                    <h3>Phòng đã đặt</h3>
+                                    <p id="bookedRoomsCount">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                                <div class="stat-info">
+                                    <h3>Doanh thu TB/ngày</h3>
+                                    <p id="avgDailyRevenue">0 VND</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="revenue-chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Khách hàng tiềm năng (UC15) -->
+                <div id="potential-customers-tab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-users"></i> Danh sách khách hàng tiềm năng (UC15)</h2>
+                            <button id="refreshPotentialBtn" class="btn-small"><i class="fas fa-sync-alt"></i> Làm mới</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Số lần đặt</th>
+                                        <th>Tổng chi tiêu</th>
+                                        <th>Hạng thành viên</th>
+                                        <th>Điểm tích lũy</th>
+                                        <th>Đánh giá tiềm năng</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="potentialTableBody">
+                                    <!-- JS render -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Quản lý phòng (UC16) - bao gồm UC12 và UC13 -->
+                <div id="room-management-tab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-door-open"></i> Quản lý phòng (UC16)</h2>
+                            <div class="header-actions">
+                                <button id="addRoomBtn" class="btn-small btn-primary"><i class="fas fa-plus"></i> Thêm phòng mới</button>
+                            </div>
+                        </div>
+                        <div class="rooms-stats-summary">
+                            <div class="mini-stat">
+                                <span>Tổng số phòng:</span>
+                                <strong id="totalRooms">0</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Còn trống:</span>
+                                <strong id="availableRooms">0</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Đã đặt:</span>
+                                <strong id="bookedRoomsStat">0</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Bảo trì:</span>
+                                <strong id="maintenanceRooms">0</strong>
+                            </div>
+                        </div>
+                        <div class="rooms-grid" id="roomsGrid">
+                            <!-- danh sách phòng động -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Danh sách booking khách hàng (UC11) -->
+                <div id="booking-list-tab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-receipt"></i> Danh sách booking của khách hàng (UC11)</h2>
+                            <div class="search-wrapper">
+                                <input type="text" id="searchBooking" placeholder="Tìm theo tên, SĐT, email..." class="search-input">
+                                <select id="statusFilter" class="status-filter">
+                                    <option value="all">Tất cả trạng thái</option>
+                                    <option value="confirmed">Đã xác nhận</option>
+                                    <option value="pending">Chờ xử lý</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đặt</th>
+                                        <th>Khách hàng</th>
+                                        <th>SĐT</th>
+                                        <th>Email</th>
+                                        <th>Phòng</th>
+                                        <th>Check-in</th>
+                                        <th>Check-out</th>
+                                        <th>Số đêm</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingTableBody">
+                                    <!-- dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Modal chỉnh sửa phòng (UC13: Điều chỉnh thông tin phòng) -->
+        <div id="roomModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3 id="modalTitle">Chỉnh sửa thông tin phòng</h3>
+                <form id="roomForm">
+                    <input type="hidden" id="roomId">
+                    <div class="form-group">
+                        <label>Số phòng / Tên phòng:</label>
+                        <input type="text" id="roomName" required placeholder="VD: 101, 202...">
+                    </div>
+                    <div class="form-group">
+                        <label>Loại phòng:</label>
+                        <select id="roomType">
+                            <option value="Standard">Standard</option>
+                            <option value="Deluxe">Deluxe</option>
+                            <option value="Suite">Suite</option>
+                            <option value="Family">Family</option>
+                            <option value="VIP">VIP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Giá phòng (VND/đêm):</label>
+                        <input type="number" id="roomPrice" required min="0" step="50000">
+                    </div>
+                    <div class="form-group">
+                        <label>Sức chứa (người):</label>
+                        <input type="number" id="roomCapacity" min="1" max="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái phòng (UC12):</label>
+                        <select id="roomStatus">
+                            <option value="available">🟢 Còn phòng</option>
+                            <option value="booked">🔴 Đã đặt</option>
+                            <option value="maintenance">🛠 Bảo trì</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn-save"><i class="fas fa-save"></i> Lưu thay đổi</button>
+                        <button type="button" id="deleteRoomBtn" class="btn-delete"><i class="fas fa-trash"></i> Xóa phòng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal chi tiết booking -->
+        <div id="bookingDetailModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Chi tiết đặt phòng</h3>
+                <div id="bookingDetailContent"></div>
+            </div>
+        </div>
+
+        <script src="admin.js"></script>
+    </body>
+    </html>
