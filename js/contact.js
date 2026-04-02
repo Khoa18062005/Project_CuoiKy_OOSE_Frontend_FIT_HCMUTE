@@ -2,33 +2,33 @@
 const teamMembers = [
     {
         id: 1,
-        fullName: "Nguyễn Văn An",
-        studentId: "20210001",
-        phone: "0901234567",
-        email: "an.nguyen@example.com",
-        dob: "15/03/2002",
-        avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        portfolioLink: "portfolio-an.html"
+        fullName: "Nguyễn Quốc Khoa",
+        studentId: "23110116",
+        phone: "0379265076",
+        email: "23110116@student.hcmute.edu.vn",
+        dob: "18/06/2005",
+        avatar: "https://res.cloudinary.com/df4ojgg7k/image/upload/v1775093845/bf6f809356d1d78f8ec0_qgqv4e.jpg",
+        portfolioLink: "https://khoa18062005.github.io/Portfolio_NguyenQuocKhoa_FIT_HCMUTE/"
     },
     {
         id: 2,
-        fullName: "Trần Thị Bình",
-        studentId: "20210002",
-        phone: "0912345678",
-        email: "binh.tran@example.com",
-        dob: "22/07/2002",
-        avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        portfolioLink: "portfolio-binh.html"
+        fullName: "Nguyễn Ngọc Thiện",
+        studentId: "23110154",
+        phone: "0866930448",
+        email: "huyalex009@gmail.com",
+        dob: "21/11/2005",
+        avatar: "https://res.cloudinary.com/df4ojgg7k/image/upload/v1775094059/Screenshot_2026-04-02_084025_x2pn0j.png",
+        portfolioLink: "https://thienfolio.onrender.com/"
     },
     {
         id: 3,
-        fullName: "Lê Hoàng Cường",
-        studentId: "20210003",
-        phone: "0923456789",
-        email: "cuong.le@example.com",
-        dob: "10/11/2001",
-        avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-        portfolioLink: "portfolio-cuong.html"
+        fullName: "Nghiêm Phú Đăng Quân",
+        studentId: "23110144",
+        phone: "0374389294",
+        email: "nghiemquan200@gmail.com",
+        dob: "24/12/2005",
+        avatar: "https://res.cloudinary.com/df4ojgg7k/image/upload/v1775094118/3563782641085889523_k79aly.jpg",
+        portfolioLink: "https://resume-zoor.onrender.com/"
     }
 ];
 
