@@ -75,9 +75,9 @@ function setResourceLinks() {
     const backendLink = document.getElementById('github-backend-link');
 
     // Thay thế các link dưới đây bằng link thực tế của dự án
-    if (reportLink) reportLink.href = "https://example.com/report.pdf";
-    if (frontendLink) frontendLink.href = "https://github.com/yourusername/frontend-repo";
-    if (backendLink) backendLink.href = "https://github.com/yourusername/backend-repo";
+    if (reportLink) reportLink.href = "https://drive.google.com/file/d/1frUJwEACV2-hDCAr3PH6sapHUiYX3MrO/view?usp=sharing";
+    if (frontendLink) frontendLink.href = "https://github.com/Khoa18062005/Project_CuoiKy_OOSE_Frontend_FIT_HCMUTE";
+    if (backendLink) backendLink.href = "https://github.com/Khoa18062005/Project_CuoiKy_OOSE_FIT_HCMUTE";
 }
 
 // Khởi tạo trang
