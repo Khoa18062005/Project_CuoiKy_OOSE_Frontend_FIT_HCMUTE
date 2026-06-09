@@ -41,22 +41,27 @@
                             <strong id="sidebarPoint">0</strong>
                         </div>
 
-                        <!-- Navigation Tabs (UC17: phân hệ gồm UC09 / UC10 / UC08) -->
+                        <!-- Navigation Tabs -->
                         <nav class="profile-nav">
                             <ul id="profile-tabs">
                                 <li>
                                     <a href="#" data-target="tab-personal" class="active">
-                                        <i class="fas fa-user"></i> Thông tin cá nhân
+                                        Thông tin cá nhân
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" data-target="tab-password">
+                                        Đổi mật khẩu
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" data-target="tab-membership">
-                                        <i class="fas fa-medal"></i> Hạng thành viên
+                                        Hạng thành viên
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" data-target="tab-history">
-                                        <i class="fas fa-clock-rotate-left"></i> Lịch sử đặt phòng
+                                        Lịch sử đặt phòng
                                     </a>
                                 </li>
                             </ul>
@@ -78,12 +83,11 @@
                         <form id="profileForm" class="profile-form">
                             <div class="avatar-upload-box">
                                 <label class="avatar-upload-label">
-                                    <i class="fas fa-image"></i> Ảnh đại diện
+                                    Ảnh đại diện
                                 </label>
 
                                 <div class="avatar-upload-inner">
                                     <label for="avatarFile" class="avatar-file-trigger">
-                                        <i class="fas fa-upload"></i>
                                         <span>Chọn ảnh từ máy tính</span>
                                     </label>
                                     <input type="file" id="avatarFile" accept="image/*">
@@ -106,28 +110,75 @@
                             <div class="form-grid">
                                 <div class="input-group">
                                     <label>Tên đăng nhập</label>
-                                    <input type="text" id="username" placeholder="Nhập tên đăng nhập">
+                                    <input type="text" id="username" placeholder="Nhập tên đăng nhập" required maxlength="50">
                                 </div>
 
                                 <div class="input-group">
                                     <label>Email</label>
-                                    <input type="email" id="email" placeholder="Nhập email">
+                                    <input type="email" id="email" placeholder="Nhập email" required maxlength="100">
                                 </div>
 
                                 <div class="input-group">
                                     <label>Số điện thoại</label>
-                                    <input type="tel" id="phone" placeholder="Nhập số điện thoại">
+                                    <input type="tel" id="phone" placeholder="Nhập số điện thoại" required pattern="^[0-9]{10}$" maxlength="10" title="Số điện thoại phải đúng 10 chữ số" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 </div>
 
                                 <div class="input-group">
                                     <label>Ngày sinh</label>
-                                    <input type="date" id="dateOfBirth">
+                                    <input type="date" id="dateOfBirth" required max="2010-01-01">
                                 </div>
                             </div>
 
                             <div class="profile-form-actions">
-                                <button type="submit" class="btn-save-profile">
-                                    <i class="fas fa-floppy-disk"></i> Lưu thay đổi
+                                <button type="submit" id="btnSaveProfile" class="btn-save-profile">
+                                    Lưu thay đổi
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Change Password -->
+                    <section class="content-card tab-content" id="tab-password" style="display: none;">
+                        <div class="card-header">
+                            <div>
+                                <h3>Đổi mật khẩu</h3>
+                                <p>Đảm bảo tài khoản của bạn đang sử dụng một mật khẩu mạnh và an toàn.</p>
+                            </div>
+                        </div>
+
+                        <form id="changePasswordForm" class="profile-form">
+                            <div class="form-grid" style="grid-template-columns: 1fr;">
+                                <div class="input-group">
+                                    <label>Mật khẩu hiện tại</label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="oldPassword" placeholder="Nhập mật khẩu hiện tại" required minlength="6">
+                                        <i class="fas fa-eye-slash toggle-password" data-target="oldPassword" style="cursor: pointer;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Mật khẩu mới</label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới" required minlength="6">
+                                        <i class="fas fa-eye-slash toggle-password" data-target="newPassword" style="cursor: pointer;"></i>
+                                    </div>
+                                    <div class="password-hint" style="margin-top: 8px; font-size: 0.85rem; color: #64748b;">
+                                        Gợi ý: Mật khẩu nên dài ít nhất 6 ký tự, kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt để đảm bảo an toàn.
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Xác nhận mật khẩu mới</label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu mới" required minlength="6">
+                                        <i class="fas fa-eye-slash toggle-password" data-target="confirmPassword" style="cursor: pointer;"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-form-actions">
+                                <button type="submit" id="btnChangePassword" class="btn-save-profile">
+                                    Cập nhật mật khẩu
                                 </button>
                             </div>
                         </form>
@@ -158,13 +209,13 @@
                         </div>
 
                         <div class="membership-benefits-panel">
-                            <h4><i class="fas fa-gift"></i> Quyền lợi đang áp dụng</h4>
+                            <h4>Quyền lợi đang áp dụng</h4>
                             <p id="membershipBenefitsText">Đang tải quyền lợi thành viên...</p>
                         </div>
 
                         <!-- Bảng phân hạng theo doc (Bảng 03) -->
                         <div class="tier-table-panel">
-                            <h4><i class="fas fa-layer-group"></i> Bảng phân hạng thành viên</h4>
+                            <h4>Bảng phân hạng thành viên</h4>
                             <div class="tier-table-scroll">
                                 <table class="tier-table">
                                     <thead>

@@ -144,20 +144,24 @@ function initAuth() {
 
     if (logoutBtn && !logoutBtn.dataset.bound) {
         logoutBtn.dataset.bound = "true";
-        logoutBtn.addEventListener('click', () => {
-            const confirmed = confirm("Bạn có chắc chắn muốn đăng xuất?");
-            if (!confirmed) return;
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            notify.confirm(
+                "Đăng xuất",
+                "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?",
+                () => {
+                    localStorage.removeItem('current_user');
+                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('current_avatar');
+                    localStorage.removeItem('current_tier');
 
-            localStorage.removeItem('current_user');
-            localStorage.removeItem('jwt_token');
-            localStorage.removeItem('current_avatar');
-            localStorage.removeItem('current_tier');
+                    notifySafe("Đăng xuất thành công!", "success");
 
-            notifySafe("Đăng xuất thành công!", "success");
-
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 500);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 500);
+                }
+            );
         });
     }
 

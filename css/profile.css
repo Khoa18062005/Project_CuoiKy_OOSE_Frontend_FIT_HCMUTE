@@ -52,6 +52,14 @@
     padding: 0 20px;
     position: relative;
     z-index: 3;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+.profile-wrapper.loaded {
+    opacity: 1;
+    visibility: visible;
 }
 
 .profile-grid {

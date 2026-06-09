@@ -5,6 +5,7 @@ class ProfileService {
         this.token = localStorage.getItem("jwt_token");
 
         this.form = document.getElementById("profileForm");
+        this.changePasswordForm = document.getElementById("changePasswordForm");
         this.avatarInput = document.getElementById("avatar");
         this.avatarFileInput = document.getElementById("avatarFile");
         this.uploadAvatarBtn = document.getElementById("uploadAvatarBtn");
@@ -39,6 +40,10 @@ class ProfileService {
     bindEvents() {
         if (this.form) {
             this.form.addEventListener("submit", (e) => this.handleUpdateProfile(e));
+        }
+
+        if (this.changePasswordForm) {
+            this.changePasswordForm.addEventListener("submit", (e) => this.handleChangePassword(e));
         }
 
         if (this.uploadAvatarBtn) {
@@ -202,26 +207,29 @@ class ProfileService {
         document.getElementById("sidebarUsername").innerText = profile.username || "--";
         document.getElementById("sidebarEmail").innerText = profile.email || "--";
         this.applySidebarTier(tier);
-        document.getElementById("sidebarPoint").innerText = point.toLocaleString("vi-VN");
+        document.getElementById("sidebarTier").textContent = tier;
+        document.getElementById("sidebarPoint").textContent = point;
 
         // Tab Hạng thành viên
-        document.getElementById("membershipTier").innerText = tier;
-        document.getElementById("membershipPoint").innerText = point.toLocaleString("vi-VN");
-        document.getElementById("membershipDiscount").innerText = discount;
-        document.getElementById("membershipBenefitsText").innerText = benefits;
-        this.highlightTierRow(tier);
+        document.getElementById("membershipTier").textContent = tier;
+        document.getElementById("membershipPoint").textContent = point;
+        document.getElementById("membershipDiscount").textContent = discount;
+        document.getElementById("membershipBenefitsText").textContent = benefits;
+        
+        document.querySelector('.profile-wrapper').classList.add('loaded');
+        this.updateTierTable(tier);
 
         const finalAvatar = this.getAvatarUrl(profile.avatar || "");
         this.avatarPreview.src = finalAvatar;
 
         localStorage.setItem("current_user", profile.username || "");
         localStorage.setItem("current_avatar", profile.avatar || "");
-        localStorage.setItem("current_tier", tier);
+        localStorage.setItem("current_tier", tierName);
 
         this.updateHeaderUI({
             username: profile.username || "User",
             avatar: profile.avatar || "",
-            tier: tier
+            tier: tierName
         });
     }
 
@@ -240,7 +248,7 @@ class ProfileService {
         return "tier-bronze";
     }
 
-    highlightTierRow(tier) {
+    updateTierTable(tier) {
         const rows = document.querySelectorAll(".tier-table tr[data-tier]");
         const key = this.tierClass(tier).replace("tier-", "");
         rows.forEach(r => {
@@ -271,6 +279,12 @@ class ProfileService {
 
     async handleUpdateProfile(e) {
         e.preventDefault();
+
+        const btnSubmit = document.getElementById("btnSaveProfile");
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = "Đang lưu...";
+        }
 
         const payload = {
             username: document.getElementById("username").value.trim(),
@@ -310,6 +324,65 @@ class ProfileService {
         } catch (error) {
             console.error(error);
             notify.show("Không thể kết nối để cập nhật hồ sơ", "error");
+        } finally {
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = "Lưu thay đổi";
+            }
+        }
+    }
+
+    async handleChangePassword(e) {
+        e.preventDefault();
+
+        const btnSubmit = document.getElementById("btnChangePassword");
+        const oldPassword = document.getElementById("oldPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (newPassword !== confirmPassword) {
+            notify.show("Mật khẩu mới và xác nhận mật khẩu không khớp", "error");
+            return;
+        }
+
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = "Đang xử lý...";
+        }
+
+        const payload = {
+            oldPassword: oldPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword
+        };
+
+        try {
+            const response = await fetch(`${this.baseUrl}/me/password`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${this.token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                notify.show(result.message || "Đổi mật khẩu thất bại", "error");
+                return;
+            }
+
+            notify.show("Đổi mật khẩu thành công!", "success");
+            this.changePasswordForm.reset();
+        } catch (error) {
+            console.error(error);
+            notify.show("Không thể kết nối để đổi mật khẩu", "error");
+        } finally {
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = "Cập nhật mật khẩu";
+            }
         }
     }
 
@@ -393,11 +466,17 @@ class ProfileService {
                         </div>
 
                         <div class="booking-total">
-                            Tổng thanh toán:
-                            <strong>${this.formatMoney(booking.totalPrice)}</strong>
+                            <div class="booking-price">
+                                <span>Tổng thanh toán:</span>
+                                <strong>${booking.totalPrice.toLocaleString()} VNĐ</strong>
+                            </div>
+                            ${booking.discountAmount > 0 ? `
+                            <div style="color: #10b981; font-weight: 500; font-size: 0.95rem; text-align: right; margin-top: 4px;">
+                                Đã giảm ${booking.discountAmount.toLocaleString()} VNĐ từ ưu đãi thành viên
+                            </div>` : ''}
                         </div>
 
-                        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        <div class="booking-footer" style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
                             ${this.renderBookingHint(booking)}
                             ${booking.canRepay ? `
                                 <button 
@@ -406,6 +485,13 @@ class ProfileService {
                                     data-booking-id="${booking.bookingID}"
                                     onclick="profileService.handleRepayBooking(${booking.bookingID})">
                                     Thanh toán lại
+                                </button>
+                                <button 
+                                    type="button"
+                                    class="btn-save-profile"
+                                    style="background: #ef4444; box-shadow: 0 6px 16px rgba(239,68,68,0.22);"
+                                    onclick="profileService.handleCancelBooking(${booking.bookingID})">
+                                    Hủy đặt phòng
                                 </button>
                             ` : ""}
                         </div>
@@ -474,6 +560,36 @@ class ProfileService {
             console.error(error);
             notify.show("Lỗi kết nối khi thanh toán lại", "error");
         }
+    }
+
+    async handleCancelBooking(bookingId) {
+        notify.confirm(
+            "Xác nhận hủy đặt phòng",
+            "Bạn có chắc chắn muốn hủy đơn đặt phòng này không? Hành động này không thể hoàn tác.",
+            async () => {
+                try {
+                    const response = await fetch(`${this.baseUrl}/me/bookings/${bookingId}/cancel`, {
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${this.token}`
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        notify.show(result.message || "Không thể hủy đơn đặt phòng", "error");
+                        return;
+                    }
+
+                    notify.show("Đã hủy đơn đặt phòng thành công", "success");
+                    await this.loadBookingHistory(); // Tải lại danh sách để cập nhật UI
+                } catch (error) {
+                    console.error(error);
+                    notify.show("Lỗi kết nối khi hủy đơn đặt phòng", "error");
+                }
+            }
+        );
     }
 
     getStatusClass(status) {

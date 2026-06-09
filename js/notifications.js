@@ -28,6 +28,65 @@ class Notifications {
             setTimeout(() => toast.remove(), 400);
         }, 2800);
     }
+
+    confirm(title, message, onConfirm) {
+        let overlay = document.getElementById('custom-confirm-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'custom-confirm-overlay';
+            overlay.className = 'custom-confirm-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        overlay.innerHTML = `
+            <div class="custom-confirm-box">
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <div class="custom-confirm-actions">
+                    <button class="custom-confirm-btn custom-confirm-cancel" id="customConfirmCancel">Hủy bỏ</button>
+                    <button class="custom-confirm-btn custom-confirm-ok" id="customConfirmOk">Đồng ý</button>
+                </div>
+            </div>
+        `;
+
+        setTimeout(() => overlay.classList.add('show'), 10);
+
+        const cancelBtn = document.getElementById('customConfirmCancel');
+        const okBtn = document.getElementById('customConfirmOk');
+
+        const close = () => {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.innerHTML = '', 300);
+        };
+
+        cancelBtn.onclick = close;
+        okBtn.onclick = () => {
+            close();
+            if (typeof onConfirm === 'function') onConfirm();
+        };
+    }
 }
 
 const notify = new Notifications();
+
+// Password Toggle Global Logic
+document.addEventListener("DOMContentLoaded", () => {
+    // Lắng nghe sự kiện click trên document để hỗ trợ cả các phần tử sinh ra động
+    document.body.addEventListener("click", function(e) {
+        if (e.target.classList.contains("toggle-password")) {
+            const targetId = e.target.getAttribute("data-target");
+            const input = document.getElementById(targetId);
+            if (input) {
+                if (input.type === "password") {
+                    input.type = "text";
+                    e.target.classList.remove("fa-eye-slash");
+                    e.target.classList.add("fa-eye");
+                } else {
+                    input.type = "password";
+                    e.target.classList.remove("fa-eye");
+                    e.target.classList.add("fa-eye-slash");
+                }
+            }
+        }
+    });
+});
