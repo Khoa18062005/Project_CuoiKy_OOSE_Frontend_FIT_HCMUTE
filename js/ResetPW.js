@@ -66,7 +66,7 @@ if (emailForm) {
 
 // Xử lý form OTP (Bước 2)
 if (otpForm) {
-    otpForm.addEventListener('submit', (e) => {
+    otpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!otpHandler) {
@@ -81,7 +81,9 @@ if (otpForm) {
             return;
         }
         
-        if (otpHandler.verifyOTP(enteredOTP)) {
+        const isVerified = await otpHandler.verifyOTP(enteredOTP);
+        
+        if (isVerified) {
             alert('✅ Xác thực OTP thành công!');
             showStep(3);
             
@@ -105,7 +107,7 @@ if (otpForm) {
 
 // Xử lý đặt lại mật khẩu (Bước 3)
 if (passwordForm) {
-    passwordForm.addEventListener('submit', (e) => {
+    passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // ĐÃ SỬA: Thêm tham số 'passwordHint' khi khởi tạo
@@ -125,9 +127,24 @@ if (passwordForm) {
             const newPassword = document.getElementById('newPassword')?.value;
             const strength = passwordChecker.checkStrength();
             
-            // Giả lập cập nhật mật khẩu
-            alert(`🎉 Đặt lại mật khẩu thành công!\n\n🔐 Độ mạnh mật khẩu mới: ${strength.feedback}\n\nVui lòng đăng nhập lại.`);
-            window.location.href = 'login.html';
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, newPassword: newPassword })
+                });
+
+                if (response.ok) {
+                    alert(`🎉 Đặt lại mật khẩu thành công!\n\n🔐 Độ mạnh mật khẩu mới: ${strength.feedback}\n\nVui lòng đăng nhập lại.`);
+                    window.location.href = 'login.html';
+                } else {
+                    const errorText = await response.text();
+                    alert(`❌ Đặt lại mật khẩu thất bại: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('Lỗi đặt lại mật khẩu:', error);
+                alert('Không thể kết nối đến server. Hãy kiểm tra Backend đã chạy chưa nhé!');
+            }
         }
     });
 }

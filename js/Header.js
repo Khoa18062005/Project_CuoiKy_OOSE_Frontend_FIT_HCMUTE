@@ -80,22 +80,38 @@ function bindDropdownOutsideClick() {
     });
 }
 
-function updateHeaderUserUI(username, avatar) {
+function applyTierBadge(el, tier) {
+    if (!el) return;
+    const t = (tier || "Bronze");
+    el.innerText = t;
+    el.className = "dropdown-tier";
+    const key = t.toLowerCase();
+    if (key.includes("silver") || key.includes("bạc")) el.classList.add("tier-silver");
+    else if (key.includes("gold") || key.includes("vàng")) el.classList.add("tier-gold");
+    else if (key.includes("platinum") || key.includes("bạch kim")) el.classList.add("tier-platinum");
+}
+
+function updateHeaderUserUI(username, avatar, tier) {
     const authButtons = document.getElementById('auth-buttons');
     const userDropdown = document.getElementById('user-dropdown');
     const displayUsername = document.getElementById('display-username');
     const avatarImg = document.getElementById('header-avatar-img');
+    const dropdownName = document.getElementById('dropdown-username');
+    const dropdownAvatar = document.getElementById('dropdown-avatar-img');
+    const dropdownTier = document.getElementById('dropdown-tier');
 
     if (authButtons) authButtons.style.display = 'none';
     if (userDropdown) userDropdown.style.display = 'block';
 
-    if (displayUsername) {
-        displayUsername.innerText = username || "User";
-    }
+    const finalAvatar = buildAvatarUrl(avatar || "");
 
-    if (avatarImg) {
-        avatarImg.src = buildAvatarUrl(avatar || "");
-    }
+    if (displayUsername) displayUsername.innerText = username || "User";
+    if (dropdownName) dropdownName.innerText = username || "User";
+    if (avatarImg) avatarImg.src = finalAvatar;
+    if (dropdownAvatar) dropdownAvatar.src = finalAvatar;
+
+    const finalTier = tier || localStorage.getItem('current_tier') || "Bronze";
+    applyTierBadge(dropdownTier, finalTier);
 }
 
 function initAuth() {
@@ -106,16 +122,10 @@ function initAuth() {
     const dropdownToggle = document.getElementById('user-dropdown-toggle');
     const currentUser = localStorage.getItem('current_user');
     const currentAvatar = localStorage.getItem('current_avatar');
+    const currentTier = localStorage.getItem('current_tier');
 
     if (currentUser) {
-        if (authButtons) authButtons.style.display = 'none';
-        if (userDropdown) userDropdown.style.display = 'block';
-        if (displayUsername) displayUsername.innerText = currentUser;
-
-        const avatarImg = document.getElementById('header-avatar-img');
-        if (avatarImg) {
-            avatarImg.src = buildAvatarUrl(currentAvatar || "");
-        }
+        updateHeaderUserUI(currentUser, currentAvatar || "", currentTier || "Bronze");
     } else {
         if (authButtons) authButtons.style.display = 'flex';
         if (userDropdown) userDropdown.style.display = 'none';
@@ -126,7 +136,8 @@ function initAuth() {
         dropdownToggle.addEventListener('click', () => {
             const dropdown = document.getElementById('user-dropdown');
             if (dropdown) {
-                dropdown.classList.toggle('open');
+                const open = dropdown.classList.toggle('open');
+                dropdownToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
             }
         });
     }
@@ -140,6 +151,7 @@ function initAuth() {
             localStorage.removeItem('current_user');
             localStorage.removeItem('jwt_token');
             localStorage.removeItem('current_avatar');
+            localStorage.removeItem('current_tier');
 
             notifySafe("Đăng xuất thành công!", "success");
 
@@ -171,8 +183,9 @@ async function loadHeaderProfile() {
 
         localStorage.setItem('current_user', profile.username || "");
         localStorage.setItem('current_avatar', profile.avatar || "");
+        localStorage.setItem('current_tier', profile.membershipTier || "Bronze");
 
-        updateHeaderUserUI(profile.username || "User", profile.avatar || "");
+        updateHeaderUserUI(profile.username || "User", profile.avatar || "", profile.membershipTier || "Bronze");
     } catch (error) {
         console.warn("Không tải được profile header:", error);
     }
@@ -188,9 +201,11 @@ window.addEventListener("profile-updated", (e) => {
     const detail = e.detail || {};
     const username = detail.username || "User";
     const avatar = detail.avatar || "";
+    const tier = detail.tier || localStorage.getItem("current_tier") || "Bronze";
 
     localStorage.setItem("current_user", username);
     localStorage.setItem("current_avatar", avatar);
+    localStorage.setItem("current_tier", tier);
 
-    updateHeaderUserUI(username, avatar);
-});
+    updateHeaderUserUI(username, avatar, tier);
+});

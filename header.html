@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="css/Header.css">
-    <link rel="stylesheet" href="css/Global.css">
+    <link rel="stylesheet" href="css/Header.css?v=2">
+    <link rel="stylesheet" href="css/Global.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Chart.js cho biểu đồ -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -35,50 +35,63 @@
                 </div>
 
                 <div class="user-dropdown" id="user-dropdown" style="display: none;">
-                    <button class="user-dropdown-toggle" id="user-dropdown-toggle" type="button">
-                        <div class="user-avatar-mini" id="header-avatar-mini">
+                    <button class="user-dropdown-toggle" id="user-dropdown-toggle" type="button" aria-haspopup="true"
+                        aria-expanded="false">
+                        <span class="user-avatar-mini" id="header-avatar-mini">
                             <img id="header-avatar-img" src="asset/default-avatar.png" alt="avatar">
-                        </div>
-                        <div class="user-meta">
-                            <span class="user-greeting">Xin chào</span>
+                        </span>
+                        <span class="user-meta">
+                            <span class="user-greeting">Xin chào,</span>
                             <strong id="display-username">User</strong>
-                        </div>
-                        <span class="dropdown-arrow">▾</span>
+                        </span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                     </button>
 
-                    <div class="user-dropdown-menu" id="user-dropdown-menu">
-                        <a href="profile.html" class="dropdown-item">
+                    <div class="user-dropdown-menu" id="user-dropdown-menu" role="menu">
+                        <div class="dropdown-head">
+                            <div class="dropdown-head-avatar">
+                                <img id="dropdown-avatar-img" src="asset/default-avatar.png" alt="avatar">
+                            </div>
+                            <div class="dropdown-head-info">
+                                <strong id="dropdown-username">User</strong>
+                                <span id="dropdown-tier" class="dropdown-tier">Bronze</span>
+                            </div>
+                        </div>
+
+                        <a href="profile.html" class="dropdown-item" role="menuitem">
                             <span class="dropdown-icon"><i class="fas fa-user-circle"></i></span>
                             <span>Hồ sơ cá nhân</span>
                         </a>
 
-                        <a href="profile.html#booking-history-list" class="dropdown-item">
+                        <a href="profile.html#tab-history" class="dropdown-item" role="menuitem">
                             <span class="dropdown-icon"><i class="fas fa-book-open"></i></span>
                             <span>Lịch sử đặt phòng</span>
                         </a>
 
-                        <a href="room.html" class="dropdown-item">
+                        <a href="room.html" class="dropdown-item" role="menuitem">
                             <span class="dropdown-icon"><i class="fas fa-hotel"></i></span>
                             <span>Đặt phòng ngay</span>
                         </a>
 
-                        <hr class="dropdown-divider"> <button id="logout-btn" class="dropdown-item logout-item"
-                            type="button">
+                        <hr class="dropdown-divider">
+
+                        <button id="logout-btn" class="dropdown-item logout-item" type="button" role="menuitem">
                             <span class="dropdown-icon"><i class="fas fa-sign-out-alt"></i></span>
                             <span>Đăng xuất</span>
                         </button>
                     </div>
-
-                    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Mở menu">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
                 </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Mở menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </nav>
     </header>
 
-    <script src="js/Header.js"></script>
+    <script src="js/Header.js?v=2"></script>
 </body>
 
-</html>
+</html>

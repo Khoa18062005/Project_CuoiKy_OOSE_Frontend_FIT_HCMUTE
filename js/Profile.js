@@ -14,7 +14,7 @@ class ProfileService {
         this.init();
     }
 
-    init() {
+    async init() {
         if (!this.token) {
             notify.show("Bạn cần đăng nhập để vào trang hồ sơ", "error");
             setTimeout(() => {
@@ -24,6 +24,14 @@ class ProfileService {
         }
 
         this.bindEvents();
+        
+        // Ẩn màn hình loading, hiện nội dung ngay lập tức để tránh cảm giác "lag"
+        const pageLoading = document.getElementById("page-loading");
+        const mainContent = document.getElementById("main-profile-content");
+        if (pageLoading) pageLoading.style.display = "none";
+        if (mainContent) mainContent.style.display = "block";
+
+        // Tải dữ liệu bất đồng bộ, phần nào xong thì hiện phần đó
         this.loadProfile();
         this.loadBookingHistory();
     }
@@ -40,6 +48,34 @@ class ProfileService {
         if (this.avatarFileInput) {
             this.avatarFileInput.addEventListener("change", () => this.previewLocalAvatar());
         }
+
+        const tabLinks = document.querySelectorAll("#profile-tabs a");
+        tabLinks.forEach(link => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                this.activateTab(link.getAttribute("data-target"));
+            });
+        });
+
+        // Mở đúng tab khi truy cập qua hash (vd: profile.html#tab-history)
+        const applyHash = () => {
+            const hash = (window.location.hash || "").replace("#", "");
+            if (hash && document.getElementById(hash)) {
+                this.activateTab(hash);
+            }
+        };
+        applyHash();
+        window.addEventListener("hashchange", applyHash);
+    }
+
+    activateTab(targetId) {
+        const tabLinks = document.querySelectorAll("#profile-tabs a");
+        tabLinks.forEach(t => {
+            t.classList.toggle("active", t.getAttribute("data-target") === targetId);
+        });
+        document.querySelectorAll(".tab-content").forEach(content => {
+            content.style.display = content.id === targetId ? "block" : "none";
+        });
     }
 
     getAvatarUrl(url) {
@@ -157,46 +193,78 @@ class ProfileService {
         document.getElementById("dateOfBirth").value = profile.dateOfBirth || "";
         document.getElementById("avatar").value = profile.avatar || "";
 
+        const tier = profile.membershipTier || "Bronze";
+        const point = profile.point ?? 0;
+        const discount = `${Math.round((profile.discountRate || 0) * 100)}%`;
+        const benefits = profile.benefits || "Chưa có quyền lợi";
+
+        // Sidebar
         document.getElementById("sidebarUsername").innerText = profile.username || "--";
         document.getElementById("sidebarEmail").innerText = profile.email || "--";
+        this.applySidebarTier(tier);
+        document.getElementById("sidebarPoint").innerText = point.toLocaleString("vi-VN");
 
-        document.getElementById("tierBadge").innerText = profile.membershipTier || "Bronze";
-        document.getElementById("profilePoint").innerText = profile.point ?? 0;
-        document.getElementById("profileBenefits").innerText = profile.benefits || "Chưa có quyền lợi";
-
-        document.getElementById("membershipTier").innerText = profile.membershipTier || "Bronze";
-        document.getElementById("membershipPoint").innerText = profile.point ?? 0;
-        document.getElementById("membershipDiscount").innerText = `${Math.round((profile.discountRate || 0) * 100)}%`;
-        document.getElementById("membershipBenefitsText").innerText = profile.benefits || "Chưa có quyền lợi";
+        // Tab Hạng thành viên
+        document.getElementById("membershipTier").innerText = tier;
+        document.getElementById("membershipPoint").innerText = point.toLocaleString("vi-VN");
+        document.getElementById("membershipDiscount").innerText = discount;
+        document.getElementById("membershipBenefitsText").innerText = benefits;
+        this.highlightTierRow(tier);
 
         const finalAvatar = this.getAvatarUrl(profile.avatar || "");
         this.avatarPreview.src = finalAvatar;
 
         localStorage.setItem("current_user", profile.username || "");
         localStorage.setItem("current_avatar", profile.avatar || "");
+        localStorage.setItem("current_tier", tier);
 
         this.updateHeaderUI({
             username: profile.username || "User",
-            avatar: profile.avatar || ""
+            avatar: profile.avatar || "",
+            tier: tier
+        });
+    }
+
+    applySidebarTier(tier) {
+        const el = document.getElementById("sidebarTier");
+        if (!el) return;
+        el.innerText = tier || "Bronze";
+        el.className = "sidebar-tier " + this.tierClass(tier);
+    }
+
+    tierClass(tier) {
+        const k = (tier || "").toLowerCase();
+        if (k.includes("silver") || k.includes("bạc")) return "tier-silver";
+        if (k.includes("gold") || k.includes("vàng")) return "tier-gold";
+        if (k.includes("platinum") || k.includes("bạch kim")) return "tier-platinum";
+        return "tier-bronze";
+    }
+
+    highlightTierRow(tier) {
+        const rows = document.querySelectorAll(".tier-table tr[data-tier]");
+        const key = this.tierClass(tier).replace("tier-", "");
+        rows.forEach(r => {
+            r.classList.toggle("tier-row-active", r.getAttribute("data-tier") === key);
         });
     }
 
     updateHeaderUI(profile) {
-        const headerName = document.getElementById("display-username");
-        const headerAvatar = document.getElementById("header-avatar-img");
-
-        if (headerName) {
-            headerName.innerText = profile.username || "User";
-        }
-
-        if (headerAvatar) {
-            headerAvatar.src = this.getAvatarUrl(profile.avatar || "");
+        const tier = profile.tier || localStorage.getItem("current_tier") || "Bronze";
+        // Ưu tiên dùng hàm chuẩn của Header nếu đã nạp
+        if (typeof updateHeaderUserUI === "function") {
+            updateHeaderUserUI(profile.username || "User", profile.avatar || "", tier);
+        } else {
+            const headerName = document.getElementById("display-username");
+            const headerAvatar = document.getElementById("header-avatar-img");
+            if (headerName) headerName.innerText = profile.username || "User";
+            if (headerAvatar) headerAvatar.src = this.getAvatarUrl(profile.avatar || "");
         }
 
         window.dispatchEvent(new CustomEvent("profile-updated", {
             detail: {
                 username: profile.username || "User",
-                avatar: profile.avatar || ""
+                avatar: profile.avatar || "",
+                tier: tier
             }
         }));
     }
@@ -467,5 +535,7 @@ class ProfileService {
 let profileService = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    profileService = new ProfileService();
-});
+    if (!profileService) {
+        profileService = new ProfileService();
+    }
+});
