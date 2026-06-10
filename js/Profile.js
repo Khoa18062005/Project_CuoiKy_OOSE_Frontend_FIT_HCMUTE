@@ -224,12 +224,12 @@ class ProfileService {
 
         localStorage.setItem("current_user", profile.username || "");
         localStorage.setItem("current_avatar", profile.avatar || "");
-        localStorage.setItem("current_tier", tierName);
+        localStorage.setItem("current_tier", tier);
 
         this.updateHeaderUI({
             username: profile.username || "User",
             avatar: profile.avatar || "",
-            tier: tierName
+            tier: tier
         });
     }
 

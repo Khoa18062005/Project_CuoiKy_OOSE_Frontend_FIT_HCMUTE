@@ -1,25 +1,38 @@
 class Notifications {
     constructor() {
-        if (!document.getElementById('toast-container')) {
-            const container = document.createElement('div');
-            container.id = 'toast-container';
-            document.body.appendChild(container);
-        }
-        this.container = document.getElementById('toast-container');
+        this.createContainer('top');
+        this.createContainer('bottom');
     }
 
-    show(message, type = 'success') {
+    createContainer(position) {
+        const id = `toast-container-${position}`;
+        if (!document.getElementById(id)) {
+            const container = document.createElement('div');
+            container.id = id;
+            document.body.appendChild(container);
+        }
+    }
+
+    show(message, type = 'success', position = 'top') {
+        let targetContainer = document.getElementById(`toast-container-${position}`);
+        if (!targetContainer) {
+            this.createContainer(position);
+            targetContainer = document.getElementById(`toast-container-${position}`);
+        }
+
         const toast = document.createElement('div');
         toast.className = `toast-custom toast-${type}`;
 
-        const icon = type === 'success' ? '✅' : '❌';
+        const icon = type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : '❌');
 
         toast.innerHTML = `
             <span class="toast-icon">${icon}</span>
             <span class="toast-message">${message}</span>
         `;
 
-        this.container.appendChild(toast);
+        if (targetContainer) {
+            targetContainer.appendChild(toast);
+        }
 
         setTimeout(() => toast.classList.add('show'), 100);
 

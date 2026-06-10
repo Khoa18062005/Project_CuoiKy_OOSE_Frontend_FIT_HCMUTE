@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liên hệ - Nhóm phát triển</title>
     <link rel="stylesheet" href="css/Global.css">
+    <link rel="stylesheet" href="css/Header.css">
     <link rel="stylesheet" href="css/Contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div id="header-placeholder"></div>
+    <script src="js/SharedHeader.js"></script>
 
     <main class="contact-main">
         <section class="page-header">
@@ -55,21 +57,7 @@
 
     <script src="js/Contact.js"></script>
     <script src="js/Header.js"></script>
-    <script>
-        // Tải header từ header.html (tương tự như index)
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-                if (typeof initHeader === 'function') {
-                    initHeader();
-                }
-                if (typeof initAuth === 'function') {
-                    initAuth();
-                }
-            })
-            .catch(err => console.error("Lỗi tải header:", err));
-    </script>
+
 </body>
 
 </html>

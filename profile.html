@@ -13,6 +13,7 @@
 
 <body>
     <div id="header-placeholder"></div>
+    <script src="js/SharedHeader.js"></script>
 
     <main class="profile-page" id="main-profile-content">
         <section class="profile-hero">
@@ -280,28 +281,11 @@
     <script src="js/Profile.js?v=3"></script>
 
     <script>
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-
-                if (typeof initHeader === 'function') initHeader();
-                if (typeof initAuth === 'function') initAuth();
-
-                if (typeof ProfileService === 'function') {
-                    if (typeof profileService === 'undefined' || !profileService) {
-                        profileService = new ProfileService();
-                    }
-                }
-            })
-            .catch(err => {
-                console.error("Lỗi tải header:", err);
-                if (typeof ProfileService === 'function') {
-                    if (typeof profileService === 'undefined' || !profileService) {
-                        profileService = new ProfileService();
-                    }
-                }
-            });
+        if (typeof ProfileService === 'function') {
+            if (typeof profileService === 'undefined' || !profileService) {
+                profileService = new ProfileService();
+            }
+        }
     </script>
 </body>
 

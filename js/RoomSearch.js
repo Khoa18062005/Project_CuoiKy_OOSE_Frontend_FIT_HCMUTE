@@ -38,6 +38,24 @@ class RoomSearchService {
         const guests = form.guests.value;
         const roomType = form.roomType.value;
 
+        // Validation dữ liệu đầu vào
+        if (!checkin) {
+            notify.show("Vui lòng chọn Ngày nhận phòng.", "error");
+            return;
+        }
+        if (!checkout) {
+            notify.show("Vui lòng chọn Ngày trả phòng.", "error");
+            return;
+        }
+
+        const checkinDate = new Date(checkin);
+        const checkoutDate = new Date(checkout);
+        
+        if (checkoutDate <= checkinDate) {
+            notify.show("Ngày trả phòng phải lớn hơn ngày nhận phòng.", "error");
+            return;
+        }
+
         this.lastSearchPayload = { 
             checkin, 
             checkout, 
@@ -88,6 +106,12 @@ class RoomSearchService {
             return;
         }
 
+        if (!result.enough) {
+            container.innerHTML = `<div class="empty-room-state">Rất tiếc! Chỉ còn ${result.totalFound} phòng trống, không đủ ${result.requested} phòng như bạn yêu cầu. Vui lòng tìm kiếm lại với số lượng phòng ít hơn.</div>`;
+            bookingAction.style.display = "none";
+            return;
+        }
+
         result.rooms.forEach(room => {
             const card = document.createElement("div");
             card.className = "room-card-beauty";
@@ -123,14 +147,26 @@ class RoomSearchService {
 
         // Gắn sự kiện cho checkbox
         container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener("change", () => this.handleSelectRoom());
+            cb.addEventListener("change", (e) => this.handleSelectRoom(e));
         });
 
         bookingAction.style.display = "block";
     }
 
-    handleSelectRoom() {
+    handleSelectRoom(e) {
         const checked = document.querySelectorAll('#room-result-list input[type="checkbox"]:checked');
+        const requestedRooms = Number(this.lastSearchPayload.numberOfRooms);
+
+        if (checked.length > requestedRooms) {
+            notify.show(`Bạn chỉ được chọn tối đa ${requestedRooms} phòng như đã yêu cầu.`, "warning", "bottom");
+            if (e && e.target) {
+                e.target.checked = false;
+            }
+            const rechecked = document.querySelectorAll('#room-result-list input[type="checkbox"]:checked');
+            this.selectedRooms = Array.from(rechecked).map(item => Number(item.value));
+            return;
+        }
+
         this.selectedRooms = Array.from(checked).map(item => Number(item.value));
     }
 
@@ -152,12 +188,18 @@ class RoomSearchService {
             return;
         }
 
+        const requestedRooms = Number(this.lastSearchPayload.numberOfRooms);
+        if (this.selectedRooms.length !== requestedRooms) {
+            notify.show(`Vui lòng chọn đúng ${requestedRooms} phòng như đã yêu cầu`, "error");
+            return;
+        }
+
         const payload = {
             checkin: this.lastSearchPayload.checkin,
             checkout: this.lastSearchPayload.checkout,
             roomIds: this.selectedRooms,
             guests: Number(this.lastSearchPayload.guests),
-            numberOfRooms: Number(this.lastSearchPayload.numberOfRooms)
+            numberOfRooms: requestedRooms
         };
 
         try {
