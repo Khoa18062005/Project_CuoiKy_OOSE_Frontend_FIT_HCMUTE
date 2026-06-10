@@ -76,7 +76,7 @@ class LoginService {
 
         } catch (error) {
             console.error("Lỗi kết nối:", error);
-            notify.show("⚠️ Không thể kết nối tới máy chủ Backend.", "error");
+            notify.show("Không thể kết nối tới máy chủ.", "error");
         }
     }
 }

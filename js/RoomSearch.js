@@ -94,6 +94,7 @@ class RoomSearchService {
         const bookingAction = document.getElementById("booking-action");
 
         container.innerHTML = "";
+        container.classList.remove("has-selection");
         this.selectedRooms = [];
 
         summary.innerText = result.enough
@@ -112,9 +113,17 @@ class RoomSearchService {
             return;
         }
 
+        // Cập nhật counter trên thanh booking
+        const requiredCount = document.getElementById("required-count");
+        if (requiredCount) requiredCount.textContent = result.requested;
+        this.updateSelectionUI();
+
         result.rooms.forEach(room => {
             const card = document.createElement("div");
             card.className = "room-card-beauty";
+            card.dataset.roomId = room.roomID;
+            card.dataset.price = room.roomType.priceRoom;
+            card.dataset.roomNumber = room.roomNumber;
             card.innerHTML = `
                 <div class="room-card-top">
                     <div>
@@ -132,42 +141,55 @@ class RoomSearchService {
                     <div><i class="fas fa-users"></i> ${room.roomType.occupancy} khách</div>
                     <div><i class="fas fa-circle-check"></i> ${room.status}</div>
                 </div>
-
-                <label class="room-select-box">
-                    <input type="checkbox" 
-                           value="${room.roomID}" 
-                           data-price="${room.roomType.priceRoom}" 
-                           data-room="${room.roomNumber}">
-                    <span>Chọn phòng này</span>
-                </label>
             `;
 
+            // Click toàn bộ card để chọn / bỏ chọn
+            card.addEventListener("click", () => this.handleCardClick(card));
             container.appendChild(card);
         });
 
-        // Gắn sự kiện cho checkbox
-        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener("change", (e) => this.handleSelectRoom(e));
-        });
-
-        bookingAction.style.display = "block";
+        bookingAction.style.display = "flex";
     }
 
-    handleSelectRoom(e) {
-        const checked = document.querySelectorAll('#room-result-list input[type="checkbox"]:checked');
+    handleCardClick(card) {
+        const roomId = Number(card.dataset.roomId);
         const requestedRooms = Number(this.lastSearchPayload.numberOfRooms);
+        const isSelected = card.classList.contains("room-selected");
 
-        if (checked.length > requestedRooms) {
-            notify.show(`Bạn chỉ được chọn tối đa ${requestedRooms} phòng như đã yêu cầu.`, "warning", "bottom");
-            if (e && e.target) {
-                e.target.checked = false;
+        if (isSelected) {
+            // Bỏ chọn
+            card.classList.remove("room-selected");
+            this.selectedRooms = this.selectedRooms.filter(id => id !== roomId);
+        } else {
+            // Kiểm tra giới hạn
+            if (this.selectedRooms.length >= requestedRooms) {
+                notify.show(
+                    `Bạn chỉ được chọn tối đa ${requestedRooms} phòng (theo số lượng tìm kiếm). Bỏ chọn phòng khác trước khi chọn thêm.`,
+                    "warning",
+                    "bottom"
+                );
+                return;
             }
-            const rechecked = document.querySelectorAll('#room-result-list input[type="checkbox"]:checked');
-            this.selectedRooms = Array.from(rechecked).map(item => Number(item.value));
-            return;
+            card.classList.add("room-selected");
+            this.selectedRooms.push(roomId);
         }
 
-        this.selectedRooms = Array.from(checked).map(item => Number(item.value));
+        this.updateSelectionUI();
+    }
+
+    updateSelectionUI() {
+        const container = document.getElementById("room-result-list");
+        const selectedCount = document.getElementById("selected-count");
+
+        // Toggle lớp dimmed cho các card chưa chọn
+        if (this.selectedRooms.length > 0) {
+            container.classList.add("has-selection");
+        } else {
+            container.classList.remove("has-selection");
+        }
+
+        // Cập nhật counter
+        if (selectedCount) selectedCount.textContent = this.selectedRooms.length;
     }
 
     async handleCreateBooking() {
