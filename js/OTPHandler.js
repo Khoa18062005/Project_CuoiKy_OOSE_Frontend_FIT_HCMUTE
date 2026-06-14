@@ -1,11 +1,17 @@
 // OTPHandler.js - Xử lý logic OTP và timer
 
 class OTPHandler {
-    constructor(otpInputsSelector, timerElementId, resendBtnId, emailInputId = null) {
+    constructor(otpInputsSelector, timerElementId, resendBtnId, emailInputId = null, options = {}) {
         this.otpInputs = document.querySelectorAll(otpInputsSelector);
         this.timerElement = document.getElementById(timerElementId);
         this.resendBtn = document.getElementById(resendBtnId);
         this.emailInput = emailInputId ? document.getElementById(emailInputId) : null;
+
+        // Cho phép tùy biến endpoint (mặc định = luồng quên mật khẩu)
+        this.sendUrl = options.sendUrl || 'http://localhost:8080/api/auth/forgot-password';
+        this.verifyUrl = options.verifyUrl || 'http://localhost:8080/api/auth/verify-otp';
+        // Hàm dựng body gửi OTP (mặc định chỉ gửi { email })
+        this.buildSendBody = options.buildSendBody || ((email) => ({ email }));
 
         this.generatedOTP = '';
         this.userEmail = '';
@@ -55,11 +61,11 @@ class OTPHandler {
         this.userEmail = email;
 
         try {
-            // Gọi đến API chúng ta đã viết ở AuthController
-            const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+            // Gọi API gửi OTP (endpoint + body tùy theo cấu hình)
+            const response = await fetch(this.sendUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
+                body: JSON.stringify(this.buildSendBody(email))
             });
 
             if (response.ok) {
@@ -69,13 +75,17 @@ class OTPHandler {
                 this.resetOTPInputs();
                 if (this.otpInputs.length > 0) this.otpInputs[0].focus();
 
-                console.log("✅ OTP đã được Java gửi đi!");
+                console.log("✅ OTP đã được gửi đi!");
+                return true;
             } else {
-                const errorData = await response.text();
-                alert("Lỗi: " + errorData);
+                let errorData = "";
+                try { errorData = await response.text(); } catch (e) { /* ignore */ }
+                alert("Lỗi: " + (errorData || "Không gửi được mã OTP"));
+                return false;
             }
         } catch (error) {
             alert("Không thể kết nối đến server. Hãy kiểm tra Backend đã chạy chưa nhé!");
+            return false;
         }
     }
 
@@ -116,7 +126,7 @@ class OTPHandler {
 
     async verifyOTP(enteredOTP) {
         try {
-            const response = await fetch('http://localhost:8080/api/auth/verify-otp', {
+            const response = await fetch(this.verifyUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

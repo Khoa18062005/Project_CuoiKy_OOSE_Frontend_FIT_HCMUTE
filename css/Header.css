@@ -329,15 +329,15 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     text-decoration: none;
-    color: #4a5568; /* Màu chữ dịu mắt hơn */
+    color: #334155;
     background: transparent;
     border: none;
     border-radius: 12px;
-    padding: 11px 14px;
-    font-size: 0.94rem;
-    font-weight: 500;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -348,14 +348,20 @@ body {
 }
 
 .dropdown-icon {
-    width: 20px;
-    text-align: center;
-    color: #94a3b8; /* Màu xám nhạt cho icon lúc bình thường */
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border-radius: 10px;
+    color: #64748b;
     font-size: 1.1rem;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .dropdown-item:hover .dropdown-icon {
+    background: rgba(239, 65, 54, 0.1);
     color: #ef4136;
 }
 
@@ -364,7 +370,12 @@ body {
 }
 
 .logout-item:hover {
-    background: rgba(239, 68, 68, 0.08);
+    background: rgba(239, 68, 68, 0.05);
+    color: #dc2626;
+}
+
+.logout-item:hover .dropdown-icon {
+    background: rgba(239, 68, 68, 0.1);
     color: #dc2626;
 }
 

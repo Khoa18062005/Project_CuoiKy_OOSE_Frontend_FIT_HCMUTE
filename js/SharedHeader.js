@@ -49,17 +49,17 @@ const sharedHeaderHTML = `
                         </div>
 
                         <a href="profile.html" class="dropdown-item" role="menuitem">
-                            <span class="dropdown-icon"><i class="fas fa-user-circle"></i></span>
+                            <span class="dropdown-icon"><i class="far fa-user"></i></span>
                             <span>Hồ sơ cá nhân</span>
                         </a>
 
                         <a href="profile.html#tab-history" class="dropdown-item" role="menuitem">
-                            <span class="dropdown-icon"><i class="fas fa-book-open"></i></span>
+                            <span class="dropdown-icon"><i class="far fa-calendar-check"></i></span>
                             <span>Lịch sử đặt phòng</span>
                         </a>
 
                         <a href="room.html" class="dropdown-item" role="menuitem">
-                            <span class="dropdown-icon"><i class="fas fa-hotel"></i></span>
+                            <span class="dropdown-icon"><i class="far fa-compass"></i></span>
                             <span>Đặt phòng ngay</span>
                         </a>
 

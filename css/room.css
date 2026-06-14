@@ -451,6 +451,47 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     line-height: 1.6;
 }
 
+.room-desc i {
+    color: #ef4136;
+    margin-right: 4px;
+}
+
+/* === VIEW BADGE (Tầm nhìn đẹp) === */
+.room-view-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(20, 184, 166, 0.12));
+    color: #0d9488;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.room-view-badge i {
+    margin-right: 4px;
+}
+
+/* === PREMIUM BADGE (ribbon góc trên) === */
+.room-premium-badge {
+    position: absolute;
+    top: -12px;
+    right: 18px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
 .room-badge {
     display: inline-block;
     padding: 6px 12px;

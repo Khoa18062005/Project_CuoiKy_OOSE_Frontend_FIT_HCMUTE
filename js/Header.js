@@ -212,4 +212,10 @@ window.addEventListener("profile-updated", (e) => {
     localStorage.setItem("current_tier", tier);
 
     updateHeaderUserUI(username, avatar, tier);
+});
+
+// Tự động khởi tạo Header và Auth trên mọi trang
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof initHeader === 'function') initHeader();
+    if (typeof initAuth === 'function') initAuth();
 });

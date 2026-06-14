@@ -35,7 +35,7 @@ body {
 /* Toast Containers */
 #toast-container-top {
     position: fixed;
-    top: 90px; /* Nằm dưới thanh Header (header cao tầm 70-80px) */
+    top: 20px;
     right: 20px;
     z-index: 9999;
     display: flex;
@@ -199,4 +199,80 @@ body {
 }
 .custom-confirm-ok:hover {
     background: #dc2626;
+}
+
+/* === Divider "hoặc" + nút Google (dùng chung cho login & register) === */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 18px 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+.auth-divider span {
+    padding: 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.google-btn-container {
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    margin-bottom: 8px;
+}
+
+/* === OTP nhập mã (bước 2 đăng ký) === */
+#reg-step2 .reg-otp-desc {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+#reg-step2 .otp-container {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+#reg-step2 .otp-input {
+    width: 100%;
+    height: 54px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: 0.2s;
+}
+#reg-step2 .otp-input:focus {
+    border-color: #ef4136;
+    box-shadow: 0 0 0 3px rgba(239, 65, 54, 0.12);
+}
+#reg-step2 .otp-timer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+#reg-step2 .resend-btn {
+    background: none;
+    border: none;
+    color: #ef4136;
+    font-weight: 600;
+    cursor: pointer;
+}
+#reg-step2 .resend-btn:disabled {
+    color: #cbd5e1;
+    cursor: not-allowed;
 }

@@ -112,6 +112,37 @@ class ApiService {
             throw error;
         }
     }
+
+    // API: Lấy danh sách đánh giá cho admin
+    async getAdminReviews() {
+        try {
+            // Because there's no specific admin endpoint in our controller, we can use the public one 
+            // OR create an admin endpoint. For now, public endpoint gets all reviews.
+            const response = await fetch(`${this.baseUrl}/reviews/public`, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi tải đánh giá:", error);
+            return [];
+        }
+    }
+
+    // API: Trả lời đánh giá
+    async replyReview(reviewId, replyContent) {
+        try {
+            const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/reply`, {
+                method: 'PUT',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ reply: replyContent })
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi phản hồi đánh giá:", error);
+            throw error;
+        }
+    }
 }
 
 /**
@@ -126,7 +157,8 @@ class AdminDashboard {
     }
 
     init() {
-        this.checkAuth();
+        // Không đủ quyền thì dừng luôn, không chạy tiếp (tránh gọi API admin vô ích)
+        if (!this.checkAuth()) return;
         this.setupClock();
         this.setupEventListeners();
 
@@ -140,16 +172,95 @@ class AdminDashboard {
             const offset = today.getTimezoneOffset() * 60000;
             const localISOTime = (new Date(today - offset)).toISOString().slice(0, -1);
             roomViewDate.value = localISOTime.split('T')[0];
+
+            // Lịch đẹp giống bên client (flatpickr) — vẫn giữ value dạng Y-m-d cho code cũ
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr(roomViewDate, {
+                    locale: 'vn',
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd/m/Y',
+                    altInputClass: 'modern-input flatpickr-alt',
+                    defaultDate: roomViewDate.value,
+                    disableMobile: true
+                });
+            }
+        }
+
+        // Lịch cho khoảng ngày bảo trì trong modal
+        if (typeof flatpickr !== 'undefined') {
+            const fpOpts = {
+                locale: 'vn', dateFormat: 'Y-m-d', altInput: true, altFormat: 'd/m/Y',
+                altInputClass: 'modern-input flatpickr-alt', minDate: 'today', disableMobile: true
+            };
+            const startEl = document.getElementById('maintenanceStart');
+            const endEl = document.getElementById('maintenanceEnd');
+            if (startEl) this.fpMaintStart = flatpickr(startEl, fpOpts);
+            if (endEl) this.fpMaintEnd = flatpickr(endEl, fpOpts);
+        }
+
+        // Nạp danh sách loại phòng cho dropdown trong modal
+        this.loadRoomTypes();
+
+        // Biến các <select> thành dropdown đẹp (custom)
+        ['roomStatusFilter', 'statusFilter', 'roomStatus'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) this.enhanceSelect(el);
+        });
+
+        // Hiện/ẩn ô chọn khoảng ngày bảo trì theo trạng thái được chọn
+        const roomStatusEl = document.getElementById('roomStatus');
+        if (roomStatusEl) {
+            roomStatusEl.addEventListener('change', () => this.toggleMaintenanceDates(roomStatusEl.value));
+        }
+
+        // Click ra ngoài thì đóng mọi dropdown
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.adm-select.open').forEach(w => w.classList.remove('open'));
+        });
+    }
+
+    // Lấy danh sách loại phòng để đổ vào dropdown (luôn đồng bộ với DB, không bị thiếu loại)
+    async loadRoomTypes() {
+        const typeSelect = document.getElementById('roomType');
+        if (!typeSelect) return;
+        try {
+            const res = await fetch(`${this.api.baseUrl}/room-types`);
+            if (!res.ok) return;
+            const types = await res.json();
+            this.roomTypes = types;
+            typeSelect.innerHTML = types
+                .map(t => `<option value="${t.typeID}">${t.typeName}</option>`)
+                .join('');
+
+            // Dựng/cập nhật dropdown đẹp cho ô loại phòng
+            if (typeSelect.dataset.enhanced === 'true' && typeSelect._admRebuild) {
+                typeSelect._admRebuild();
+            } else {
+                this.enhanceSelect(typeSelect);
+            }
+        } catch (err) {
+            console.error('Không tải được danh sách loại phòng:', err);
         }
     }
 
-    // 1. Kiểm tra đăng nhập
+    // 1. Kiểm tra đăng nhập + đúng quyền MANAGER
     checkAuth() {
         const token = localStorage.getItem('jwt_token');
         const user = localStorage.getItem('current_user');
+        const role = localStorage.getItem('role');
 
+        // Chưa đăng nhập -> về trang đăng nhập
         if (!token) {
             window.location.href = 'login.html';
+            return false;
+        }
+
+        // Đăng nhập rồi nhưng không phải quản lý -> đá về trang chủ ngay (không hiện khung admin)
+        if (role !== 'MANAGER') {
+            alert('Bạn không có quyền truy cập trang quản trị.');
+            window.location.href = 'index.html';
+            return false;
         }
 
         // Cập nhật tên Admin trên UI nếu có
@@ -157,6 +268,7 @@ class AdminDashboard {
         if (adminNameEl && user) {
             adminNameEl.innerText = user;
         }
+        return true;
     }
 
     // 2. Cài đặt đồng hồ thời gian thực
@@ -187,14 +299,34 @@ class AdminDashboard {
             });
         });
 
-        // Sự kiện Đăng xuất
+        // Sự kiện Đăng xuất (dùng modal custom thay cho confirm() xấu)
         const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
+        const logoutModal = document.getElementById('logoutConfirmModal');
+        const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
+        const logoutCancelBtn = document.getElementById('logoutCancelBtn');
+
+        if (logoutBtn && logoutModal) {
+            // Mở modal khi bấm nút đăng xuất
             logoutBtn.addEventListener('click', () => {
-                if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi trang quản trị?")) {
-                    localStorage.removeItem('jwt_token');
-                    localStorage.removeItem('current_user');
-                    window.location.href = 'login.html';
+                logoutModal.style.display = 'flex';
+            });
+
+            // Xác nhận đăng xuất
+            logoutConfirmBtn.addEventListener('click', () => {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('current_user');
+                window.location.href = 'login.html';
+            });
+
+            // Hủy bỏ
+            logoutCancelBtn.addEventListener('click', () => {
+                logoutModal.style.display = 'none';
+            });
+
+            // Bấm vùng tối bên ngoài cũng đóng modal
+            logoutModal.addEventListener('click', (e) => {
+                if (e.target === logoutModal) {
+                    logoutModal.style.display = 'none';
                 }
             });
         }
@@ -264,6 +396,15 @@ class AdminDashboard {
             });
         }
 
+        // Sự kiện tạo tài khoản quản lý mới
+        const createManagerForm = document.getElementById('createManagerForm');
+        if (createManagerForm) {
+            createManagerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleCreateManager();
+            });
+        }
+
         // Các sự kiện cho Modal (Tắt modal khi bấm X)
         const closeBtns = document.querySelectorAll('.close');
         closeBtns.forEach(btn => {
@@ -292,6 +433,10 @@ class AdminDashboard {
         }
 
         // Gọi API tương ứng khi chuyển tab
+        if (tabId === 'manager-account') {
+            const msg = document.getElementById('mgrFormMsg');
+            if (msg) msg.innerText = '';
+        }
         if (tabId === 'revenue') {
             this.loadRevenueData('week');
         } else if (tabId === 'potential-customers') {
@@ -302,7 +447,127 @@ class AdminDashboard {
             // Lấy ngày hiện tại trên input để tải
             const dateStr = document.getElementById('roomViewDate')?.value || '';
             this.loadRooms(dateStr);
+        } else if (tabId === 'review-management') {
+            this.loadAdminReviews();
         }
+    }
+
+    // Tạo tài khoản quản lý mới (gọi API /manager/managers)
+    async handleCreateManager() {
+        const username = document.getElementById('mgrUsername').value.trim();
+        const email = document.getElementById('mgrEmail').value.trim();
+        const password = document.getElementById('mgrPassword').value;
+        const msgEl = document.getElementById('mgrFormMsg');
+
+        msgEl.style.color = '#ef4444';
+        msgEl.innerText = '';
+
+        try {
+            const res = await fetch(`${this.api.baseUrl}/manager/managers`, {
+                method: 'POST',
+                headers: this.api.getHeaders(),
+                body: JSON.stringify({ username, email, password })
+            });
+
+            let data = {};
+            try { data = await res.json(); } catch (e) { /* ignore */ }
+
+            if (!res.ok) {
+                if (data.errors && Array.isArray(data.errors)) {
+                    msgEl.innerText = data.errors[0].defaultMessage || 'Dữ liệu không hợp lệ';
+                } else {
+                    msgEl.innerText = data.message || 'Tạo quản lý thất bại';
+                }
+                return;
+            }
+
+            msgEl.style.color = '#16a34a';
+            msgEl.innerText = `Đã tạo tài khoản quản lý "${data.username}" thành công!`;
+            document.getElementById('createManagerForm').reset();
+        } catch (err) {
+            console.error(err);
+            msgEl.innerText = 'Lỗi kết nối tới máy chủ';
+        }
+    }
+
+    // Biến 1 thẻ <select> gốc thành dropdown đẹp (custom), vẫn giữ select gốc để lấy value
+    enhanceSelect(select) {
+        if (!select || select.dataset.enhanced === 'true') return;
+        select.dataset.enhanced = 'true';
+        select.style.display = 'none';
+
+        // Ẩn mũi tên cũ của .select-wrapper (nếu có) để khỏi bị 2 mũi tên
+        if (select.parentElement && select.parentElement.classList.contains('select-wrapper')) {
+            select.parentElement.classList.add('adm-no-arrow');
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'adm-select';
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'adm-select-trigger';
+        const label = document.createElement('span');
+        label.className = 'adm-select-label';
+        const chevron = document.createElement('i');
+        chevron.className = 'fas fa-chevron-down adm-select-chevron';
+        trigger.appendChild(label);
+        trigger.appendChild(chevron);
+
+        const menu = document.createElement('ul');
+        menu.className = 'adm-select-menu';
+
+        const buildOptions = () => {
+            menu.innerHTML = '';
+            Array.from(select.options).forEach(opt => {
+                const li = document.createElement('li');
+                li.className = 'adm-select-opt';
+                li.dataset.value = opt.value;
+                li.textContent = opt.textContent;
+                if (opt.value === select.value) li.classList.add('selected');
+                li.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    wrapper.classList.remove('open');
+                });
+                menu.appendChild(li);
+            });
+        };
+
+        const syncLabel = () => {
+            const sel = select.options[select.selectedIndex];
+            label.textContent = sel ? sel.textContent : '';
+            menu.querySelectorAll('.adm-select-opt').forEach(li => {
+                li.classList.toggle('selected', li.dataset.value === select.value);
+            });
+        };
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.adm-select.open').forEach(w => { if (w !== wrapper) w.classList.remove('open'); });
+            wrapper.classList.toggle('open');
+        });
+
+        // Đồng bộ khi value thay đổi (kể cả khi code set value rồi dispatch 'change')
+        select.addEventListener('change', syncLabel);
+
+        wrapper.appendChild(trigger);
+        wrapper.appendChild(menu);
+        select.parentNode.insertBefore(wrapper, select.nextSibling);
+
+        // Cho phép dựng lại options khi đổ động (vd loại phòng tải từ API)
+        select._admRebuild = () => { buildOptions(); syncLabel(); };
+
+        buildOptions();
+        syncLabel();
+    }
+
+    // Hiện ô chọn khoảng ngày khi trạng thái là bảo trì / ngừng hoạt động
+    toggleMaintenanceDates(status) {
+        const group = document.getElementById('maintenanceDateGroup');
+        if (!group) return;
+        group.style.display = (status === 'maintenance' || status === 'inactive') ? 'block' : 'none';
     }
 
     // 5. Xử lý logic nghiệp vụ: Doanh Thu
@@ -537,7 +802,7 @@ class AdminDashboard {
         const filterValue = document.getElementById('roomStatusFilter')?.value || 'all';
 
         let total = this.roomsData.length;
-        let available = 0, booked = 0, maintenance = 0;
+        let available = 0, booked = 0, maintenance = 0, inactive = 0;
 
         // BƯỚC 1: Tính toán thống kê dựa trên TẤT CẢ dữ liệu (để 4 ô trên cùng luôn đúng)
         this.roomsData.forEach(room => {
@@ -545,12 +810,15 @@ class AdminDashboard {
             if (status === 'available') available++;
             else if (status === 'booked') booked++;
             else if (status === 'maintenance') maintenance++;
+            else if (status === 'inactive') inactive++;
         });
 
         document.getElementById('totalRooms').innerText = total;
         document.getElementById('availableRooms').innerText = available;
         document.getElementById('bookedRoomsStat').innerText = booked;
         document.getElementById('maintenanceRooms').innerText = maintenance;
+        const inactiveEl = document.getElementById('inactiveRooms');
+        if (inactiveEl) inactiveEl.innerText = inactive;
 
         roomsGrid.innerHTML = '';
 
@@ -609,6 +877,7 @@ class AdminDashboard {
                     <p style="margin: 5px 0;"><strong>Loại:</strong> <span style="font-weight: 600;">${room.typeName}</span></p>
                     <p style="margin: 5px 0;"><strong>Giá:</strong> <span style="color: #c53030; font-weight:bold;">${this.formatCurrency(room.priceRoom)}</span></p>
                     <p style="margin: 5px 0;"><strong>Sức chứa:</strong> <i class="fas fa-user"></i> ${room.occupancy}</p>
+                    ${room.description ? `<p style="margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed #eee; font-size: 13px; color: #6b7280; font-style: italic; line-height: 1.5;"><i class="fas fa-mountain-sun" style="color: #0d9488; margin-right: 5px;"></i>${this.escapeHTML(room.description)}</p>` : ''}
                 </div>
             `;
 
@@ -633,14 +902,35 @@ class AdminDashboard {
         document.getElementById('roomName').value = room.roomNumber;
         document.getElementById('roomName').disabled = true;
 
-        // Select Loại phòng
+        // Tính phụ phí riêng của phòng (priceExtra = giá hiển thị - giá gốc loại phòng)
+        // Giá hiển thị (room.priceRoom) = giá gốc loại phòng + priceExtra (view/ngoại cảnh)
+        const currentType = (this.roomTypes || []).find(t => t.typeID === room.typeID);
+        const basePrice = currentType ? currentType.priceRoom : 0;
+        this._currentPriceExtra = room.priceRoom - basePrice; // lưu lại phụ phí riêng của phòng
+        if (this._currentPriceExtra < 0) this._currentPriceExtra = 0; // đề phòng dữ liệu lệch
+
+        // Chọn Loại phòng theo typeID (option value chính là typeID)
         const typeSelect = document.getElementById('roomType');
-        for (let i = 0; i < typeSelect.options.length; i++) {
-            if (typeSelect.options[i].text.trim() === room.typeName?.trim()) {
-                typeSelect.selectedIndex = i;
-                break;
-            }
+
+        // Gỡ handler cũ (nếu có) để tránh chồng sự kiện khi mở modal nhiều lần
+        if (this._onRoomTypeChange) {
+            typeSelect.removeEventListener('change', this._onRoomTypeChange);
         }
+
+        // Đăng ký handler mới: khi đổi loại phòng -> tự cập nhật giá & sức chứa
+        this._onRoomTypeChange = () => {
+            const selectedTypeId = parseInt(typeSelect.value, 10);
+            const selectedType = (this.roomTypes || []).find(t => t.typeID === selectedTypeId);
+            if (selectedType) {
+                // Giá mới = giá gốc loại phòng mới + phụ phí riêng (view/ngoại cảnh) của phòng
+                document.getElementById('roomPrice').value = selectedType.priceRoom + this._currentPriceExtra;
+                document.getElementById('roomCapacity').value = selectedType.occupancy;
+            }
+        };
+        typeSelect.addEventListener('change', this._onRoomTypeChange);
+
+        typeSelect.value = String(room.typeID);
+        typeSelect.dispatchEvent(new Event('change', { bubbles: true })); // cập nhật dropdown đẹp + giá/sức chứa
 
         document.getElementById('roomPrice').value = room.priceRoom;
         document.getElementById('roomPrice').disabled = true;
@@ -652,7 +942,19 @@ class AdminDashboard {
         if (physicalStatus === 'booked') {
             physicalStatus = 'available';
         }
-        document.getElementById('roomStatus').value = physicalStatus;
+        const statusSelect = document.getElementById('roomStatus');
+        statusSelect.value = physicalStatus;
+        statusSelect.dispatchEvent(new Event('change', { bubbles: true })); // cập nhật dropdown đẹp + ẩn/hiện ô ngày
+
+        // Điền sẵn khoảng ngày bảo trì (nếu phòng đang có lịch)
+        if (this.fpMaintStart) {
+            if (room.maintenanceStart) this.fpMaintStart.setDate(room.maintenanceStart, false);
+            else this.fpMaintStart.clear();
+        }
+        if (this.fpMaintEnd) {
+            if (room.maintenanceEnd) this.fpMaintEnd.setDate(room.maintenanceEnd, false);
+            else this.fpMaintEnd.clear();
+        }
 
         modal.style.display = 'flex';
     }
@@ -662,21 +964,22 @@ class AdminDashboard {
         const status = document.getElementById('roomStatus').value;
 
         const typeSelect = document.getElementById('roomType');
-        let typeId = 0;
-
-        // Map Type ID dựa theo CSDL
-        const typeName = typeSelect.options[typeSelect.selectedIndex].text.trim();
-        if (typeName === 'Basic') typeId = 1;
-        if (typeName === 'Superior') typeId = 2;
-        if (typeName === 'Deluxe') typeId = 3;
-        if (typeName === 'Royal') typeId = 4;
-        if (typeName === 'Junior Suite') typeId = 5;
-        if (typeName === 'Family Suite') typeId = 6;
+        // option value chính là typeID (đổ từ /api/room-types) -> không cần map tay, không lo thiếu loại
+        const typeId = parseInt(typeSelect.value, 10) || 0;
 
         const updateData = {
             typeID: typeId,
             status: status
         };
+
+        // Khoảng ngày bảo trì/ngừng hoạt động (rỗng -> null = áp dụng tới khi gỡ thủ công)
+        if (status === 'maintenance' || status === 'inactive') {
+            updateData.maintenanceStart = document.getElementById('maintenanceStart').value || null;
+            updateData.maintenanceEnd = document.getElementById('maintenanceEnd').value || null;
+        } else {
+            updateData.maintenanceStart = null;
+            updateData.maintenanceEnd = null;
+        }
 
         const btnSave = document.querySelector('.btn-save');
         const originalText = btnSave.innerHTML;
@@ -696,6 +999,115 @@ class AdminDashboard {
             btnSave.innerHTML = originalText;
             btnSave.disabled = false;
         }
+    }
+
+    // 11. Xử lý nghiệp vụ: Quản lý Đánh giá
+    escapeHTML(str) {
+        if (!str) return '';
+        return str.toString().replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
+    async loadAdminReviews() {
+        const tableBody = document.getElementById('reviewsTableBody');
+        if (!tableBody) return;
+
+        tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+
+        const reviews = await this.api.getAdminReviews();
+        if (!reviews || reviews.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Không có đánh giá nào.</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = '';
+        reviews.sort((a, b) => b.reviewID - a.reviewID).forEach(review => {
+            const tr = document.createElement('tr');
+            
+            let adminReplyHtml = review.adminReply 
+                ? `<span style="color: #10b981;">Đã phản hồi</span>` 
+                : `<span style="color: #ef4444;">Chưa phản hồi</span>`;
+
+            const safeComment = this.escapeHTML(review.comment);
+            const safeUsername = this.escapeHTML(review.customerName || 'N/A');
+
+            tr.innerHTML = `
+                <td><strong>#${review.reviewID}</strong></td>
+                <td>${safeUsername}</td>
+                <td><a href="#" style="color:#3b82f6;">#${review.bookingID || 'N/A'}</a></td>
+                <td style="color: #fbbf24; font-weight:bold;">${review.rating} <i class="fas fa-star"></i></td>
+                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${safeComment}">
+                    ${safeComment}
+                </td>
+                <td>${this.formatDate(review.reviewDate)}</td>
+                <td>${adminReplyHtml}</td>
+                <td style="text-align: center;">
+                    <button class="btn-small btn-reply-review" data-id="${review.reviewID}" data-comment="${safeComment}" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s;">
+                        <i class="fas fa-reply"></i> Phản hồi
+                    </button>
+                </td>
+            `;
+
+            const replyBtn = tr.querySelector('.btn-reply-review');
+            replyBtn.addEventListener('click', (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                const comment = e.currentTarget.getAttribute('data-comment');
+                this.showReplyModal(id, comment);
+            });
+
+            tableBody.appendChild(tr);
+        });
+
+        // Add event listener for refresh button
+        const refreshBtn = document.getElementById("refreshReviewsBtn");
+        if (refreshBtn && !refreshBtn.dataset.bound) {
+            refreshBtn.addEventListener('click', () => this.loadAdminReviews());
+            refreshBtn.dataset.bound = true;
+        }
+    }
+
+    showReplyModal(reviewId, comment) {
+        const modal = document.getElementById('replyReviewModal');
+        if (!modal) return;
+        document.getElementById('replyReviewId').value = reviewId;
+        document.getElementById('replyCustomerComment').textContent = `"${comment}"`;
+        document.getElementById('adminReplyText').value = '';
+
+        const form = document.getElementById('replyReviewForm');
+        // Remove old event listener
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        newForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSubmit = newForm.querySelector('button[type="submit"]');
+            const originalHtml = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+            btnSubmit.disabled = true;
+
+            try {
+                const rId = document.getElementById('replyReviewId').value;
+                const replyText = document.getElementById('adminReplyText').value;
+                await this.api.replyReview(rId, replyText);
+                alert("Gửi phản hồi thành công!");
+                modal.style.display = 'none';
+                this.loadAdminReviews();
+            } catch (err) {
+                alert("Lỗi khi gửi phản hồi.");
+            } finally {
+                btnSubmit.innerHTML = originalHtml;
+                btnSubmit.disabled = false;
+            }
+        });
+
+        modal.style.display = 'flex';
     }
 
     // 10. Cấu hình Chart.js

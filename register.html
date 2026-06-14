@@ -26,6 +26,8 @@
             <div class="form-section">
                 <h1 class="register-title">REGISTER</h1>
 
+                <!-- Bước 1: Form đăng ký -->
+                <div id="reg-step1">
                 <form id="registerForm" action="#" method="post">
                     <div class="input-group">
                         <label>Tên đăng nhập</label>
@@ -80,11 +82,48 @@
                             <span>→</span>
                         </button>
                     </div>
+                </form>
+
+                <div class="auth-divider"><span>hoặc</span></div>
+                <div id="googleBtn" class="google-btn-container"></div>
+
+                <div class="login-redirect">
+                    Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a>
+                </div>
+                </div><!-- /reg-step1 -->
+
+                <!-- Bước 2: Xác thực OTP qua email -->
+                <div id="reg-step2" style="display:none;">
+                    <p class="reg-otp-desc">Nhập mã OTP gồm 6 số vừa được gửi tới <strong id="otpEmailLabel"></strong></p>
+                    <form id="regOtpForm">
+                        <div class="input-group">
+                            <label>Mã xác thực (OTP)</label>
+                            <div class="otp-container">
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            </div>
+                            <div class="otp-timer">
+                                <span id="otpTimer">03:00</span>
+                                <button type="button" id="resendOtp" class="resend-btn" disabled>Gửi lại mã</button>
+                            </div>
+                        </div>
+
+                        <div class="register-btn-wrapper">
+                            <button type="submit" class="register-btn">
+                                <span>Xác nhận đăng ký</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </form>
 
                     <div class="login-redirect">
-                        Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a>
+                        <a href="#" id="backToRegStep1">← Quay lại chỉnh sửa thông tin</a>
                     </div>
-                </form>
+                </div><!-- /reg-step2 -->
             </div>
 
             <!-- Cột phải: Hình khách sạn -->
@@ -99,6 +138,9 @@
 
     <script src="js/CheckPW.js"></script>
     <script src="js/notifications.js"></script>
+    <script src="js/OTPHandler.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="js/GoogleAuth.js"></script>
     <script src="js/Register.js"></script>
 </body>
 

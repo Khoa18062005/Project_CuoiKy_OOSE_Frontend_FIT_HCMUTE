@@ -93,6 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('loginUsername').value = rememberedUser;
         if (rememberCheckbox) rememberCheckbox.checked = true;
     }
+
+    // Nút "Đăng nhập với Google"
+    if (typeof renderGoogleButton === 'function') {
+        renderGoogleButton('googleBtn');
+    }
 });
 
 // Xử lý sự kiện khi nhấn Đăng nhập

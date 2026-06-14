@@ -124,15 +124,23 @@ class RoomSearchService {
             card.dataset.roomId = room.roomID;
             card.dataset.price = room.roomType.priceRoom;
             card.dataset.roomNumber = room.roomNumber;
+
+            const price = room.roomType.priceRoom;
+            const isPremium = price >= 3000000;
+            const hasView = room.description && /view/i.test(room.description);
+            const description = room.description || "Không gian sang trọng, đầy đủ tiện nghi.";
+
             card.innerHTML = `
+                ${isPremium ? `<div class="room-premium-badge"><i class="fas fa-crown"></i> Cao cấp</div>` : ""}
                 <div class="room-card-top">
                     <div>
                         <span class="room-badge">${room.roomType.typeName}</span>
+                        ${hasView ? `<span class="room-view-badge"><i class="fas fa-mountain-sun"></i> Tầm nhìn đẹp</span>` : ""}
                         <h3>${room.roomNumber}</h3>
-                        <p>${room.description || "Không gian sang trọng, đầy đủ tiện nghi."}</p>
+                        <p class="room-desc">${hasView ? '<i class="fas fa-mountain-sun"></i> ' : ''}${description}</p>
                     </div>
                     <div class="room-price">
-                        <strong>${this.formatMoney(room.roomType.priceRoom)}</strong>
+                        <strong>${this.formatMoney(price)}</strong>
                         <span>/ đêm</span>
                     </div>
                 </div>
@@ -166,7 +174,7 @@ class RoomSearchService {
                 notify.show(
                     `Bạn chỉ được chọn tối đa ${requestedRooms} phòng (theo số lượng tìm kiếm). Bỏ chọn phòng khác trước khi chọn thêm.`,
                     "warning",
-                    "bottom"
+                    "top"
                 );
                 return;
             }
