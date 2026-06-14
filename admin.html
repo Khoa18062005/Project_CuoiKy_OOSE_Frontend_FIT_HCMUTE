@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Mây Vàng | Admin Dashboard</title>
-    <link rel="stylesheet" href="css/admin.css?v=3">
+    <link rel="stylesheet" href="css/admin.css?v=7">
     <!-- Font Awesome 6 (Free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Flatpickr (lịch đẹp giống bên client) -->
@@ -160,9 +160,10 @@
                                     <th>Số điện thoại</th>
                                     <th>Số lần đặt</th>
                                     <th>Tổng chi tiêu</th>
+                                    <th>Lần đặt gần nhất</th>
                                     <th>Hạng thành viên</th>
-                                    <th>Điểm tích lũy</th>
-                                    <!-- <th>Đánh giá tiềm năng</th> -->
+                                    <th>Điểm RFM</th>
+                                    <th>Phân loại</th>
                                 </tr>
                             </thead>
                             <tbody id="potentialTableBody">
@@ -258,7 +259,6 @@
                                     <!-- <th>Số đêm</th> -->
                                     <th>Tổng tiền</th>
                                     <th>Trạng thái</th>
-                                    <th>Chi tiết</th>
                                 </tr>
                             </thead>
                             <tbody id="bookingTableBody">
@@ -363,14 +363,16 @@
                         thị dựa vào lịch booking của khách hàng.</small>
                 </div>
 
-                <!-- Khoảng ngày bảo trì / ngừng hoạt động (chỉ hiện khi chọn maintenance/inactive) -->
+                <!-- Khoảng ngày & lý do bảo trì / ngừng hoạt động (chỉ hiện khi chọn maintenance/inactive) -->
                 <div class="form-group" id="maintenanceDateGroup" style="display: none;">
-                    <label>Khoảng thời gian áp dụng:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="maintenanceStart" class="modern-input" placeholder="Từ ngày" style="flex: 1;">
-                        <input type="text" id="maintenanceEnd" class="modern-input" placeholder="Đến ngày" style="flex: 1;">
+                    <label>Bảo trì / ngừng hoạt động
+                        <i class="fas fa-circle-info maintenance-info" title='Để trống ngày = áp dụng tới khi gỡ thủ công. Có "Đến ngày" thì hệ thống tự kích hoạt lại phòng sau ngày đó.'></i>
+                    </label>
+                    <div class="maintenance-row">
+                        <input type="text" id="maintenanceStart" class="modern-input" placeholder="Từ ngày">
+                        <input type="text" id="maintenanceEnd" class="modern-input" placeholder="Đến ngày">
                     </div>
-                    <small style="color: #666; display: block; margin-top: 4px;">* Để trống = áp dụng cho tới khi gỡ thủ công. Có "Đến ngày" thì hệ thống tự kích hoạt lại phòng sau ngày đó.</small>
+                    <input type="text" id="statusNote" class="modern-input status-note-input" placeholder="Lý do (VD: Sửa điều hòa, thay thảm sàn...)">
                 </div>
 
                 <div class="modal-buttons">
@@ -503,7 +505,7 @@
     <!-- Flatpickr cho ô chọn ngày -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
-    <script src="js/admin.js?v=6"></script>
+    <script src="js/admin.js?v=7"></script>
 </body>
 
 </html>

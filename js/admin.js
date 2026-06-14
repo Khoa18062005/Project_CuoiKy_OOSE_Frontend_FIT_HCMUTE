@@ -577,11 +577,11 @@ class AdminDashboard {
         syncLabel();
     }
 
-    // Hiện ô chọn khoảng ngày khi trạng thái là bảo trì / ngừng hoạt động
+    // Hiện ô chọn khoảng ngày + lý do khi trạng thái là bảo trì / ngừng hoạt động
     toggleMaintenanceDates(status) {
-        const group = document.getElementById('maintenanceDateGroup');
-        if (!group) return;
-        group.style.display = (status === 'maintenance' || status === 'inactive') ? 'block' : 'none';
+        const show = (status === 'maintenance' || status === 'inactive');
+        const dateGroup = document.getElementById('maintenanceDateGroup');
+        if (dateGroup) dateGroup.style.display = show ? 'block' : 'none';
     }
 
     // Toast thông báo đẹp (thay cho alert mặc định của trình duyệt)
@@ -638,17 +638,17 @@ class AdminDashboard {
         this.renderChart(labels, values, period);
     }
 
-    // 6. Xử lý logic nghiệp vụ: Khách hàng tiềm năng
+    // 6. Xử lý logic nghiệp vụ: Khách hàng tiềm năng (RFM)
     async loadPotentialCustomers() {
         const tableBody = document.getElementById('potentialTableBody');
         if (!tableBody) return;
 
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
 
         const customers = await this.api.getPotentialCustomers();
 
         if (!customers || customers.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Không có dữ liệu khách hàng tiềm năng.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Không có dữ liệu khách hàng tiềm năng.</td></tr>';
             return;
         }
 
@@ -675,6 +675,29 @@ class AdminDashboard {
                 tierColor = '#333';
             }
 
+            // RFM label styling
+            const rfmScore = customer.rfmScore || 0;
+            let labelBg, labelColor, labelIcon;
+            switch (customer.rfmLabel) {
+                case 'VIP':
+                    labelBg = '#fef3c7'; labelColor = '#92400e'; labelIcon = '🔥';
+                    break;
+                case 'Tiềm năng cao':
+                    labelBg = '#d1fae5'; labelColor = '#065f46'; labelIcon = '⭐';
+                    break;
+                case 'Cần kích hoạt':
+                    labelBg = '#fef9c3'; labelColor = '#854d0e'; labelIcon = '💤';
+                    break;
+                default:
+                    labelBg = '#f1f5f9'; labelColor = '#64748b'; labelIcon = '❄️';
+            }
+
+            // RFM score color
+            let scoreBg, scoreColor;
+            if (rfmScore >= 7) { scoreBg = '#dc2626'; scoreColor = '#fff'; }
+            else if (rfmScore >= 5) { scoreBg = '#f59e0b'; scoreColor = '#fff'; }
+            else { scoreBg = '#94a3b8'; scoreColor = '#fff'; }
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${customer.username || 'Khách vãng lai'}</strong></td>
@@ -682,8 +705,19 @@ class AdminDashboard {
                 <td>${customer.phone || 'Chưa cập nhật'}</td>
                 <td style="text-align: center;"><strong>${customer.totalBookings || 0}</strong></td>
                 <td style="color: #c53030; font-weight: bold;">${this.formatCurrency(customer.totalSpent || 0)}</td>
+                <td>${customer.lastBookingDate || 'N/A'}</td>
                 <td><span style="padding: 4px 8px; border-radius: 4px; background: ${tierBg}; font-weight: bold; font-size: 12px; color: ${tierColor}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${tier}</span></td>
-                <td style="text-align: center;">${points}</td>
+                <td style="text-align: center;">
+                    <span title="R=${customer.recencyScore || 0} | F=${customer.frequencyScore || 0} | M=${customer.monetaryScore || 0}" 
+                          style="display:inline-block; padding: 4px 10px; border-radius: 20px; background: ${scoreBg}; color: ${scoreColor}; font-weight: 700; font-size: 0.85rem; cursor: help; min-width: 28px;">
+                        ${rfmScore}/9
+                    </span>
+                </td>
+                <td>
+                    <span style="display:inline-flex; align-items:center; gap:4px; padding: 4px 10px; border-radius: 20px; background: ${labelBg}; color: ${labelColor}; font-weight: 600; font-size: 0.8rem; white-space: nowrap;">
+                        ${labelIcon} ${customer.rfmLabel || 'N/A'}
+                    </span>
+                </td>
             `;
             tableBody.appendChild(tr);
         });
@@ -695,7 +729,7 @@ class AdminDashboard {
         if (!tableBody) return;
 
         // Bật loading
-        tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Đang tải dữ liệu... <i class="fas fa-spinner fa-spin"></i></td></tr>';
 
         const status = document.getElementById('statusFilter').value;
         const keyword = document.getElementById('searchBooking').value;
@@ -704,7 +738,7 @@ class AdminDashboard {
         const bookings = await this.api.getBookings(status, keyword);
 
         if (!bookings || bookings.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">Không tìm thấy kết quả nào phù hợp.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Không tìm thấy kết quả nào phù hợp.</td></tr>';
             return;
         }
 
@@ -743,6 +777,8 @@ class AdminDashboard {
                     statusBadge = `<span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #e2e3e5;">${booking.status || 'N/A'}</span>`;
             }
 
+            tr.style.cursor = 'pointer';
+            tr.style.transition = 'background 0.15s';
             tr.innerHTML = `
                 <td><strong>#${booking.bookingID}</strong></td>
                 <td>${booking.username || 'N/A'}</td>
@@ -753,18 +789,12 @@ class AdminDashboard {
                 <td>${checkoutDisplay}</td>
                 <td style="color: #c53030; font-weight: bold;">${this.formatCurrency(booking.totalPrice || 0)}</td>
                 <td>${statusBadge}</td>
-                <td style="text-align: center;">
-                    <button class="btn-small btn-view-detail" style="background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 10px; border-radius: 4px; cursor: pointer; transition: 0.2s;"><i class="fas fa-eye"></i></button>
-                </td>
             `;
 
-            // Bắt sự kiện click vào nút xem chi tiết
-            const viewBtn = tr.querySelector('.btn-view-detail');
-            viewBtn.addEventListener('click', () => this.showBookingDetailModal(booking, statusBadge));
-
-            // Thêm hiệu ứng hover cho nút
-            viewBtn.addEventListener('mouseover', () => viewBtn.style.background = '#d3d9df');
-            viewBtn.addEventListener('mouseout', () => viewBtn.style.background = '#e9ecef');
+            // Nhấn vào cả hàng để xem chi tiết
+            tr.addEventListener('click', () => this.showBookingDetailModal(booking, statusBadge));
+            tr.addEventListener('mouseover', () => tr.style.background = '#fef6ee');
+            tr.addEventListener('mouseout', () => tr.style.background = '');
 
             tableBody.appendChild(tr);
         });
@@ -922,6 +952,7 @@ class AdminDashboard {
                     <p style="margin: 5px 0;"><strong>Giá:</strong> <span style="color: #c53030; font-weight:bold;">${this.formatCurrency(room.priceRoom)}</span></p>
                     <p style="margin: 5px 0;"><strong>Sức chứa:</strong> <i class="fas fa-user"></i> ${room.occupancy}</p>
                     ${room.description ? `<p style="margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed #eee; font-size: 13px; color: #6b7280; font-style: italic; line-height: 1.5;"><i class="fas fa-mountain-sun" style="color: #0d9488; margin-right: 5px;"></i>${this.escapeHTML(room.description)}</p>` : ''}
+                    ${room.statusNote ? `<p style="margin: 6px 0 0; font-size: 13px; color: #b45309; font-style: italic; line-height: 1.5;"><i class="fas fa-wrench" style="color: #d97706; margin-right: 5px;"></i>${this.escapeHTML(room.statusNote)}</p>` : ''}
                 </div>
             `;
 
@@ -1000,6 +1031,10 @@ class AdminDashboard {
             else this.fpMaintEnd.clear();
         }
 
+        // Điền lý do bảo trì / ngừng kinh doanh
+        const noteEl = document.getElementById('statusNote');
+        if (noteEl) noteEl.value = room.statusNote || '';
+
         modal.style.display = 'flex';
     }
 
@@ -1020,9 +1055,11 @@ class AdminDashboard {
         if (status === 'maintenance' || status === 'inactive') {
             updateData.maintenanceStart = document.getElementById('maintenanceStart').value || null;
             updateData.maintenanceEnd = document.getElementById('maintenanceEnd').value || null;
+            updateData.statusNote = document.getElementById('statusNote').value || null;
         } else {
             updateData.maintenanceStart = null;
             updateData.maintenanceEnd = null;
+            updateData.statusNote = null;
         }
 
         const btnSave = document.querySelector('.btn-save');

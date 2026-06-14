@@ -690,6 +690,40 @@ body {
     background-color: #fff;
 }
 
+/* Hàng ngang gọn: khoảng ngày bảo trì + lý do trong modal sửa phòng */
+.maintenance-info {
+    color: #94a3b8;
+    cursor: help;
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.maintenance-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.maintenance-row .modern-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.status-note-input {
+    width: 100%;
+    text-align: left;
+    cursor: text;
+}
+
+@media (max-width: 480px) {
+    .maintenance-row {
+        flex-wrap: wrap;
+    }
+    .maintenance-row .modern-input {
+        flex: 1 1 100%;
+    }
+}
+
 /* ===== Custom dropdown đẹp cho admin (filter + modal), xổ ra có style riêng ===== */
 .select-wrapper.adm-no-arrow::after { display: none; }
 
