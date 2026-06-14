@@ -90,6 +90,10 @@ class ProfileService {
         if (!url || !url.trim()) {
             return "asset/default-avatar.png";
         }
+        // URL Google avatar không cần cache-bust
+        if (url.includes("googleusercontent.com")) {
+            return url;
+        }
         const separator = url.includes("?") ? "&" : "?";
         return `${url}${separator}t=${Date.now()}`;
     }

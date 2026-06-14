@@ -28,7 +28,7 @@ const sharedHeaderHTML = `
                 <div class="user-dropdown" id="user-dropdown" style="display: none;">
                     <button class="user-dropdown-toggle" id="user-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
                         <span class="user-avatar-mini" id="header-avatar-mini">
-                            <img id="header-avatar-img" src="asset/default-avatar.png" alt="avatar">
+                            <img id="header-avatar-img" src="asset/default-avatar.png" alt="Avatar" referrerpolicy="no-referrer" onerror="this.src='asset/default-avatar.png'">
                         </span>
                         <span class="user-meta">
                             <span class="user-greeting">Xin chào,</span>
@@ -40,7 +40,7 @@ const sharedHeaderHTML = `
                     <div class="user-dropdown-menu" id="user-dropdown-menu" role="menu">
                         <div class="dropdown-head">
                             <div class="dropdown-head-avatar">
-                                <img id="dropdown-avatar-img" src="asset/default-avatar.png" alt="avatar">
+                                <img id="dropdown-avatar-img" src="asset/default-avatar.png" alt="Avatar" referrerpolicy="no-referrer" onerror="this.src='asset/default-avatar.png'">
                             </div>
                             <div class="dropdown-head-info">
                                 <strong id="dropdown-username">User</strong>

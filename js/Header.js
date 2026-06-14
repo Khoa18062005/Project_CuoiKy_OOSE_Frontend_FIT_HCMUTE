@@ -11,6 +11,11 @@ function buildAvatarUrl(url) {
     if (!url || !url.trim()) {
         return "asset/default-avatar.png";
     }
+    // URL Google avatar (lh3.googleusercontent.com) không cần cache-bust
+    // vì Google CDN có thể từ chối query param lạ → load không ổn định
+    if (url.includes("googleusercontent.com")) {
+        return url;
+    }
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}t=${Date.now()}`;
 }
