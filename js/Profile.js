@@ -401,6 +401,12 @@ class ProfileService {
             notify.show("Cập nhật hồ sơ thành công!", "success");
             this.renderProfile(result);
 
+            // Nếu backend trả JWT mới (do đổi username) → cập nhật token
+            if (result.token) {
+                localStorage.setItem("jwt_token", result.token);
+                this.token = result.token;
+            }
+
             if (typeof initAuth === "function") {
                 initAuth();
             }

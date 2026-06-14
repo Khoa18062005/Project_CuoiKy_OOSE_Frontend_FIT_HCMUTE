@@ -737,7 +737,7 @@ class AdminDashboard {
         if (booking.details && booking.details.length > 0) {
             detailsHtml = booking.details.map((d, index) => `
                 <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef; margin-bottom: 10px;">
-                    <h5 style="margin-top:0; margin-bottom: 8px; color: #495057;">Phòng ${index + 1}: <strong style="color:#c53030;">${d.roomNumber}</strong> - ${d.roomTypeName}</h5>
+                    <h5 style="margin-top:0; margin-bottom: 8px; color: #495057;">Phòng ${index + 1}: <strong style="color:#c53030;">${d.roomNumber}</strong> - ${d.roomType}</h5>
                     <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px;">
                         <span><i class="fas fa-calendar-alt" style="color:#6c757d;"></i> Từ: <strong>${this.formatDate(d.checkinDate)}</strong></span>
                         <span>Đến: <strong>${this.formatDate(d.checkoutDate)}</strong></span>
