@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Quản trị khách sạn | Admin Dashboard</title>
+    <title>Mây Vàng | Admin Dashboard</title>
     <link rel="stylesheet" href="css/admin.css?v=3">
     <!-- Font Awesome 6 (Free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -51,7 +51,7 @@
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-hotel"></i>
-                <h3>Hotel<span>Manager</span></h3>
+                <h3>Mây<span>Vàng</span></h3>
             </div>
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" data-tab="revenue">
@@ -311,7 +311,7 @@
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="mgrEmail" required placeholder="quanly02@hotelstyle.com">
+                            <input type="email" id="mgrEmail" required placeholder="quanly02@mayvang.com">
                         </div>
                         <div class="form-group">
                             <label>Mật khẩu</label>
@@ -395,18 +395,22 @@
     <div id="replyReviewModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3>Phản hồi đánh giá</h3>
+            <h3 style="display:flex; align-items:center; gap:10px;"><i class="fas fa-reply" style="color:#f15a24;"></i> Phản hồi đánh giá</h3>
+            <p style="color:#64748b; font-size:0.9rem; margin:-6px 0 18px;">Phản hồi sẽ hiển thị công khai ngay dưới đánh giá của khách.</p>
             <form id="replyReviewForm">
                 <input type="hidden" id="replyReviewId">
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label>Bình luận của khách:</label>
-                    <p id="replyCustomerComment" style="background: #f1f5f9; padding: 10px; border-radius: 6px; font-style: italic;"></p>
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label style="display:flex; align-items:center; gap:6px; color:#475569; font-weight:600; margin-bottom:8px;"><i class="fas fa-quote-left" style="color:#94a3b8;"></i> Bình luận của khách</label>
+                    <p id="replyCustomerComment" style="background:#f8fafc; border:1px solid #e2e8f0; border-left:3px solid #cbd5e1; padding:12px 16px; border-radius:10px; font-style:italic; color:#475569; margin:0;"></p>
                 </div>
                 <div class="form-group">
-                    <label>Nội dung phản hồi:</label>
-                    <textarea id="adminReplyText" rows="4" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                    <label style="display:flex; align-items:center; gap:6px; color:#475569; font-weight:600; margin-bottom:8px;"><i class="fas fa-pen" style="color:#f15a24;"></i> Nội dung phản hồi</label>
+                    <textarea id="adminReplyText" rows="4" required placeholder="Nhập phản hồi của Mây Vàng dành cho khách..."
+                        style="width:100%; padding:12px 14px; border:1px solid #cbd5e1; border-radius:12px; font-family:inherit; font-size:0.95rem; resize:vertical; outline:none; transition:border-color .2s, box-shadow .2s;"
+                        onfocus="this.style.borderColor='#f15a24'; this.style.boxShadow='0 0 0 3px rgba(241,90,36,0.12)';"
+                        onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';"></textarea>
                 </div>
-                <div class="modal-buttons" style="margin-top: 20px;">
+                <div class="modal-buttons" style="margin-top: 22px;">
                     <button type="submit" class="btn-save"><i class="fas fa-paper-plane"></i> Gửi phản hồi</button>
                 </div>
             </form>
@@ -499,7 +503,7 @@
     <!-- Flatpickr cho ô chọn ngày -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
-    <script src="js/admin.js?v=5"></script>
+    <script src="js/admin.js?v=6"></script>
 </body>
 
 </html>

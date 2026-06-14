@@ -143,6 +143,20 @@ class ApiService {
             throw error;
         }
     }
+
+    // API: Xóa phản hồi đánh giá
+    async deleteReply(reviewId) {
+        try {
+            const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/reply`, {
+                method: 'DELETE',
+                headers: this.getHeaders()
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error("Lỗi khi xóa phản hồi:", error);
+            throw error;
+        }
+    }
 }
 
 /**
@@ -570,6 +584,36 @@ class AdminDashboard {
         group.style.display = (status === 'maintenance' || status === 'inactive') ? 'block' : 'none';
     }
 
+    // Toast thông báo đẹp (thay cho alert mặc định của trình duyệt)
+    showToast(message, type = 'success') {
+        const colors = { success: '#16a34a', error: '#dc2626', info: '#2563eb' };
+        const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+        const color = colors[type] || colors.success;
+        const icon = icons[type] || icons.success;
+
+        let container = document.getElementById('admToastContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'admToastContainer';
+            container.style.cssText = 'position:fixed; top:24px; right:24px; z-index:99999; display:flex; flex-direction:column; gap:10px;';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.style.cssText = `display:flex; align-items:center; gap:12px; background:#fff; color:#1e293b;
+            border-left:5px solid ${color}; box-shadow:0 10px 30px rgba(0,0,0,0.18); border-radius:14px;
+            padding:14px 20px; min-width:280px; max-width:380px; font-size:0.95rem; font-weight:500;
+            transform:translateX(120%); transition:transform .35s cubic-bezier(.22,1,.36,1);`;
+        toast.innerHTML = `<i class="fas ${icon}" style="color:${color}; font-size:1.35rem;"></i><span>${message}</span>`;
+        container.appendChild(toast);
+
+        requestAnimationFrame(() => { toast.style.transform = 'translateX(0)'; });
+        setTimeout(() => {
+            toast.style.transform = 'translateX(120%)';
+            setTimeout(() => toast.remove(), 350);
+        }, 3000);
+    }
+
     // 5. Xử lý logic nghiệp vụ: Doanh Thu
     async loadRevenueData(period) {
         const data = await this.api.getRevenue(period);
@@ -988,13 +1032,13 @@ class AdminDashboard {
 
         try {
             await this.api.updateRoom(roomId, updateData);
-            alert("Cập nhật thông tin phòng thành công!");
+            this.showToast("Cập nhật thông tin phòng thành công!", 'success');
             document.getElementById('roomModal').style.display = 'none';
             // Lấy lại ngày đang chọn để refresh đúng dữ liệu
             const dateStr = document.getElementById('roomViewDate')?.value || '';
             this.loadRooms(dateStr);
         } catch (error) {
-            alert("Cập nhật thất bại. Vui lòng thử lại!");
+            this.showToast("Cập nhật thất bại. Vui lòng thử lại!", 'error');
         } finally {
             btnSave.innerHTML = originalText;
             btnSave.disabled = false;
@@ -1030,13 +1074,11 @@ class AdminDashboard {
         tableBody.innerHTML = '';
         reviews.sort((a, b) => b.reviewID - a.reviewID).forEach(review => {
             const tr = document.createElement('tr');
-            
-            let adminReplyHtml = review.adminReply 
-                ? `<span style="color: #10b981;">Đã phản hồi</span>` 
-                : `<span style="color: #ef4444;">Chưa phản hồi</span>`;
 
             const safeComment = this.escapeHTML(review.comment);
             const safeUsername = this.escapeHTML(review.customerName || 'N/A');
+            const safeAdminReply = this.escapeHTML(review.adminReply || '');
+            const hasReply = !!review.adminReply;
 
             tr.innerHTML = `
                 <td><strong>#${review.reviewID}</strong></td>
@@ -1047,20 +1089,75 @@ class AdminDashboard {
                     ${safeComment}
                 </td>
                 <td>${this.formatDate(review.reviewDate)}</td>
-                <td>${adminReplyHtml}</td>
+                <td>${hasReply 
+                    ? `<span style="color: #10b981;"><i class="fas fa-check-circle" style="margin-right:3px;"></i>Đã phản hồi</span>` 
+                    : `<span style="color: #ef4444;">Chưa phản hồi</span>`}
+                </td>
                 <td style="text-align: center;">
-                    <button class="btn-small btn-reply-review" data-id="${review.reviewID}" data-comment="${safeComment}" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s;">
-                        <i class="fas fa-reply"></i> Phản hồi
-                    </button>
+                    ${hasReply ? `
+                        <div style="display:flex; align-items:center; gap:6px; justify-content:center;">
+                            <button disabled style="background: #d1fae5; color: #059669; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; cursor: not-allowed; opacity: 0.85;">
+                                <i class="fas fa-check"></i> Đã phản hồi
+                            </button>
+                            <div style="position:relative;">
+                                <button class="btn-reply-menu" data-id="${review.reviewID}" style="background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display:flex; align-items:center; justify-content:center; transition: all 0.2s; font-size: 14px;"
+                                    onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="reply-dropdown" data-dropdown-id="${review.reviewID}" style="display:none; position:absolute; right:0; top:36px; background:white; border:1px solid #e2e8f0; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.12); min-width:160px; z-index:1000; overflow:hidden;">
+                                    <button class="btn-edit-reply" data-id="${review.reviewID}" data-comment="${safeComment}" data-reply="${safeAdminReply}" style="display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; border:none; background:none; cursor:pointer; color:#475569; font-size:0.85rem; transition:background 0.15s;"
+                                        onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
+                                        <i class="fas fa-pen" style="color:#3b82f6; width:16px;"></i> Chỉnh sửa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : `
+                        <button class="btn-small btn-reply-review" data-id="${review.reviewID}" data-comment="${safeComment}" style="background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.82rem; font-weight: 600;"
+                            onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                            <i class="fas fa-reply"></i> Phản hồi
+                        </button>
+                    `}
                 </td>
             `;
 
+            // Event: Nút phản hồi mới (chưa reply)
             const replyBtn = tr.querySelector('.btn-reply-review');
-            replyBtn.addEventListener('click', (e) => {
-                const id = e.currentTarget.getAttribute('data-id');
-                const comment = e.currentTarget.getAttribute('data-comment');
-                this.showReplyModal(id, comment);
-            });
+            if (replyBtn) {
+                replyBtn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const comment = e.currentTarget.getAttribute('data-comment');
+                    this.showReplyModal(id, comment);
+                });
+            }
+
+            // Event: Menu 3 chấm toggle
+            const menuBtn = tr.querySelector('.btn-reply-menu');
+            if (menuBtn) {
+                menuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rid = e.currentTarget.getAttribute('data-id');
+                    // Đóng tất cả dropdown khác
+                    document.querySelectorAll('.reply-dropdown').forEach(d => d.style.display = 'none');
+                    const dropdown = tr.querySelector(`.reply-dropdown[data-dropdown-id="${rid}"]`);
+                    if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                });
+            }
+
+            // Event: Chỉnh sửa phản hồi
+            const editBtn = tr.querySelector('.btn-edit-reply');
+            if (editBtn) {
+                editBtn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const comment = e.currentTarget.getAttribute('data-comment');
+                    const existingReply = e.currentTarget.getAttribute('data-reply');
+                    document.querySelectorAll('.reply-dropdown').forEach(d => d.style.display = 'none');
+                    this.showReplyModal(id, comment, existingReply);
+                });
+            }
+
+            // Event: Xóa phản hồi
+
 
             tableBody.appendChild(tr);
         });
@@ -1073,21 +1170,38 @@ class AdminDashboard {
         }
     }
 
-    showReplyModal(reviewId, comment) {
+    showReplyModal(reviewId, comment, existingReply = '') {
         const modal = document.getElementById('replyReviewModal');
         if (!modal) return;
+        const isEdit = !!existingReply;
+
         document.getElementById('replyReviewId').value = reviewId;
         document.getElementById('replyCustomerComment').textContent = `"${comment}"`;
-        document.getElementById('adminReplyText').value = '';
+        document.getElementById('adminReplyText').value = existingReply;
+
+        // Cập nhật tiêu đề modal
+        const modalTitle = modal.querySelector('.modal-content h3');
+        if (modalTitle) {
+            modalTitle.innerHTML = isEdit 
+                ? '<i class="fas fa-pen" style="color:#f15a24;"></i> Chỉnh sửa phản hồi'
+                : '<i class="fas fa-reply" style="color:#f15a24;"></i> Phản hồi đánh giá';
+        }
 
         const form = document.getElementById('replyReviewForm');
         // Remove old event listener
         const newForm = form.cloneNode(true);
         form.parentNode.replaceChild(newForm, form);
 
+        // Cập nhật nút submit
+        const btnSubmit = newForm.querySelector('button[type="submit"]');
+        if (btnSubmit) {
+            btnSubmit.innerHTML = isEdit 
+                ? '<i class="fas fa-save"></i> Lưu thay đổi' 
+                : '<i class="fas fa-paper-plane"></i> Gửi phản hồi';
+        }
+
         newForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btnSubmit = newForm.querySelector('button[type="submit"]');
             const originalHtml = btnSubmit.innerHTML;
             btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
             btnSubmit.disabled = true;
@@ -1096,11 +1210,11 @@ class AdminDashboard {
                 const rId = document.getElementById('replyReviewId').value;
                 const replyText = document.getElementById('adminReplyText').value;
                 await this.api.replyReview(rId, replyText);
-                alert("Gửi phản hồi thành công!");
                 modal.style.display = 'none';
+                this.showToast(isEdit ? "Cập nhật phản hồi thành công!" : "Gửi phản hồi thành công!", 'success');
                 this.loadAdminReviews();
             } catch (err) {
-                alert("Lỗi khi gửi phản hồi.");
+                this.showToast("Lỗi khi gửi phản hồi, vui lòng thử lại.", 'error');
             } finally {
                 btnSubmit.innerHTML = originalHtml;
                 btnSubmit.disabled = false;
@@ -1189,4 +1303,11 @@ class AdminDashboard {
 // Khởi chạy ứng dụng khi DOM đã tải xong
 document.addEventListener('DOMContentLoaded', () => {
     new AdminDashboard();
+
+    // Đóng dropdown menu phản hồi khi click ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.btn-reply-menu') && !e.target.closest('.reply-dropdown')) {
+            document.querySelectorAll('.reply-dropdown').forEach(d => d.style.display = 'none');
+        }
+    });
 });

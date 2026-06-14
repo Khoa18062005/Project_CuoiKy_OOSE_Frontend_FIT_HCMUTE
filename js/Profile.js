@@ -1003,7 +1003,7 @@ class ProfileService {
         }
 
         const modalTitle = document.getElementById("reviewModalTitle");
-        if (modalTitle) modalTitle.textContent = "Đánh giá khách sạn";
+        if (modalTitle) modalTitle.textContent = "Đánh giá Mây Vàng";
 
         if (reviewModal) {
             reviewModal.style.display = "flex";
@@ -1050,7 +1050,7 @@ class ProfileService {
             const images = (review.imageUrls || "").split(",").map(u => u.trim()).filter(Boolean);
             const imagesHtml = images.length ? `
                 <div class="review-images">
-                    ${images.map(url => `<img src="${url}" alt="Ảnh đánh giá">`).join("")}
+                    ${images.map(url => `<img src="${url}" alt="Ảnh đánh giá" style="cursor:pointer;" onclick="openLightbox(this.src)">`).join("")}
                 </div>
             ` : "";
 
@@ -1058,7 +1058,7 @@ class ProfileService {
                 <article class="review-card">
                     <div class="review-card-top">
                         <div>
-                            <h4>${review.roomType ? review.roomType : "Khách sạn"}${review.bookingID ? ` · Booking #${review.bookingID}` : ""}</h4>
+                            <h4>${review.roomType ? review.roomType : "Mây Vàng"}${review.bookingID ? ` · Booking #${review.bookingID}` : ""}</h4>
                             <div class="review-meta">
                                 <span><i class="fas fa-calendar"></i> ${this.formatDateTime(review.reviewDate)}</span>
                                 ${review.anonymous ? `<span class="review-anon-badge"><i class="fas fa-user-secret"></i> Ẩn danh</span>` : ""}
@@ -1078,7 +1078,7 @@ class ProfileService {
                     ${imagesHtml}
                     ${review.adminReply ? `
                         <div class="review-reply">
-                            <strong><i class="fas fa-reply"></i> Phản hồi từ khách sạn:</strong>
+                            <strong><i class="fas fa-reply"></i> Phản hồi từ Mây Vàng:</strong>
                             <p>${review.adminReply}</p>
                         </div>
                     ` : ""}

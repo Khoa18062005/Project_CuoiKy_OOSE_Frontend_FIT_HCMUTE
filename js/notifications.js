@@ -102,4 +102,54 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+
+    // ── Image Lightbox (Shopee-style) ────────────────────────────────────
+    // Tạo DOM cho lightbox 1 lần duy nhất
+    const lightboxOverlay = document.createElement('div');
+    lightboxOverlay.className = 'lightbox-overlay';
+    lightboxOverlay.innerHTML = `
+        <button class="lightbox-close" aria-label="Đóng">&times;</button>
+        <img src="" alt="Phóng to ảnh">
+    `;
+    document.body.appendChild(lightboxOverlay);
+
+    const lightboxImg = lightboxOverlay.querySelector('img');
+    const lightboxCloseBtn = lightboxOverlay.querySelector('.lightbox-close');
+
+    // Mở lightbox
+    window.openLightbox = function(src) {
+        lightboxImg.src = src;
+        lightboxOverlay.style.display = 'flex';
+        // Trigger reflow rồi mới add class active để animation chạy
+        void lightboxOverlay.offsetWidth;
+        lightboxOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    // Đóng lightbox
+    function closeLightbox() {
+        lightboxOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            lightboxOverlay.style.display = 'none';
+            lightboxImg.src = '';
+        }, 250);
+    }
+
+    lightboxCloseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeLightbox();
+    });
+
+    // Click vào vùng tối (backdrop) để đóng
+    lightboxOverlay.addEventListener('click', (e) => {
+        if (e.target === lightboxOverlay) closeLightbox();
+    });
+
+    // Nhấn Escape để đóng
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
 });

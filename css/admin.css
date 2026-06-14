@@ -347,7 +347,7 @@ body {
 
 /* Table */
 .table-responsive {
-    overflow-x: auto;
+    overflow: visible;
 }
 .data-table {
     width: 100%;

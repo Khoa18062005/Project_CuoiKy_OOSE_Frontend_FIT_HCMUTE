@@ -7,7 +7,7 @@ const sharedHeaderHTML = `
         <nav class="navbar">
             <div class="logo">
                 <a href="index.html" class="logo-link">
-                    <h2>HOTEL<span>STYLE</span></h2>
+                    <h2>MÂY<span>VÀNG</span></h2>
                 </a>
             </div>
 
