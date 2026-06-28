@@ -634,7 +634,7 @@ class ProfileService {
             `;
         }
 
-        if (booking.expired && booking.status ? .toLowerCase() === "cancelled") {
+        if (booking.expired && booking.status ?.toLowerCase() === "cancelled") {
             return `
                 <div style="padding:10px 14px; border-radius:14px; background:rgba(239,68,68,0.10); color:#b91c1c; font-weight:600;">
                     Booking đã hết hạn giữ phòng và đã bị hủy. Muốn đặt tiếp bạn cần tạo booking mới.

@@ -124,7 +124,7 @@ if (passwordForm) {
 
         if (passwordChecker && passwordChecker.validate()) {
             // Lấy thông tin mật khẩu mới
-            const newPassword = document.getElementById('newPassword') ? .value;
+            const newPassword = document.getElementById('newPassword') ?.value;
             const strength = passwordChecker.checkStrength();
 
             try {

@@ -471,7 +471,7 @@ class AdminDashboard {
             this.loadBookings();
         } else if (tabId === 'room-management') {
             // Lấy ngày hiện tại trên input để tải
-            const dateStr = document.getElementById('roomViewDate') ? .value || '';
+            const dateStr = document.getElementById('roomViewDate') ?.value || '';
             this.loadRooms(dateStr);
         } else if (tabId === 'review-management') {
             this.loadAdminReviews();
@@ -814,7 +814,7 @@ class AdminDashboard {
 
             // Xử lý huy hiệu trạng thái (Badge)
             let statusBadge = '';
-            switch (booking.status ? .toLowerCase()) {
+            switch (booking.status ?.toLowerCase()) {
                 case 'confirmed':
                     statusBadge = '<span style="color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Đã xác nhận</span>';
                     break;
@@ -924,7 +924,7 @@ class AdminDashboard {
         if (!roomsGrid) return;
 
         // Lấy giá trị bộ lọc hiện tại
-        const filterValue = document.getElementById('roomStatusFilter') ? .value || 'all';
+        const filterValue = document.getElementById('roomStatusFilter') ?.value || 'all';
 
         let total = this.roomsData.length;
         let available = 0,
@@ -934,7 +934,7 @@ class AdminDashboard {
 
         // BƯỚC 1: Tính toán thống kê dựa trên TẤT CẢ dữ liệu (để 4 ô trên cùng luôn đúng)
         this.roomsData.forEach(room => {
-            const status = room.status ? .toLowerCase() || 'available';
+            const status = room.status ?.toLowerCase() || 'available';
             if (status === 'available') available++;
             else if (status === 'booked') booked++;
             else if (status === 'maintenance') maintenance++;
@@ -953,7 +953,7 @@ class AdminDashboard {
         // BƯỚC 2: Lọc dữ liệu theo giá trị dropdown
         const filteredRooms = this.roomsData.filter(room => {
             if (filterValue === 'all') return true;
-            const status = room.status ? .toLowerCase() || 'available';
+            const status = room.status ?.toLowerCase() || 'available';
             return status === filterValue;
         });
 
@@ -965,7 +965,7 @@ class AdminDashboard {
         }
 
         filteredRooms.forEach(room => {
-            const status = room.status ? .toLowerCase() || 'available';
+            const status = room.status ?.toLowerCase() || 'available';
             let statusText = '',
                 statusIcon = '',
                 statusBgColor = '',
@@ -1086,7 +1086,7 @@ class AdminDashboard {
         document.getElementById('roomCapacity').disabled = true;
 
         // Nếu phòng hiện tại đang được Booked trên UI, trong Modal chỉ hiển thị nó ở trạng thái vật lý là Available
-        let physicalStatus = room.status ? .toLowerCase() || 'available';
+        let physicalStatus = room.status ?.toLowerCase() || 'available';
         if (physicalStatus === 'booked') {
             physicalStatus = 'available';
         }
@@ -1147,7 +1147,7 @@ class AdminDashboard {
             this.showToast("Cập nhật thông tin phòng thành công!", 'success');
             document.getElementById('roomModal').style.display = 'none';
             // Lấy lại ngày đang chọn để refresh đúng dữ liệu
-            const dateStr = document.getElementById('roomViewDate') ? .value || '';
+            const dateStr = document.getElementById('roomViewDate') ?.value || '';
             this.loadRooms(dateStr);
         } catch (error) {
             this.showToast("Cập nhật thất bại. Vui lòng thử lại!", 'error');

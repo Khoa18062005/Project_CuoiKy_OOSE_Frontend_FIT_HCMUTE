@@ -94,3 +94,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof initHeader === 'function') initHeader();
     if (typeof initAuth === 'function') initAuth();
 });
+

@@ -198,7 +198,7 @@ class PaymentResultPage {
     }
 
     safeNotify(message, type) {
-        if (typeof notify !== "undefined" && notify ? .show) {
+        if (typeof notify !== "undefined" && notify ?.show) {
             setTimeout(() => notify.show(message, type), 250);
         }
     }
