@@ -8,10 +8,12 @@ class OTPHandler {
         this.emailInput = emailInputId ? document.getElementById(emailInputId) : null;
 
         // Cho phép tùy biến endpoint (mặc định = luồng quên mật khẩu)
-        this.sendUrl = options.sendUrl || 'http://localhost:8080/api/auth/forgot-password';
-        this.verifyUrl = options.verifyUrl || 'http://localhost:8080/api/auth/verify-otp';
+        this.sendUrl = options.sendUrl || 'https://mayvang-api.onrender.com/api/auth/forgot-password';
+        this.verifyUrl = options.verifyUrl || 'https://mayvang-api.onrender.com/api/auth/verify-otp';
         // Hàm dựng body gửi OTP (mặc định chỉ gửi { email })
-        this.buildSendBody = options.buildSendBody || ((email) => ({ email }));
+        this.buildSendBody = options.buildSendBody || ((email) => ({
+            email
+        }));
 
         this.generatedOTP = '';
         this.userEmail = '';
@@ -64,7 +66,9 @@ class OTPHandler {
             // Gọi API gửi OTP (endpoint + body tùy theo cấu hình)
             const response = await fetch(this.sendUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(this.buildSendBody(email))
             });
 
@@ -79,7 +83,10 @@ class OTPHandler {
                 return true;
             } else {
                 let errorData = "";
-                try { errorData = await response.text(); } catch (e) { /* ignore */ }
+                try {
+                    errorData = await response.text();
+                } catch (e) {
+                    /* ignore */ }
                 alert("Lỗi: " + (errorData || "Không gửi được mã OTP"));
                 return false;
             }
@@ -128,7 +135,9 @@ class OTPHandler {
         try {
             const response = await fetch(this.verifyUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                     email: this.userEmail,
                     otpCode: enteredOTP

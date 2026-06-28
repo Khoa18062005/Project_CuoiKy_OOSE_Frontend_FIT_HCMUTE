@@ -178,7 +178,7 @@ async function loadHeaderProfile() {
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:8080/api/users/me', {
+        const response = await fetch('https://mayvang-api.onrender.com/api/users/me', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -223,4 +223,4 @@ window.addEventListener("profile-updated", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof initHeader === 'function') initHeader();
     if (typeof initAuth === 'function') initAuth();
-});
+});

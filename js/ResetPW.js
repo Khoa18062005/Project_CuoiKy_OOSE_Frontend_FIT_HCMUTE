@@ -18,7 +18,7 @@ function showStep(stepNumber) {
     step1.classList.remove('active');
     step2.classList.remove('active');
     step3.classList.remove('active');
-    
+
     if (stepNumber === 1) step1.classList.add('active');
     if (stepNumber === 2) step2.classList.add('active');
     if (stepNumber === 3) step3.classList.add('active');
@@ -43,23 +43,23 @@ if (emailForm) {
     emailForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = emailInput.value;
-        
+
         if (!email) {
             alert('Vui lòng nhập email!');
             return;
         }
-        
+
         if (!validateEmail(email)) {
             alert('Vui lòng nhập email hợp lệ!');
             return;
         }
-        
+
         userEmail = email;
-        
+
         // Khởi tạo và gửi OTP
         const handler = initOTP();
         handler.sendOTP(email);
-        
+
         showStep(2);
     });
 }
@@ -68,35 +68,35 @@ if (emailForm) {
 if (otpForm) {
     otpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         if (!otpHandler) {
             alert('Có lỗi xảy ra. Vui lòng thử lại!');
             return;
         }
-        
+
         const enteredOTP = otpHandler.getOTP();
-        
+
         if (enteredOTP.length !== 6) {
             alert('Vui lòng nhập đủ 6 số OTP!');
             return;
         }
-        
+
         const isVerified = await otpHandler.verifyOTP(enteredOTP);
-        
+
         if (isVerified) {
             alert('✅ Xác thực OTP thành công!');
             showStep(3);
-            
+
             // Khởi tạo password checker khi vào bước 3
             // ĐÃ SỬA: Thêm tham số 'passwordHint' để hiển thị gợi ý mật khẩu
             if (!passwordChecker) {
                 passwordChecker = initPasswordChecker(
-                    'newPassword',      // passwordId
-                    'strengthBar',      // strengthBarId
-                    'strengthText',     // strengthTextId
-                    'confirmPassword',  // confirmId
-                    'matchMessage',     // matchId
-                    'passwordHint'      // hintId - THÊM VÀO ĐỂ CÓ GỢI Ý MẬT KHẨU
+                    'newPassword', // passwordId
+                    'strengthBar', // strengthBarId
+                    'strengthText', // strengthTextId
+                    'confirmPassword', // confirmId
+                    'matchMessage', // matchId
+                    'passwordHint' // hintId - THÊM VÀO ĐỂ CÓ GỢI Ý MẬT KHẨU
                 );
             }
         } else {
@@ -109,29 +109,34 @@ if (otpForm) {
 if (passwordForm) {
     passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         // ĐÃ SỬA: Thêm tham số 'passwordHint' khi khởi tạo
         if (!passwordChecker) {
             passwordChecker = initPasswordChecker(
-                'newPassword',      // passwordId
-                'strengthBar',      // strengthBarId
-                'strengthText',     // strengthTextId
-                'confirmPassword',  // confirmId
-                'matchMessage',     // matchId
-                'passwordHint'      // hintId - THÊM VÀO ĐỂ CÓ GỢI Ý MẬT KHẨU
+                'newPassword', // passwordId
+                'strengthBar', // strengthBarId
+                'strengthText', // strengthTextId
+                'confirmPassword', // confirmId
+                'matchMessage', // matchId
+                'passwordHint' // hintId - THÊM VÀO ĐỂ CÓ GỢI Ý MẬT KHẨU
             );
         }
-        
+
         if (passwordChecker && passwordChecker.validate()) {
             // Lấy thông tin mật khẩu mới
-            const newPassword = document.getElementById('newPassword')?.value;
+            const newPassword = document.getElementById('newPassword') ? .value;
             const strength = passwordChecker.checkStrength();
-            
+
             try {
-                const response = await fetch('http://localhost:8080/api/auth/reset-password', {
+                const response = await fetch('https://mayvang-api.onrender.com/api/auth/reset-password', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: userEmail, newPassword: newPassword })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        newPassword: newPassword
+                    })
                 });
 
                 if (response.ok) {

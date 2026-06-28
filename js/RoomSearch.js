@@ -1,6 +1,6 @@
 class RoomSearchService {
     constructor() {
-        this.baseUrl = "http://localhost:8080";
+        this.baseUrl = "https://mayvang-api.onrender.com";
         this.selectedRooms = [];
         this.lastSearchPayload = null;
         this.bindEvents();
@@ -50,18 +50,18 @@ class RoomSearchService {
 
         const checkinDate = new Date(checkin);
         const checkoutDate = new Date(checkout);
-        
+
         if (checkoutDate <= checkinDate) {
             notify.show("Ngày trả phòng phải lớn hơn ngày nhận phòng.", "error");
             return;
         }
 
-        this.lastSearchPayload = { 
-            checkin, 
-            checkout, 
-            numberOfRooms, 
-            guests, 
-            roomType 
+        this.lastSearchPayload = {
+            checkin,
+            checkout,
+            numberOfRooms,
+            guests,
+            roomType
         };
 
         const query = new URLSearchParams({
@@ -97,9 +97,9 @@ class RoomSearchService {
         container.classList.remove("has-selection");
         this.selectedRooms = [];
 
-        summary.innerText = result.enough
-            ? `Tìm thấy ${result.totalFound} phòng phù hợp. Bạn đang yêu cầu ${result.requested} phòng.`
-            : (result.warning || "Không đủ phòng phù hợp.");
+        summary.innerText = result.enough ?
+            `Tìm thấy ${result.totalFound} phòng phù hợp. Bạn đang yêu cầu ${result.requested} phòng.` :
+            (result.warning || "Không đủ phòng phù hợp.");
 
         if (!result.rooms || result.rooms.length === 0) {
             container.innerHTML = `<div class="empty-room-state">Không có phòng trống phù hợp trong thời gian bạn chọn.</div>`;

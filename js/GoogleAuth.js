@@ -7,19 +7,26 @@
 // google.client-id trong application.properties của backend.
 const GOOGLE_CLIENT_ID = "121925631383-nu18dka9ssej2ov1lg7efjdidt2b9nct.apps.googleusercontent.com";
 
-const GOOGLE_AUTH_API = "http://localhost:8080/api/auth/google";
+const GOOGLE_AUTH_API = "https://mayvang-api.onrender.com/api/auth/google";
 
 // Sau khi Google trả credential -> gửi lên backend đổi lấy JWT của hệ thống
 async function exchangeGoogleCredential(credential, onSuccess) {
     try {
         const res = await fetch(GOOGLE_AUTH_API, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ credential })
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                credential
+            })
         });
 
         let data = {};
-        try { data = await res.json(); } catch (e) { /* ignore */ }
+        try {
+            data = await res.json();
+        } catch (e) {
+            /* ignore */ }
 
         if (!res.ok) {
             notifyMsg(data.message || "Đăng nhập Google thất bại", "error");

@@ -1,7 +1,7 @@
 class ProfileService {
     constructor() {
-        this.baseUrl = "http://localhost:8080/api/users";
-        this.paymentBaseUrl = "http://localhost:8080/api/payments";
+        this.baseUrl = "https://mayvang-api.onrender.com/api/users";
+        this.paymentBaseUrl = "https://mayvang-api.onrender.com/api/payments";
         this.token = localStorage.getItem("jwt_token");
 
         this.form = document.getElementById("profileForm");
@@ -25,7 +25,7 @@ class ProfileService {
         }
 
         this.bindEvents();
-        
+
         // Ẩn màn hình loading, hiện nội dung ngay lập tức để tránh cảm giác "lag"
         const pageLoading = document.getElementById("page-loading");
         const mainContent = document.getElementById("main-profile-content");
@@ -206,7 +206,7 @@ class ProfileService {
         document.getElementById("avatar").value = profile.avatar || "";
 
         const tier = profile.membershipTier || "Bronze";
-        const point = profile.point ?? 0;
+        const point = profile.point ? ? 0;
         const discount = `${Math.round((profile.discountRate || 0) * 100)}%`;
         const benefits = profile.benefits || "Chưa có quyền lợi";
 
@@ -222,7 +222,7 @@ class ProfileService {
         document.getElementById("membershipPoint").textContent = point;
         document.getElementById("membershipDiscount").textContent = discount;
         document.getElementById("membershipBenefitsText").textContent = benefits;
-        
+
         document.querySelector('.profile-wrapper').classList.add('loaded');
         this.updateTierTable(tier);
 
@@ -368,12 +368,12 @@ class ProfileService {
         }
 
         // Tài khoản Google chỉ được đổi SĐT & ngày sinh; tài khoản thường đổi đầy đủ
-        const payload = this.isGoogleAccount
-            ? {
+        const payload = this.isGoogleAccount ?
+            {
                 phone: document.getElementById("phone").value.trim(),
                 dateOfBirth: document.getElementById("dateOfBirth").value
-            }
-            : {
+            } :
+            {
                 username: document.getElementById("username").value.trim(),
                 email: document.getElementById("email").value.trim(),
                 phone: document.getElementById("phone").value.trim(),
@@ -616,7 +616,10 @@ class ProfileService {
             setTimeout(() => {
                 const targetEl = document.getElementById(`booking-${targetBookingId}`);
                 if (targetEl) {
-                    targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+                    targetEl.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
                 }
             }, 250);
         }
@@ -631,7 +634,7 @@ class ProfileService {
             `;
         }
 
-        if (booking.expired && booking.status?.toLowerCase() === "cancelled") {
+        if (booking.expired && booking.status ? .toLowerCase() === "cancelled") {
             return `
                 <div style="padding:10px 14px; border-radius:14px; background:rgba(239,68,68,0.10); color:#b91c1c; font-weight:600;">
                     Booking đã hết hạn giữ phòng và đã bị hủy. Muốn đặt tiếp bạn cần tạo booking mới.
@@ -764,7 +767,7 @@ class ProfileService {
         const btnClose = document.getElementById("btnCloseReviewModal");
         const btnCancel = document.getElementById("btnCancelReview");
         const reviewForm = document.getElementById("reviewForm");
-        
+
         // Stars
         const mainStars = document.querySelectorAll(".star-rating.main-rating i");
         const mainRatingInput = document.getElementById("reviewRating");
@@ -787,7 +790,7 @@ class ProfileService {
             const service = parseFloat(document.getElementById("serviceRating").value) || 0;
             const facilities = parseFloat(document.getElementById("facilitiesRating").value) || 0;
             const location = parseFloat(document.getElementById("locationRating").value) || 0;
-            
+
             const avgRating = (cleanliness + service + facilities + location) / 4;
             mainRatingInput.value = avgRating;
 
@@ -806,7 +809,7 @@ class ProfileService {
                 } else if (avgRating > starIndex - 1) {
                     fillPercent = (avgRating - (starIndex - 1)) * 100;
                 }
-                
+
                 star.style.background = `linear-gradient(90deg, #fbbf24 ${fillPercent}%, #e2e8f0 ${fillPercent}%)`;
                 star.style.webkitBackgroundClip = "text";
                 star.style.webkitTextFillColor = "transparent";
@@ -825,7 +828,7 @@ class ProfileService {
                 const targetInputId = container.getAttribute("data-target");
                 const targetInput = document.getElementById(targetInputId);
                 const subStars = container.querySelectorAll("i");
-                
+
                 // Initialize default to 5
                 subStars.forEach(s => s.style.color = "#fbbf24");
 
@@ -856,7 +859,7 @@ class ProfileService {
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         const img = document.createElement("img");
                         img.src = e.target.result;
                         img.style.width = "70px";
@@ -911,9 +914,11 @@ class ProfileService {
                         for (let i = 0; i < files.length; i++) {
                             formData.append("files", files[i]);
                         }
-                        const uploadRes = await fetch(`http://localhost:8080/api/reviews/me/images`, {
+                        const uploadRes = await fetch(`https://mayvang-api.onrender.com/api/reviews/me/images`, {
                             method: "POST",
-                            headers: { "Authorization": `Bearer ${this.token}` },
+                            headers: {
+                                "Authorization": `Bearer ${this.token}`
+                            },
                             body: formData
                         });
                         if (uploadRes.ok) {
@@ -925,15 +930,16 @@ class ProfileService {
                     }
 
                     const response = await fetch(
-                        isEdit ? `http://localhost:8080/api/reviews/${editId}` : `http://localhost:8080/api/reviews/`,
-                        {
+                        isEdit ? `https://mayvang-api.onrender.com/api/reviews/${editId}` : `https://mayvang-api.onrender.com/api/reviews/`, {
                             method: isEdit ? "PUT" : "POST",
                             headers: {
                                 "Authorization": `Bearer ${this.token}`,
                                 "Content-Type": "application/json"
                             },
                             body: JSON.stringify({
-                                booking: { bookingID: bookingId },
+                                booking: {
+                                    bookingID: bookingId
+                                },
                                 rating: parseFloat(rating),
                                 comment: comment,
                                 cleanlinessRating: parseInt(cleanlinessRating),
@@ -1019,8 +1025,10 @@ class ProfileService {
         if (!container) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/reviews/me`, {
-                headers: { "Authorization": `Bearer ${this.token}` }
+            const res = await fetch(`https://mayvang-api.onrender.com/api/reviews/me`, {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
             });
             if (!res.ok) throw new Error("Failed to load reviews");
             const reviews = await res.json();
@@ -1043,7 +1051,9 @@ class ProfileService {
 
         container.innerHTML = reviews.map(review => {
             const rating = review.rating || 0;
-            const starsHtml = Array.from({ length: 5 }, (_, i) => {
+            const starsHtml = Array.from({
+                length: 5
+            }, (_, i) => {
                 const starIndex = i + 1;
                 let fillPercent = 0;
                 if (rating >= starIndex) fillPercent = 100;
@@ -1159,9 +1169,11 @@ class ProfileService {
         if (!confirm("Bạn có chắc muốn xóa đánh giá này không?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/reviews/${reviewId}`, {
+            const res = await fetch(`https://mayvang-api.onrender.com/api/reviews/${reviewId}`, {
                 method: "DELETE",
-                headers: { "Authorization": `Bearer ${this.token}` }
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
             });
 
             if (!res.ok) {
@@ -1185,4 +1197,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!profileService) {
         profileService = new ProfileService();
     }
-});
+});

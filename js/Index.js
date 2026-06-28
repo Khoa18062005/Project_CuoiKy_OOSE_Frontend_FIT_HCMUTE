@@ -8,7 +8,7 @@ const navButtons = document.querySelector('.nav-buttons');
 if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', () => {
         navLinks.classList.toggle('active');
-        
+
         // Hiển thị cả nút đăng nhập/đăng ký trong menu mobile
         if (navLinks.classList.contains('active')) {
             if (!document.querySelector('.mobile-nav-buttons')) {
@@ -29,7 +29,7 @@ if (mobileMenuBtn) {
 // 2. SMOOTH SCROLL CHO NAVIGATION
 // ==========================================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
+    anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
         if (href !== '#' && href !== '' && href.startsWith('#')) {
             e.preventDefault();
@@ -53,7 +53,7 @@ const header = document.querySelector('.main-header');
 if (header) {
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
-        
+
         if (currentScroll > 100) {
             header.style.background = 'rgba(255, 255, 255, 0.98)';
             header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
@@ -61,7 +61,7 @@ if (header) {
             header.style.background = 'rgba(255, 255, 255, 0.96)';
             header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
         }
-        
+
         lastScroll = currentScroll;
     });
 }
@@ -96,7 +96,7 @@ document.querySelectorAll('.room-card, .service-card').forEach(el => {
 // ==========================================
 const images = document.querySelectorAll('img');
 images.forEach(img => {
-    img.addEventListener('error', function() {
+    img.addEventListener('error', function () {
         this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNlZTBlMGUiLz48dGV4dCB4PSI1IiB5PSIyNSIgZmlsbD0iIzk5OSI+SW1hZ2U8L3RleHQ+PC9zdmc+';
         this.style.objectFit = 'cover';
     });
@@ -105,7 +105,7 @@ images.forEach(img => {
 // Hiệu ứng hover cho các nút
 const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .btn-book, .btn-login, .btn-register-nav');
 buttons.forEach(btn => {
-    btn.addEventListener('mouseenter', function() {
+    btn.addEventListener('mouseenter', function () {
         this.style.transition = 'all 0.3s ease';
     });
 });
@@ -140,7 +140,7 @@ function typeWriter() {
     // Kịch bản gõ và xóa
     if (!isDeleting && text === currentWord) {
         // Gõ xong 1 từ -> Dừng lại 2 giây cho khách đọc
-        typeSpeed = 2000; 
+        typeSpeed = 2000;
         isDeleting = true;
     } else if (isDeleting && text === "") {
         // Xóa xong -> Chuyển sang từ tiếp theo
@@ -169,14 +169,14 @@ console.log('Trang chủ đã sẵn sàng với hiệu ứng chữ chạy!');
 // ==========================================
 function escapeHTML(str) {
     if (!str) return '';
-    return str.toString().replace(/[&<>'"]/g, 
+    return str.toString().replace(/[&<>'"]/g,
         tag => ({
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
             "'": '&#39;',
             '"': '&quot;'
-        }[tag])
+        } [tag])
     );
 }
 
@@ -188,15 +188,19 @@ async function loadReviews(isMyReviews = false) {
 
     try {
         const token = localStorage.getItem("jwt_token");
-        let url = "http://localhost:8080/api/reviews/public";
+        let url = "https://mayvang-api.onrender.com/api/reviews/public";
         let headers = {};
 
         if (isMyReviews && token) {
-            url = "http://localhost:8080/api/reviews/me";
-            headers = { "Authorization": `Bearer ${token}` };
+            url = "https://mayvang-api.onrender.com/api/reviews/me";
+            headers = {
+                "Authorization": `Bearer ${token}`
+            };
         }
 
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, {
+            headers
+        });
         if (!response.ok) {
             container.innerHTML = `<div style="text-align: center; width: 100%; color: #64748b;">Không thể tải đánh giá.</div>`;
             return;
@@ -209,7 +213,9 @@ async function loadReviews(isMyReviews = false) {
         }
 
         const generateStarsHtml = (rating, fontSize = '1rem') => {
-            return Array.from({length: 5}, (_, i) => {
+            return Array.from({
+                length: 5
+            }, (_, i) => {
                 const starIndex = i + 1;
                 let fillPercent = 0;
                 if (rating >= starIndex) fillPercent = 100;
@@ -223,7 +229,7 @@ async function loadReviews(isMyReviews = false) {
         if (!isMyReviews && avgContainer && reviews.length > 0) {
             const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
             const avgRating = (totalRating / reviews.length).toFixed(1);
-            
+
             const avgStars = generateStarsHtml(avgRating, '1.8rem');
 
             avgContainer.style.display = "flex";
@@ -241,15 +247,15 @@ async function loadReviews(isMyReviews = false) {
 
         container.innerHTML = topReviews.map(r => {
             const stars = generateStarsHtml(r.rating, '1rem');
-            
+
             const safeAdminReply = escapeHTML(r.adminReply);
             const replyDateStr = r.replyDate ? new Date(r.replyDate).toLocaleDateString('vi-VN') : '';
 
             const date = new Date(r.reviewDate).toLocaleDateString('vi-VN');
 
-            const avatarSrc = r.customerAvatar 
-                ? (r.customerAvatar.startsWith('http') ? r.customerAvatar : `http://localhost:8080${r.customerAvatar.startsWith('/') ? '' : '/'}${r.customerAvatar}`) 
-                : 'asset/default-avatar.png';
+            const avatarSrc = r.customerAvatar ?
+                (r.customerAvatar.startsWith('http') ? r.customerAvatar : `https://mayvang-api.onrender.com${r.customerAvatar.startsWith('/') ? '' : '/'}${r.customerAvatar}`) :
+                'asset/default-avatar.png';
 
             return `
                 <div style="background: white; padding: 20px 24px; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: all 0.25s; border: 1px solid #f1f5f9;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,0.04)'">
@@ -308,16 +314,16 @@ function setupReviewTabs() {
 
     if (token && reviewTabs) {
         reviewTabs.style.display = "flex";
-        
+
         btnAll.addEventListener("click", () => {
             btnAll.style.background = "linear-gradient(135deg, #ef4136, #c73b0c)";
             btnAll.style.color = "white";
             btnAll.style.boxShadow = "0 4px 14px rgba(239, 65, 54, 0.3)";
-            
+
             btnMy.style.background = "#e2e8f0";
             btnMy.style.color = "#475569";
             btnMy.style.boxShadow = "none";
-            
+
             loadReviews(false);
         });
 
@@ -325,11 +331,11 @@ function setupReviewTabs() {
             btnMy.style.background = "linear-gradient(135deg, #ef4136, #c73b0c)";
             btnMy.style.color = "white";
             btnMy.style.boxShadow = "0 4px 14px rgba(239, 65, 54, 0.3)";
-            
+
             btnAll.style.background = "#e2e8f0";
             btnAll.style.color = "#475569";
             btnAll.style.boxShadow = "none";
-            
+
             loadReviews(true);
         });
     }
@@ -338,4 +344,4 @@ function setupReviewTabs() {
 document.addEventListener('DOMContentLoaded', () => {
     setupReviewTabs();
     loadReviews(false);
-});
+});

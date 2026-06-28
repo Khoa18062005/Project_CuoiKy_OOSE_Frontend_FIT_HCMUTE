@@ -1,8 +1,8 @@
 // Đăng ký 2 bước: (1) điền form -> backend gửi OTP về email; (2) nhập OTP -> tạo tài khoản
 class RegisterService {
     constructor() {
-        this.registerUrl = "http://localhost:8080/api/auth/register";
-        this.verifyUrl = "http://localhost:8080/api/auth/register/verify";
+        this.registerUrl = "https://mayvang-api.onrender.com/api/auth/register";
+        this.verifyUrl = "https://mayvang-api.onrender.com/api/auth/register/verify";
     }
 
     // Bước 1: gửi dữ liệu đăng ký -> backend kiểm tra & gửi OTP
@@ -12,14 +12,19 @@ class RegisterService {
         try {
             const response = await fetch(this.registerUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(userData)
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                return { ok: true, result };
+                return {
+                    ok: true,
+                    result
+                };
             }
 
             if (response.status === 400) {
@@ -45,12 +50,16 @@ class RegisterService {
             } else {
                 notify.show("Lỗi máy chủ (Code " + response.status + ")", "error");
             }
-            return { ok: false };
+            return {
+                ok: false
+            };
 
         } catch (error) {
             console.error("Lỗi:", error);
             notify.show("Không thể kết nối tới máy chủ Backend.", "error");
-            return { ok: false };
+            return {
+                ok: false
+            };
         }
     }
 }
@@ -123,7 +132,7 @@ if (registerForm) {
         otpHandler = new OTPHandler('#reg-step2 .otp-input', 'otpTimer', 'resendOtp', null, {
             sendUrl: registerService.registerUrl,
             verifyUrl: registerService.verifyUrl,
-            buildSendBody: () => pendingUserData   // gửi lại OTP = gửi lại toàn bộ form
+            buildSendBody: () => pendingUserData // gửi lại OTP = gửi lại toàn bộ form
         });
         otpHandler.userEmail = userData.email;
         otpHandler.startTimer();

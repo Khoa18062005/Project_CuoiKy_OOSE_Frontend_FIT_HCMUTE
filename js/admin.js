@@ -3,7 +3,7 @@
  */
 class ApiService {
     constructor() {
-        this.baseUrl = "http://localhost:8080/api";
+        this.baseUrl = "https://mayvang-api.onrender.com/api";
     }
 
     // Lấy token từ LocalStorage
@@ -135,7 +135,9 @@ class ApiService {
             const response = await fetch(`${this.baseUrl}/reviews/${reviewId}/reply`, {
                 method: 'PUT',
                 headers: this.getHeaders(),
-                body: JSON.stringify({ reply: replyContent })
+                body: JSON.stringify({
+                    reply: replyContent
+                })
             });
             return await this.handleResponse(response);
         } catch (error) {
@@ -204,8 +206,13 @@ class AdminDashboard {
         // Lịch cho khoảng ngày bảo trì trong modal
         if (typeof flatpickr !== 'undefined') {
             const fpOpts = {
-                locale: 'vn', dateFormat: 'Y-m-d', altInput: true, altFormat: 'd/m/Y',
-                altInputClass: 'modern-input flatpickr-alt', minDate: 'today', disableMobile: true
+                locale: 'vn',
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'd/m/Y',
+                altInputClass: 'modern-input flatpickr-alt',
+                minDate: 'today',
+                disableMobile: true
             };
             const startEl = document.getElementById('maintenanceStart');
             const endEl = document.getElementById('maintenanceEnd');
@@ -293,8 +300,13 @@ class AdminDashboard {
         const updateTime = () => {
             const now = new Date();
             timeEl.innerText = now.toLocaleString('vi-VN', {
-                weekday: 'long', year: 'numeric', month: 'long',
-                day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
         };
         updateTime();
@@ -397,7 +409,7 @@ class AdminDashboard {
         const roomStatusFilter = document.getElementById('roomStatusFilter');
         if (roomStatusFilter) {
             roomStatusFilter.addEventListener('change', () => {
-                this.renderRoomsList(); 
+                this.renderRoomsList();
             });
         }
 
@@ -459,7 +471,7 @@ class AdminDashboard {
             this.loadBookings();
         } else if (tabId === 'room-management') {
             // Lấy ngày hiện tại trên input để tải
-            const dateStr = document.getElementById('roomViewDate')?.value || '';
+            const dateStr = document.getElementById('roomViewDate') ? .value || '';
             this.loadRooms(dateStr);
         } else if (tabId === 'review-management') {
             this.loadAdminReviews();
@@ -480,11 +492,18 @@ class AdminDashboard {
             const res = await fetch(`${this.api.baseUrl}/manager/managers`, {
                 method: 'POST',
                 headers: this.api.getHeaders(),
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password
+                })
             });
 
             let data = {};
-            try { data = await res.json(); } catch (e) { /* ignore */ }
+            try {
+                data = await res.json();
+            } catch (e) {
+                /* ignore */ }
 
             if (!res.ok) {
                 if (data.errors && Array.isArray(data.errors)) {
@@ -542,7 +561,9 @@ class AdminDashboard {
                 li.addEventListener('click', (e) => {
                     e.stopPropagation();
                     select.value = opt.value;
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    select.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                     wrapper.classList.remove('open');
                 });
                 menu.appendChild(li);
@@ -559,7 +580,9 @@ class AdminDashboard {
 
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            document.querySelectorAll('.adm-select.open').forEach(w => { if (w !== wrapper) w.classList.remove('open'); });
+            document.querySelectorAll('.adm-select.open').forEach(w => {
+                if (w !== wrapper) w.classList.remove('open');
+            });
             wrapper.classList.toggle('open');
         });
 
@@ -571,7 +594,10 @@ class AdminDashboard {
         select.parentNode.insertBefore(wrapper, select.nextSibling);
 
         // Cho phép dựng lại options khi đổ động (vd loại phòng tải từ API)
-        select._admRebuild = () => { buildOptions(); syncLabel(); };
+        select._admRebuild = () => {
+            buildOptions();
+            syncLabel();
+        };
 
         buildOptions();
         syncLabel();
@@ -586,8 +612,16 @@ class AdminDashboard {
 
     // Toast thông báo đẹp (thay cho alert mặc định của trình duyệt)
     showToast(message, type = 'success') {
-        const colors = { success: '#16a34a', error: '#dc2626', info: '#2563eb' };
-        const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+        const colors = {
+            success: '#16a34a',
+            error: '#dc2626',
+            info: '#2563eb'
+        };
+        const icons = {
+            success: 'fa-circle-check',
+            error: 'fa-circle-xmark',
+            info: 'fa-circle-info'
+        };
         const color = colors[type] || colors.success;
         const icon = icons[type] || icons.success;
 
@@ -607,7 +641,9 @@ class AdminDashboard {
         toast.innerHTML = `<i class="fas ${icon}" style="color:${color}; font-size:1.35rem;"></i><span>${message}</span>`;
         container.appendChild(toast);
 
-        requestAnimationFrame(() => { toast.style.transform = 'translateX(0)'; });
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+        });
         setTimeout(() => {
             toast.style.transform = 'translateX(120%)';
             setTimeout(() => toast.remove(), 350);
@@ -680,23 +716,38 @@ class AdminDashboard {
             let labelBg, labelColor, labelIcon;
             switch (customer.rfmLabel) {
                 case 'VIP':
-                    labelBg = '#fef3c7'; labelColor = '#92400e'; labelIcon = '🔥';
+                    labelBg = '#fef3c7';
+                    labelColor = '#92400e';
+                    labelIcon = '🔥';
                     break;
                 case 'Tiềm năng cao':
-                    labelBg = '#d1fae5'; labelColor = '#065f46'; labelIcon = '⭐';
+                    labelBg = '#d1fae5';
+                    labelColor = '#065f46';
+                    labelIcon = '⭐';
                     break;
                 case 'Cần kích hoạt':
-                    labelBg = '#fef9c3'; labelColor = '#854d0e'; labelIcon = '💤';
+                    labelBg = '#fef9c3';
+                    labelColor = '#854d0e';
+                    labelIcon = '💤';
                     break;
                 default:
-                    labelBg = '#f1f5f9'; labelColor = '#64748b'; labelIcon = '❄️';
+                    labelBg = '#f1f5f9';
+                    labelColor = '#64748b';
+                    labelIcon = '❄️';
             }
 
             // RFM score color
             let scoreBg, scoreColor;
-            if (rfmScore >= 7) { scoreBg = '#dc2626'; scoreColor = '#fff'; }
-            else if (rfmScore >= 5) { scoreBg = '#f59e0b'; scoreColor = '#fff'; }
-            else { scoreBg = '#94a3b8'; scoreColor = '#fff'; }
+            if (rfmScore >= 7) {
+                scoreBg = '#dc2626';
+                scoreColor = '#fff';
+            } else if (rfmScore >= 5) {
+                scoreBg = '#f59e0b';
+                scoreColor = '#fff';
+            } else {
+                scoreBg = '#94a3b8';
+                scoreColor = '#fff';
+            }
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -763,7 +814,7 @@ class AdminDashboard {
 
             // Xử lý huy hiệu trạng thái (Badge)
             let statusBadge = '';
-            switch (booking.status?.toLowerCase()) {
+            switch (booking.status ? .toLowerCase()) {
                 case 'confirmed':
                     statusBadge = '<span style="color: #155724; background: #d4edda; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Đã xác nhận</span>';
                     break;
@@ -873,14 +924,17 @@ class AdminDashboard {
         if (!roomsGrid) return;
 
         // Lấy giá trị bộ lọc hiện tại
-        const filterValue = document.getElementById('roomStatusFilter')?.value || 'all';
+        const filterValue = document.getElementById('roomStatusFilter') ? .value || 'all';
 
         let total = this.roomsData.length;
-        let available = 0, booked = 0, maintenance = 0, inactive = 0;
+        let available = 0,
+            booked = 0,
+            maintenance = 0,
+            inactive = 0;
 
         // BƯỚC 1: Tính toán thống kê dựa trên TẤT CẢ dữ liệu (để 4 ô trên cùng luôn đúng)
         this.roomsData.forEach(room => {
-            const status = room.status?.toLowerCase() || 'available';
+            const status = room.status ? .toLowerCase() || 'available';
             if (status === 'available') available++;
             else if (status === 'booked') booked++;
             else if (status === 'maintenance') maintenance++;
@@ -899,7 +953,7 @@ class AdminDashboard {
         // BƯỚC 2: Lọc dữ liệu theo giá trị dropdown
         const filteredRooms = this.roomsData.filter(room => {
             if (filterValue === 'all') return true;
-            const status = room.status?.toLowerCase() || 'available';
+            const status = room.status ? .toLowerCase() || 'available';
             return status === filterValue;
         });
 
@@ -911,24 +965,41 @@ class AdminDashboard {
         }
 
         filteredRooms.forEach(room => {
-            const status = room.status?.toLowerCase() || 'available';
-            let statusText = '', statusIcon = '', statusBgColor = '', statusTextColor = '';
-            
-            switch(status) {
+            const status = room.status ? .toLowerCase() || 'available';
+            let statusText = '',
+                statusIcon = '',
+                statusBgColor = '',
+                statusTextColor = '';
+
+            switch (status) {
                 case 'available':
-                    statusText = 'Còn trống'; statusIcon = 'fa-check-circle';
-                    statusBgColor = '#d4edda'; statusTextColor = '#155724'; break;
+                    statusText = 'Còn trống';
+                    statusIcon = 'fa-check-circle';
+                    statusBgColor = '#d4edda';
+                    statusTextColor = '#155724';
+                    break;
                 case 'booked':
-                    statusText = 'Đã đặt'; statusIcon = 'fa-lock';
-                    statusBgColor = '#f8d7da'; statusTextColor = '#721c24'; break;
+                    statusText = 'Đã đặt';
+                    statusIcon = 'fa-lock';
+                    statusBgColor = '#f8d7da';
+                    statusTextColor = '#721c24';
+                    break;
                 case 'maintenance':
-                    statusText = 'Bảo trì'; statusIcon = 'fa-tools';
-                    statusBgColor = '#fff3cd'; statusTextColor = '#856404'; break;
+                    statusText = 'Bảo trì';
+                    statusIcon = 'fa-tools';
+                    statusBgColor = '#fff3cd';
+                    statusTextColor = '#856404';
+                    break;
                 case 'inactive':
-                    statusText = 'Ngừng kinh doanh'; statusIcon = 'fa-ban';
-                    statusBgColor = '#e2e3e5'; statusTextColor = '#383d41'; break;
+                    statusText = 'Ngừng kinh doanh';
+                    statusIcon = 'fa-ban';
+                    statusBgColor = '#e2e3e5';
+                    statusTextColor = '#383d41';
+                    break;
                 default:
-                    statusText = status; statusBgColor = '#e2e3e5'; statusTextColor = '#383d41';
+                    statusText = status;
+                    statusBgColor = '#e2e3e5';
+                    statusTextColor = '#383d41';
             }
 
             const roomCard = document.createElement('div');
@@ -939,7 +1010,7 @@ class AdminDashboard {
             roomCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
             roomCard.style.cursor = 'pointer';
             roomCard.style.transition = '0.3s';
-            
+
             const badgeStyle = `background-color: ${statusBgColor}; color: ${statusTextColor}; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;`;
 
             roomCard.innerHTML = `
@@ -1005,7 +1076,9 @@ class AdminDashboard {
         typeSelect.addEventListener('change', this._onRoomTypeChange);
 
         typeSelect.value = String(room.typeID);
-        typeSelect.dispatchEvent(new Event('change', { bubbles: true })); // cập nhật dropdown đẹp + giá/sức chứa
+        typeSelect.dispatchEvent(new Event('change', {
+            bubbles: true
+        })); // cập nhật dropdown đẹp + giá/sức chứa
 
         document.getElementById('roomPrice').value = room.priceRoom;
         document.getElementById('roomPrice').disabled = true;
@@ -1013,13 +1086,15 @@ class AdminDashboard {
         document.getElementById('roomCapacity').disabled = true;
 
         // Nếu phòng hiện tại đang được Booked trên UI, trong Modal chỉ hiển thị nó ở trạng thái vật lý là Available
-        let physicalStatus = room.status?.toLowerCase() || 'available';
+        let physicalStatus = room.status ? .toLowerCase() || 'available';
         if (physicalStatus === 'booked') {
             physicalStatus = 'available';
         }
         const statusSelect = document.getElementById('roomStatus');
         statusSelect.value = physicalStatus;
-        statusSelect.dispatchEvent(new Event('change', { bubbles: true })); // cập nhật dropdown đẹp + ẩn/hiện ô ngày
+        statusSelect.dispatchEvent(new Event('change', {
+            bubbles: true
+        })); // cập nhật dropdown đẹp + ẩn/hiện ô ngày
 
         // Điền sẵn khoảng ngày bảo trì (nếu phòng đang có lịch)
         if (this.fpMaintStart) {
@@ -1072,7 +1147,7 @@ class AdminDashboard {
             this.showToast("Cập nhật thông tin phòng thành công!", 'success');
             document.getElementById('roomModal').style.display = 'none';
             // Lấy lại ngày đang chọn để refresh đúng dữ liệu
-            const dateStr = document.getElementById('roomViewDate')?.value || '';
+            const dateStr = document.getElementById('roomViewDate') ? .value || '';
             this.loadRooms(dateStr);
         } catch (error) {
             this.showToast("Cập nhật thất bại. Vui lòng thử lại!", 'error');
@@ -1085,14 +1160,14 @@ class AdminDashboard {
     // 11. Xử lý nghiệp vụ: Quản lý Đánh giá
     escapeHTML(str) {
         if (!str) return '';
-        return str.toString().replace(/[&<>'"]/g, 
+        return str.toString().replace(/[&<>'"]/g,
             tag => ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
                 "'": '&#39;',
                 '"': '&quot;'
-            }[tag])
+            } [tag])
         );
     }
 
@@ -1219,9 +1294,9 @@ class AdminDashboard {
         // Cập nhật tiêu đề modal
         const modalTitle = modal.querySelector('.modal-content h3');
         if (modalTitle) {
-            modalTitle.innerHTML = isEdit 
-                ? '<i class="fas fa-pen" style="color:#f15a24;"></i> Chỉnh sửa phản hồi'
-                : '<i class="fas fa-reply" style="color:#f15a24;"></i> Phản hồi đánh giá';
+            modalTitle.innerHTML = isEdit ?
+                '<i class="fas fa-pen" style="color:#f15a24;"></i> Chỉnh sửa phản hồi' :
+                '<i class="fas fa-reply" style="color:#f15a24;"></i> Phản hồi đánh giá';
         }
 
         const form = document.getElementById('replyReviewForm');
@@ -1232,9 +1307,9 @@ class AdminDashboard {
         // Cập nhật nút submit
         const btnSubmit = newForm.querySelector('button[type="submit"]');
         if (btnSubmit) {
-            btnSubmit.innerHTML = isEdit 
-                ? '<i class="fas fa-save"></i> Lưu thay đổi' 
-                : '<i class="fas fa-paper-plane"></i> Gửi phản hồi';
+            btnSubmit.innerHTML = isEdit ?
+                '<i class="fas fa-save"></i> Lưu thay đổi' :
+                '<i class="fas fa-paper-plane"></i> Gửi phản hồi';
         }
 
         newForm.addEventListener('submit', async (e) => {
@@ -1299,18 +1374,26 @@ class AdminDashboard {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: false
+                    },
                     title: {
                         display: true,
                         text: titleText,
-                        font: { size: 16, family: "'Segoe UI', Roboto, sans-serif" },
+                        font: {
+                            size: 16,
+                            family: "'Segoe UI', Roboto, sans-serif"
+                        },
                         color: '#4a3f35'
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { borderDash: [5, 5], color: '#f1e5d1' },
+                        grid: {
+                            borderDash: [5, 5],
+                            color: '#f1e5d1'
+                        },
                         ticks: {
                             callback: (value) => {
                                 return value.toLocaleString('vi-VN') + ' ₫';
@@ -1318,7 +1401,9 @@ class AdminDashboard {
                         }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
@@ -1327,7 +1412,10 @@ class AdminDashboard {
 
     // --- CÁC HÀM TIỆN ÍCH (UTILITIES) ---
     formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
     }
 
     formatDate(dateString) {
