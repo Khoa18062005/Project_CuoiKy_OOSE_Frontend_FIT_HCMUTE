@@ -539,7 +539,7 @@ class ProfileService {
                 <article class="booking-item ${isTarget ? 'booking-item-highlight' : ''}" id="booking-${booking.bookingID}">
                     <div class="booking-top">
                         <div>
-                            <h4>Booking #${booking.bookingID}</h4>
+                            <h4>Mã đơn: MV-${booking.bookingID}</h4>
                             <div class="booking-meta">
                                 <span><b>Ngày đặt:</b> ${this.formatDateTime(booking.bookingDate)}</span>
                                 <span><b>Check-in:</b> ${booking.checkin || "--"}</span>
@@ -1072,7 +1072,7 @@ class ProfileService {
                 <article class="review-card">
                     <div class="review-card-top">
                         <div>
-                            <h4>${review.roomType ? review.roomType : "Mây Vàng"}${review.bookingID ? ` · Booking #${review.bookingID}` : ""}</h4>
+                            <h4>${review.roomType ? review.roomType : "Mây Vàng"}${review.bookingID ? ` · Mã đơn: MV-${review.bookingID}` : ""}</h4>
                             <div class="review-meta">
                                 <span><i class="fas fa-calendar"></i> ${this.formatDateTime(review.reviewDate)}</span>
                                 ${review.anonymous ? `<span class="review-anon-badge"><i class="fas fa-user-secret"></i> Ẩn danh</span>` : ""}
