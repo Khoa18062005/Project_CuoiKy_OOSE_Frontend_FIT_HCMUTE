@@ -206,7 +206,7 @@ class ProfileService {
         document.getElementById("avatar").value = profile.avatar || "";
 
         const tier = profile.membershipTier || "Bronze";
-        const point = profile.point ? ? 0;
+        const point = profile.point ?? 0;
         const discount = `${Math.round((profile.discountRate || 0) * 100)}%`;
         const benefits = profile.benefits || "Chưa có quyền lợi";
 
